@@ -1,128 +1,199 @@
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FITNESS PERFORMANCE PRO</title>
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FITNESS PERFORMANCE PRO · Dark Athletic Clinical</title>
 <style>
-:root {
-  --bg:#090b0a;
-  --panel:#151918;
-  --green:#b7ff36;
-  --text:#f4f7f3;
-  --muted:#89938b;
-}
-* {box-sizing:border-box}
-body {
-  margin:0;background:var(--bg);color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-}
-header {
-  padding:28px 20px 15px;
-  display:flex;justify-content:space-between;align-items:center;
-}
-.logo {font-size:18px;font-weight:900}
-.logo span {color:var(--green)}
-main {padding:18px}
-.hero {
-  border-radius:24px;padding:24px;
-  background:linear-gradient(135deg,#202922,#101412);
-  border:1px solid #303b31;
-}
-.tag {color:var(--green);font-size:12px;font-weight:800}
-h1 {font-size:29px;margin:12px 0}
-.hero p {color:var(--muted);font-size:14px}
-.grid {
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:12px;margin-top:18px;
-}
-.card {
-  background:var(--panel);border:1px solid #252d28;
-  border-radius:18px;padding:17px;
-}
-.card small {color:var(--muted)}
-.value {font-size:24px;font-weight:800;margin-top:12px}
-.green {color:var(--green)}
-nav {
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:10px;margin-top:22px;
-}
-button {
-  background:#182019;color:white;border:1px solid #303b31;
-  padding:15px 5px;border-radius:15px;font-weight:700;
-}
-button.active {background:var(--green);color:#101510}
-section {margin-top:24px}
-h2 {font-size:20px}
-input {
-  width:100%;padding:14px;background:#101412;
-  border:1px solid #303b31;border-radius:12px;
-  color:white;margin:8px 0;
-}
-.action {
-  background:var(--green);color:#101510;
-  width:100%;margin-top:10px;
-}
-footer {text-align:center;color:#68736a;padding:30px;font-size:12px}
-</style>
-</head>
-<body>
-<header>
-<div class="logo">FITNESS <span>PERFORMANCE PRO</span></div>
-<div class="green">● PRO</div>
-</header>
-<main>
-<div class="hero">
-<div class="tag">TU EVOLUCIÓN · TU CONTROL</div>
-<h1>Entrena.<br><span class="green">Progresa.</span></h1>
-<p>Tu centro personal de rendimiento físico.</p>
-</div>
-
-<div class="grid">
-<div class="card"><small>CALORÍAS</small><div class="value">1.800–2.000</div></div>
-<div class="card"><small>PROTEÍNA</small><div class="value green">125 g</div></div>
-<div class="card"><small>PESO ACTUAL</small><div class="value">82,3 kg</div></div>
-<div class="card"><small>OBJETIVO</small><div class="value green">75 kg</div></div>
-</div>
-
-<nav>
-<button class="active" onclick="show('Inicio',this)">Inicio</button>
-<button onclick="show('Nutrición',this)">Nutrición</button>
-<button onclick="show('Entrenamiento',this)">Entreno</button>
-<button onclick="show('Suplementos',this)">Suplementos</button>
-<button onclick="show('Control corporal',this)">Peso</button>
-<button onclick="show('Historial',this)">Historial</button>
-</nav>
-
-<section class="card">
-<h2 id="title">Inicio</h2>
-<p id="description">Bienvenido a tu plataforma FITNESS PERFORMANCE PRO.</p>
-<div id="content"></div>
+:root{--bg:#050706;--panel:#101511;--panel2:#151d17;--line:#26352a;--text:#edf7ef;--muted:#91a397;--green:#53ff55;--lime:#b7ff39;--blue:#25d9ff;--orange:#ffad36;--pink:#ff4eaa;--purple:#bd85ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#142018 0,#050706 55%);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer;border:1px solid #31513a;background:#16231a;color:#dfffe3;border-radius:10px;padding:9px 12px}button:hover{border-color:var(--green);color:var(--green)}input,select{background:#0b100d;color:#eaffed;border:1px solid #2a3b2e;border-radius:8px;padding:9px;width:100%}
+.shell{display:grid;grid-template-columns:220px 1fr;min-height:100vh}.side{padding:20px 12px;border-right:1px solid #1c2b20;background:#070b08;position:sticky;top:0;height:100vh}.brand{font-size:20px;font-weight:900;letter-spacing:1px;margin:5px 8px 24px;color:white}.brand span{color:var(--green)}.nav{display:grid;gap:7px}.nav button{text-align:left;background:transparent;border-color:transparent;color:#b8c7ba}.nav button.active{background:#17321b;border-color:#2b7134;color:var(--green);box-shadow:0 0 15px #2aff4920}
+main{padding:24px;max-width:1600px;width:100%;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}.eyebrow{color:var(--green);letter-spacing:2px;font-size:11px;font-weight:700}.top h1{margin:4px 0;font-size:clamp(22px,3vw,34px)}.muted{color:var(--muted)}.hero{display:grid;grid-template-columns:1.5fr .8fr;gap:14px;margin-bottom:14px}.heroimg{min-height:190px;border-radius:18px;border:1px solid #25362a;background:linear-gradient(90deg,#050806e8,#05080655),url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80') center/cover;padding:24px;display:flex;flex-direction:column;justify-content:center}.heroimg h2{font-size:clamp(22px,3vw,36px);margin:5px 0}.heroimg p{max-width:480px;color:#c5d5c8}.heroStat{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:linear-gradient(145deg,#121a14,#0b100d);border:1px solid var(--line);border-radius:15px;padding:15px;box-shadow:0 8px 25px #0004}.metric small{color:var(--muted)}.metric strong{display:block;font-size:26px;margin:5px 0}.green{color:var(--green)}.blue{color:var(--blue)}.orange{color:var(--orange)}.pink{color:var(--pink)}.purple{color:var(--purple)}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.section{display:none}.section.active{display:block}.section h2{margin:0 0 14px;font-size:23px}.sectionHead{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin:4px 0 15px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.bar{height:9px;background:#263329;border-radius:99px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--lime));border-radius:99px}
+.formrow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.formrow.two{grid-template-columns:repeat(2,1fr)}.formrow.three{grid-template-columns:repeat(3,1fr)}label{font-size:12px;color:var(--muted);display:grid;gap:5px}.list{display:grid;gap:8px;margin-top:12px}.item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px;background:#0b100d;border:1px solid #263329;border-radius:10px}.item small{display:block;color:var(--muted)}.pill{border-radius:99px;padding:4px 8px;background:#17321b;color:var(--green);font-size:11px}
+table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:10px;border-bottom:1px solid #263329}th{color:var(--muted);font-weight:600}.chart{height:180px;width:100%;background:#0b100d;border-radius:10px;padding:8px}.chart svg{width:100%;height:100%}.days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.day{padding:9px 2px;text-align:center;border-radius:8px;background:#172019;font-size:12px}.shift-day{background:#14371b;color:#7cff85}.shift-night{background:#3a2a0d;color:#ffce68}.shift-rest{background:#172d3a;color:#7bdfff}.footer{color:#788b7c;text-align:center;margin:25px 0;font-size:12px}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.side{height:auto;position:relative;border-right:0;border-bottom:1px solid #1c2b20;padding:10px}.brand{margin:5px 10px}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap}.hero{grid-template-columns:1fr}.grid4{grid-template-columns:repeat(2,1fr)}main{padding:14px}.grid2{grid-template-columns:1fr}.formrow{grid-template-columns:repeat(2,1fr)}}
+</style></head><body>
+<!-- SUPABASE AUTH INTEGRATION -->
+<section id="supabase-auth-panel" class="card" style="margin:18px 0;padding:18px;border:1px solid #263746;background:#101820;border-radius:16px">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <div>
+      <div style="font-size:11px;letter-spacing:2px;color:#8b9aa8;font-weight:700">CLOUD SYNC</div>
+      <h2 style="margin:6px 0 4px;color:#eaf2f7;font-size:20px">Cuenta y sincronización</h2>
+      <p style="margin:0;color:#9aabba;font-size:13px">Acceso personal para guardar tus registros en Supabase.</p>
+    </div>
+    <span id="sb-status" style="font-size:12px;padding:7px 10px;border-radius:999px;background:#26313b;color:#c5d2dc">Sin configurar</span>
+  </div>
+  <div id="sb-config" style="margin-top:16px;display:grid;gap:10px">
+    <label style="display:grid;gap:6px;color:#b8c6d2;font-size:12px">Project URL
+      <input id="sb-url" type="url" value="https://elzdypqxalenicwkexr.supabase.co" placeholder="https://xxxx.supabase.co" style="padding:12px;border-radius:10px;background:#0b1117;color:#edf4f8;border:1px solid #30404d">
+    </label>
+    <label style="display:grid;gap:6px;color:#b8c6d2;font-size:12px">Publishable key (sb_publishable_…)
+      <input id="sb-key" type="password" autocomplete="off" placeholder="Pega aquí tu clave publicable" style="padding:12px;border-radius:10px;background:#0b1117;color:#edf4f8;border:1px solid #30404d">
+    </label>
+    <button id="sb-connect" type="button" style="padding:12px;border:0;border-radius:10px;background:#b8ff3b;color:#101510;font-weight:800">Conectar proyecto</button>
+    <small style="color:#8394a3">Usa solo la clave publicable. Nunca pegues aquí una clave secret o service_role.</small>
+  </div>
+  <div id="sb-auth" style="display:none;margin-top:16px;gap:10px">
+    <div id="sb-user" style="color:#b8ff3b;font-size:13px"></div>
+    <label style="display:grid;gap:6px;color:#b8c6d2;font-size:12px">Correo
+      <input id="sb-email" type="email" autocomplete="email" placeholder="tu correo" style="padding:12px;border-radius:10px;background:#0b1117;color:#edf4f8;border:1px solid #30404d">
+    </label>
+    <label style="display:grid;gap:6px;color:#b8c6d2;font-size:12px">Contraseña
+      <input id="sb-password" type="password" autocomplete="current-password" placeholder="Mínimo 6 caracteres" style="padding:12px;border-radius:10px;background:#0b1117;color:#edf4f8;border:1px solid #30404d">
+    </label>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button id="sb-login" type="button" style="flex:1;padding:11px;border:0;border-radius:10px;background:#b8ff3b;color:#101510;font-weight:800">Iniciar sesión</button>
+      <button id="sb-signup" type="button" style="flex:1;padding:11px;border:1px solid #40515e;border-radius:10px;background:#17222b;color:#eaf2f7;font-weight:700">Crear cuenta</button>
+    </div>
+    <button id="sb-reset" type="button" style="padding:8px;border:0;background:transparent;color:#91caff;text-align:left">Olvidé mi contraseña</button>
+    <button id="sb-logout" type="button" style="display:none;padding:10px;border:1px solid #40515e;border-radius:10px;background:#17222b;color:#eaf2f7">Cerrar sesión</button>
+  </div>
+  <div id="sb-message" role="status" style="margin-top:12px;color:#a8bac8;font-size:13px;line-height:1.5"></div>
 </section>
-</main>
-<footer>FITNESS PERFORMANCE PRO · 2026</footer>
 
+<div class="shell"><aside class="side"><div class="brand">FITNESS<br>PERFORMANCE <span>PRO</span><small style="display:block;font-size:10px;letter-spacing:3px;color:#8ea394">CLÍNICO DIGITAL</small></div>
+<nav class="nav" id="nav">
+<button class="active" data-tab="inicio">⌂ Inicio</button><button data-tab="nutricion">＋ Nutrición</button><button data-tab="entrenamiento">✣ Entrenamiento</button><button data-tab="suplementos">◇ Suplementos</button><button data-tab="corporal">▣ Peso y medidas</button><button data-tab="turnos">▦ Calendario 7×7</button><button data-tab="historial">▤ Historial</button>
+</nav></aside>
+<main><div class="top"><div><div class="eyebrow">DARK ATHLETIC CLINICAL</div><h1>Tu rendimiento, bajo control.</h1><div class="muted">Seguimiento de nutrición · entrenamiento · composición corporal</div></div><div class="pill" id="todayShift">● Descanso</div></div>
+<section id="inicio" class="section active">
+<div class="hero"><div class="heroimg"><div class="eyebrow">FITNESS PERFORMANCE PRO</div><h2>Disciplina, datos<br><span class="green">y constancia.</span></h2><p>Registra tus hábitos y observa cómo avanzas hacia tus objetivos.</p><button onclick="tab('nutricion')" style="width:max-content">＋ Registrar alimentación</button></div><div class="heroStat"><div class="card metric"><small>Peso actual</small><strong id="kWeight">82,3 kg</strong><span class="green">−7,5 kg desde inicio</span></div><div class="card metric"><small>Cintura</small><strong id="kWaist">95 cm</strong><span class="green">Seguimiento</span></div><div class="card metric"><small>Meta final</small><strong>75 kg</strong><span class="green">Meta intermedia 80</span></div><div class="card metric"><small>Calorías hoy</small><strong id="kCal">0</strong><span class="orange">Objetivo 1.800–2.000</span></div></div></div>
+<div class="grid4"><div class="card metric"><small>Proteínas</small><strong class="blue" id="kProtein">0 g</strong><div class="bar"><i id="pbar" style="width:0"></i></div><small>Meta 125 g</small></div><div class="card metric"><small>Carbohidratos</small><strong id="kCarbs">0 g</strong><div class="bar"><i id="cbar" style="width:0;background:var(--orange)"></i></div><small>Seguimiento diario</small></div><div class="card metric"><small>Grasas</small><strong class="pink" id="kFat">0 g</strong><div class="bar"><i id="fbar" style="width:0;background:var(--pink)"></i></div><small>Calculadas/registradas</small></div><div class="card metric"><small>Entrenamiento</small><strong class="green" id="kWorkout">0 min</strong><small>Minutos registrados hoy</small></div></div>
+<div class="grid2"><div class="card"><div class="sectionHead"><h3>Progreso de peso</h3><span class="pill">Histórico</span></div><div class="chart" id="weightChart"></div><small class="muted">Datos reales ingresados por ti.</small></div><div class="card"><div class="sectionHead"><h3>Resumen de hoy</h3><span class="pill" id="dateLabel"></span></div><div class="list"><div class="item"><span>Nutrición registrada</span><b id="mealCount">0 alimentos</b></div><div class="item"><span>Suplementos confirmados</span><b id="suppCount">0</b></div><div class="item"><span>Entrenamiento</span><b id="workCount">0 sesiones</b></div></div><p class="muted">Los módulos actualizan automáticamente este panel.</p></div></div></section>
+
+<section id="nutricion" class="section"><div class="sectionHead"><h2>Nutrición inteligente</h2><span class="pill">Alimento + gramos → macros y kcal</span></div><div class="card"><div class="formrow"><label>Alimento<select id="food"><option value="arroz">Arroz blanco cocido</option><option value="pollo">Pechuga de pollo cocida</option><option value="atun">Atún al agua drenado</option><option value="avena">Avena</option><option value="platano">Plátano</option><option value="huevo">Huevo entero</option><option value="salmon">Salmón</option><option value="quinoa">Quinoa cocida</option><option value="custom">Alimento personalizado</option></select></label><label>Gramos<input id="grams" type="number" value="100" min="1"></label><label>Comida<select id="meal"><option>Desayuno</option><option>Almuerzo</option><option>Cena</option><option>Colación</option></select></label><label>Fecha<input id="foodDate" type="date"></label></div><div id="customFood" class="formrow" style="display:none"><label>Nombre<input id="customName" placeholder="Nombre alimento"></label><label>Kcal/100g<input id="customK" type="number"></label><label>Proteína/100g<input id="customP" type="number"></label><label>Carbohidrato/100g<input id="customC" type="number"></label><label>Grasa/100g<input id="customF" type="number"></label></div><div class="kpis"><div><small class="muted">Calorías estimadas</small><strong class="orange" id="previewK">130 kcal</strong></div><div><small class="muted">Proteína</small><strong class="blue" id="previewP">0 g</strong></div><div><small class="muted">Carbohidratos / grasas</small><strong id="previewCF">0 / 0 g</strong></div></div><button onclick="addFood()">＋ Agregar alimento</button></div><div class="card" style="margin-top:12px"><h3>Registros del día</h3><div id="foodList" class="list"></div><div class="item"><b>Total diario</b><b id="foodTotals">0 kcal · P 0 · C 0 · G 0</b></div></div></section>
+
+<section id="entrenamiento" class="section"><div class="sectionHead"><h2>Entrenamiento guiado</h2><span class="pill">Rutina + técnica YouTube</span></div><div class="card"><div class="formrow three"><label>Rutina<select id="routine"><option>Pecho + tríceps</option><option>Espalda + bíceps</option><option>Piernas</option><option>Hombros + abdomen</option><option>Cardio</option><option>Full body</option></select></label><label>Duración (min)<input id="duration" type="number" value="60"></label><label>Fecha<input id="workDate" type="date"></label></div><button onclick="addWorkout()">Guardar sesión</button></div><div class="grid2" style="margin-top:12px"><div class="card"><h3>Ejercicios sugeridos · Pecho + tríceps</h3><div class="list" id="exerciseList"></div></div><div class="card"><h3>Sesiones registradas</h3><div id="workList" class="list"></div></div></div></section>
+
+<section id="suplementos" class="section"><div class="sectionHead"><h2>Suplementación</h2><span class="pill">Confirmar consumo</span></div><div class="card"><div class="formrow three"><label>Suplemento<input id="suppName" placeholder="Ej. Magnesio, Omega 3"></label><label>Dosis<input id="suppDose" placeholder="Ej. 1 cápsula / 5 g"></label><label>Horario<input id="suppTime" placeholder="Ej. desayuno"></label></div><button onclick="addSupp()">＋ Agregar suplemento</button></div><div class="card" style="margin-top:12px"><h3>Lista de suplementos</h3><div id="suppList" class="list"></div></div></section>
+
+<section id="corporal" class="section"><div class="sectionHead"><h2>Peso y medidas</h2><span class="pill">Evolución corporal</span></div><div class="card"><div class="formrow three"><label>Peso (kg)<input id="weight" type="number" step=".1" placeholder="82.3"></label><label>Cintura (cm)<input id="waist" type="number" step=".1" placeholder="95"></label><label>Fecha<input id="measureDate" type="date"></label></div><button onclick="addMeasure()">＋ Guardar medición</button></div><div class="grid2" style="margin-top:12px"><div class="card"><h3>Historial de peso</h3><div id="bodyChart" class="chart"></div></div><div class="card"><h3>Mediciones</h3><div id="measureList" class="list"></div></div></div></section>
+
+<section id="turnos" class="section"><div class="sectionHead"><h2>Calendario rotativo 7×7</h2><span class="pill">Descanso → Noche → Descanso → Día</span></div><div class="card"><p>Referencia definida: <b>03–09 nov descanso · 10–16 nov noche · 17–23 nov descanso · 24–30 nov día</b></p><p class="muted">Turno noche: 19:00–07:00 · Turno día: horario por confirmar.</p><div id="calendar"></div></div></section>
+
+<section id="historial" class="section"><div class="sectionHead"><h2>Historial consultable</h2><span class="pill">Día / mes</span></div><div class="card"><div class="formrow two"><label>Consultar fecha<input id="historyDate" type="date" onchange="renderHistory()"></label><label>Consultar mes<input id="historyMonth" type="month" onchange="renderHistory()"></label></div><div id="historyResult" class="list"></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button onclick="exportData()">Exportar respaldo JSON</button><label style="max-width:230px">Importar respaldo<input type="file" accept=".json" onchange="importData(event)"></label><button onclick="clearAll()">Borrar todos los datos</button></div></div></section>
+<div class="footer">FITNESS PERFORMANCE PRO · Prototipo local V1 · Tus registros se guardan en este navegador</div>
+</main></div>
 <script>
-function show(name,btn){
- document.getElementById('title').textContent=name;
- document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
- btn.classList.add('active');
- let descriptions={
- 'Inicio':'Tu resumen de rendimiento.',
- 'Nutrición':'Registra tus alimentos y controla tus macros.',
- 'Entrenamiento':'Organiza tus sesiones de entrenamiento.',
- 'Suplementos':'Controla tus suplementos diarios.',
- 'Control corporal':'Registra tu peso y cintura.',
- 'Historial':'Consulta tu evolución.'
- };
- document.getElementById('description').textContent=descriptions[name]||name;
- document.getElementById('content').innerHTML=
- '<input placeholder="Registro / observación"><button class="action" onclick="save()">Guardar registro</button><p id="saved"></p>';
-}
-function save(){
- document.getElementById('saved').textContent='Registro preparado.';
-}
+const $=id=>document.getElementById(id), today=new Date().toISOString().slice(0,10);
+$('foodDate').value=$('workDate').value=$('measureDate').value=today;$('dateLabel').textContent=today;
+const DBKEY='fppro_v2';let db=JSON.parse(localStorage.getItem(DBKEY)||'{"foods":[],"workouts":[],"supplements":[],"measures":[{"date":"2026-10-25","weight":82.3,"waist":95}]}');
+const foods={arroz:{n:'Arroz blanco cocido',k:130,p:2.7,c:28.2,f:.3},pollo:{n:'Pechuga de pollo cocida',k:165,p:31,c:0,f:3.6},atun:{n:'Atún al agua drenado',k:116,p:25.5,c:0,f:1},avena:{n:'Avena',k:389,p:16.9,c:66.3,f:6.9},platano:{n:'Plátano',k:89,p:1.1,c:22.8,f:.3},huevo:{n:'Huevo entero',k:143,p:12.6,c:.7,f:9.5},salmon:{n:'Salmón',k:208,p:20.4,c:0,f:13.4},quinoa:{n:'Quinoa cocida',k:120,p:4.4,c:21.3,f:1.9}};
+function save(){localStorage.setItem(DBKEY,JSON.stringify(db));renderAll()}
+function macros(){return db.foods.filter(x=>x.date===today).reduce((a,x)=>({k:a.k+x.k,p:a.p+x.p,c:a.c+x.c,f:a.f+x.f}),{k:0,p:0,c:0,f:0})}
+function tab(id){document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));}
+$('nav').addEventListener('click',e=>{let b=e.target.closest('button[data-tab]');if(b)tab(b.dataset.tab)});
+function foodVals(){let key=$('food').value,g=+$('grams').value||0,v;if(key==='custom')v={n:$('customName').value||'Personalizado',k:+$('customK').value||0,p:+$('customP').value||0,c:+$('customC').value||0,f:+$('customF').value||0};else v=foods[key];return {...v,k:v.k*g/100,p:v.p*g/100,c:v.c*g/100,f:v.f*g/100,g}}
+$('food').onchange=()=>{$('customFood').style.display=$('food').value==='custom'?'grid':'none';preview()};$('grams').oninput=preview;['customK','customP','customC','customF','customName'].forEach(id=>$(id).oninput=preview);
+function preview(){let x=foodVals();$('previewK').textContent=x.k.toFixed(0)+' kcal';$('previewP').textContent=x.p.toFixed(1)+' g';$('previewCF').textContent=x.c.toFixed(1)+' / '+x.f.toFixed(1)+' g'}
+function addFood(){let x=foodVals();if(!x.g||x.g<=0)return alert('Ingresa gramos válidos');db.foods.push({...x,meal:$('meal').value,date:$('foodDate').value,id:Date.now()});save()}
+function addWorkout(){db.workouts.push({routine:$('routine').value,minutes:+$('duration').value||0,date:$('workDate').value,id:Date.now()});save()}
+function addSupp(){let n=$('suppName').value.trim();if(!n)return alert('Escribe el suplemento');db.supplements.push({name:n,dose:$('suppDose').value,time:$('suppTime').value,done:false,date:today,id:Date.now()});$('suppName').value=$('suppDose').value=$('suppTime').value='';save()}
+function addMeasure(){let w=+$('weight').value,wa=+$('waist').value;if(!w&&!wa)return alert('Ingresa peso o cintura');db.measures.push({date:$('measureDate').value,weight:w||null,waist:wa||null,id:Date.now()});save()}
+function del(arr,id){db[arr]=db[arr].filter(x=>x.id!==id);save()}
+function renderAll(){let m=macros();$('kCal').textContent=Math.round(m.k)+' kcal';$('kProtein').textContent=m.p.toFixed(1)+' g';$('kCarbs').textContent=m.c.toFixed(1)+' g';$('kFat').textContent=m.f.toFixed(1)+' g';$('pbar').style.width=Math.min(100,m.p/125*100)+'%';$('cbar').style.width=Math.min(100,m.c/200*100)+'%';$('fbar').style.width=Math.min(100,m.f/60*100)+'%';$('mealCount').textContent=db.foods.filter(x=>x.date===today).length+' alimentos';$('suppCount').textContent=db.supplements.filter(x=>x.date===today&&x.done).length;$('workCount').textContent=db.workouts.filter(x=>x.date===today).length+' sesiones';$('kWorkout').textContent=db.workouts.filter(x=>x.date===today).reduce((a,x)=>a+x.minutes,0)+' min';
+let last=[...db.measures].reverse().find(x=>x.weight);if(last)$('kWeight').textContent=last.weight+' kg';let lw=[...db.measures].reverse().find(x=>x.waist);if(lw)$('kWaist').textContent=lw.waist+' cm';
+$('foodTotals').textContent=`${Math.round(m.k)} kcal · P ${m.p.toFixed(1)} · C ${m.c.toFixed(1)} · G ${m.f.toFixed(1)}`;
+$('foodList').innerHTML=db.foods.filter(x=>x.date===$('foodDate').value).map(x=>`<div class="item"><span>${x.n}<small>${x.meal} · ${x.g} g</small></span><b>${Math.round(x.k)} kcal <button onclick="del('foods',${x.id})">×</button></b></div>`).join('')||'<p class="muted">Sin alimentos registrados para esta fecha.</p>';
+$('workList').innerHTML=db.workouts.map(x=>`<div class="item"><span>${x.routine}<small>${x.date} · ${x.minutes} min</small></span><button onclick="del('workouts',${x.id})">Eliminar</button></div>`).join('')||'<p class="muted">Aún no hay sesiones.</p>';
+$('suppList').innerHTML=db.supplements.map(x=>`<div class="item"><span>${x.name}<small>${x.dose||'Dosis no indicada'} · ${x.time||'Horario libre'} · ${x.date}</small></span><span><button onclick="toggleSupp(${x.id})">${x.done?'✓ Consumido':'Confirmar consumo'}</button> <button onclick="del('supplements',${x.id})">×</button></span></div>`).join('')||'<p class="muted">Agrega tus suplementos.</p>';
+$('measureList').innerHTML=[...db.measures].reverse().map(x=>`<div class="item"><span>${x.date}<small>${x.weight?x.weight+' kg':''} ${x.waist?'· '+x.waist+' cm':''}</small></span><button onclick="del('measures',${x.id})">Eliminar</button></div>`).join('');
+chart('weightChart');chart('bodyChart');renderExercises();renderCalendar();renderHistory()}
+function toggleSupp(id){let x=db.supplements.find(x=>x.id===id);x.done=!x.done;save()}
+function chart(id){let data=db.measures.filter(x=>x.weight).sort((a,b)=>a.date.localeCompare(b.date));if(!data.length){$(id).innerHTML='<p class="muted">Registra peso para visualizar evolución.</p>';return}let vals=data.map(x=>x.weight),min=Math.min(...vals)-1,max=Math.max(...vals)+1,points=vals.map((v,i)=>`${20+i*360/Math.max(1,vals.length-1)},${155-(v-min)/(max-min)*125}`).join(' ');$(id).innerHTML=`<svg viewBox="0 0 400 180" preserveAspectRatio="none"><path d="M20 155 H380 M20 90 H380 M20 25 H380" stroke="#263329" fill="none"/><polyline points="${points}" fill="none" stroke="#53ff55" stroke-width="3"/>${vals.map((v,i)=>`<circle cx="${20+i*360/Math.max(1,vals.length-1)}" cy="${155-(v-min)/(max-min)*125}" r="4" fill="#b7ff39"/>`).join('')}<text x="22" y="15" fill="#9bad9f" font-size="11">${max.toFixed(1)} kg</text><text x="22" y="175" fill="#9bad9f" font-size="11">${min.toFixed(1)} kg</text></svg>`}
+function renderExercises(){let ex=[['Press banca','4 × 8–10','https://www.youtube.com/results?search_query=press+banca+tecnica+correcta'],['Press inclinado mancuernas','3 × 10–12','https://www.youtube.com/results?search_query=press+inclinado+mancuernas+tecnica'],['Aperturas','3 × 12','https://www.youtube.com/results?search_query=aperturas+pecho+tecnica'],['Extensión tríceps polea','3 × 12','https://www.youtube.com/results?search_query=extension+triceps+polea+tecnica']];$('exerciseList').innerHTML=ex.map(x=>`<div class="item"><span>${x[0]}<small>${x[1]}</small></span><a style="color:var(--green)" href="${x[2]}" target="_blank">▶ YouTube</a></div>`).join('')}
+function renderCalendar(){let start=new Date('2026-11-03T12:00:00'),base=[['Descanso',7,'shift-rest'],['Noche',7,'shift-night'],['Descanso',7,'shift-rest'],['Día',7,'shift-day']];let d=new Date('2026-11-01T12:00:00'),html='<div class="days">'+['L','M','X','J','V','S','D'].map(x=>`<div class="day muted">${x}</div>`).join('');let offset=(d.getDay()+6)%7;for(let i=0;i<offset;i++)html+='<div></div>';for(let n=1;n<=30;n++){let date=new Date(2026,10,n,12),diff=Math.floor((date-start)/86400000),idx=((Math.floor(diff/7)%4)+4)%4,shift=diff<0?'':base[idx][0];html+=`<div class="day ${diff<0?'':base[idx][2]}">${n}<small style="display:block;font-size:9px">${shift}</small></div>`}html+='</div>';$('calendar').innerHTML=html}
+function renderHistory(){let date=$('historyDate').value,month=$('historyMonth').value;let all=[...db.foods.map(x=>({...x,type:'Alimento'})),...db.workouts.map(x=>({...x,type:'Entrenamiento'})),...db.supplements.map(x=>({...x,type:'Suplemento'})),...db.measures.map(x=>({...x,type:'Medición'}))];let filtered=all.filter(x=>date?x.date===date:month?x.date?.startsWith(month):true).sort((a,b)=>b.date.localeCompare(a.date));$('historyResult').innerHTML=filtered.map(x=>`<div class="item"><span>${x.type}: ${x.n||x.routine||x.name||((x.weight||'')+' kg / '+(x.waist||'')+' cm')}<small>${x.date}</small></span><b>${x.k?Math.round(x.k)+' kcal':x.minutes?x.minutes+' min':x.done?'Consumido':''}</b></div>`).join('')||'<p class="muted">No hay registros para ese filtro.</p>'}
+function exportData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='fitness-performance-respaldo.json';a.click();URL.revokeObjectURL(a.href)}
+function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{db=JSON.parse(r.result);save();alert('Respaldo importado')}catch{alert('Archivo no válido')}};r.readAsText(f)}
+function clearAll(){if(confirm('¿Borrar todos los registros?')){db={foods:[],workouts:[],supplements:[],measures:[]};save()}}
+renderAll();preview();
 </script>
-</body>
-</html>
+<!-- SUPABASE AUTH INTEGRATION -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const urlInput = $('sb-url'), keyInput = $('sb-key');
+  const statusEl = $('sb-status'), messageEl = $('sb-message');
+  const configEl = $('sb-config'), authEl = $('sb-auth');
+  let client = null, authSubscription = null;
+
+  const saved = (() => { try { return JSON.parse(localStorage.getItem('fp_supabase_config') || '{}'); } catch { return {}; } })();
+  if (saved.url) urlInput.value = saved.url;
+  if (saved.key) keyInput.value = saved.key;
+
+  function message(text, isError=false) {
+    messageEl.textContent = text;
+    messageEl.style.color = isError ? '#ff8b8b' : '#a8bac8';
+  }
+  function status(text, connected=false) {
+    statusEl.textContent = text;
+    statusEl.style.background = connected ? '#183527' : '#26313b';
+    statusEl.style.color = connected ? '#b8ff3b' : '#c5d2dc';
+  }
+  function setAuthUI(session) {
+    const signedIn = !!session?.user;
+    configEl.style.display = client ? 'none' : 'grid';
+    authEl.style.display = client ? 'grid' : 'none';
+    $('sb-user').textContent = signedIn ? 'Sesión activa: ' + session.user.email : 'Proyecto conectado. Inicia sesión o crea tu cuenta.';
+    $('sb-login').style.display = signedIn ? 'none' : 'block';
+    $('sb-signup').style.display = signedIn ? 'none' : 'block';
+    $('sb-reset').style.display = signedIn ? 'none' : 'block';
+    $('sb-logout').style.display = signedIn ? 'block' : 'none';
+    status(signedIn ? 'Sesión activa' : 'Proyecto conectado', true);
+  }
+  async function connect() {
+    const url = urlInput.value.trim(), key = keyInput.value.trim();
+    if (!/^https:\/\/[^/]+\.supabase\.co\/?$/.test(url) || !key.startsWith('sb_publishable_')) {
+      message('Revisa el Project URL y confirma que la clave sea sb_publishable_…', true); return;
+    }
+    if (!window.supabase?.createClient) { message('No se pudo cargar Supabase JS. Revisa tu conexión a internet.', true); return; }
+    try {
+      if (authSubscription) authSubscription.unsubscribe();
+      client = window.supabase.createClient(url.replace(/\/$/, ''), key);
+      localStorage.setItem('fp_supabase_config', JSON.stringify({url: url.replace(/\/$/, ''), key}));
+      const {data, error} = await client.auth.getSession();
+      if (error) throw error;
+      setAuthUI(data.session);
+      authSubscription = client.auth.onAuthStateChange((_event, session) => setAuthUI(session)).data.subscription;
+      message('Conexión inicial correcta. Aún falta validar el guardado de datos en las tablas.');
+    } catch (e) {
+      client = null; setAuthUI(null); status('Error de conexión');
+      message(e.message || 'No fue posible conectar.', true);
+    }
+  }
+  async function authAction(fn, successText) {
+    const email = $('sb-email').value.trim(), password = $('sb-password').value;
+    if (!email) return message('Ingresa tu correo.', true);
+    try {
+      const result = await fn(email, password);
+      if (result.error) throw result.error;
+      message(successText);
+      if (result.data?.user && !result.data?.session) message('Cuenta creada. Revisa tu correo para confirmar la dirección y luego inicia sesión.');
+    } catch (e) { message(e.message || 'No se pudo completar la acción.', true); }
+  }
+  $('sb-connect').addEventListener('click', connect);
+  $('sb-login').addEventListener('click', () => authAction((email,password) => client.auth.signInWithPassword({email,password}), 'Inicio de sesión correcto.'));
+  $('sb-signup').addEventListener('click', () => authAction((email,password) => {
+    if (password.length < 6) return Promise.resolve({error:new Error('La contraseña debe tener al menos 6 caracteres.')});
+    return client.auth.signUp({email,password});
+  }, 'Registro enviado.'));
+  $('sb-reset').addEventListener('click', async () => {
+    const email = $('sb-email').value.trim();
+    if (!email) return message('Escribe tu correo y vuelve a pulsar “Olvidé mi contraseña”.', true);
+    const {error} = await client.auth.resetPasswordForEmail(email, {redirectTo: location.href.split('#')[0]});
+    message(error ? error.message : 'Solicitud enviada. Revisa tu correo para restablecer la contraseña.', !!error);
+  });
+  $('sb-logout').addEventListener('click', async () => {
+    const {error} = await client.auth.signOut();
+    message(error ? error.message : 'Sesión cerrada.', !!error);
+  });
+  if (saved.url && saved.key && window.supabase?.createClient) {
+    // Restore configuration, but wait for the user to tap Connect to avoid silent auth actions.
+    status('Configuración guardada');
+  }
+})();
+</script>
+
+</body></html>
