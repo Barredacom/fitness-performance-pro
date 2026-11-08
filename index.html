@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FITNESS PERFORMANCE PRO</title>
+<style>
+:root {
+  --bg:#090b0a;
+  --panel:#151918;
+  --green:#b7ff36;
+  --text:#f4f7f3;
+  --muted:#89938b;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+}
+header {
+  padding:28px 20px 15px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.logo {font-size:18px;font-weight:900}
+.logo span {color:var(--green)}
+main {padding:18px}
+.hero {
+  border-radius:24px;padding:24px;
+  background:linear-gradient(135deg,#202922,#101412);
+  border:1px solid #303b31;
+}
+.tag {color:var(--green);font-size:12px;font-weight:800}
+h1 {font-size:29px;margin:12px 0}
+.hero p {color:var(--muted);font-size:14px}
+.grid {
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:12px;margin-top:18px;
+}
+.card {
+  background:var(--panel);border:1px solid #252d28;
+  border-radius:18px;padding:17px;
+}
+.card small {color:var(--muted)}
+.value {font-size:24px;font-weight:800;margin-top:12px}
+.green {color:var(--green)}
+nav {
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:10px;margin-top:22px;
+}
+button {
+  background:#182019;color:white;border:1px solid #303b31;
+  padding:15px 5px;border-radius:15px;font-weight:700;
+}
+button.active {background:var(--green);color:#101510}
+section {margin-top:24px}
+h2 {font-size:20px}
+input {
+  width:100%;padding:14px;background:#101412;
+  border:1px solid #303b31;border-radius:12px;
+  color:white;margin:8px 0;
+}
+.action {
+  background:var(--green);color:#101510;
+  width:100%;margin-top:10px;
+}
+footer {text-align:center;color:#68736a;padding:30px;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">FITNESS <span>PERFORMANCE PRO</span></div>
+<div class="green">● PRO</div>
+</header>
+<main>
+<div class="hero">
+<div class="tag">TU EVOLUCIÓN · TU CONTROL</div>
+<h1>Entrena.<br><span class="green">Progresa.</span></h1>
+<p>Tu centro personal de rendimiento físico.</p>
+</div>
+
+<div class="grid">
+<div class="card"><small>CALORÍAS</small><div class="value">1.800–2.000</div></div>
+<div class="card"><small>PROTEÍNA</small><div class="value green">125 g</div></div>
+<div class="card"><small>PESO ACTUAL</small><div class="value">82,3 kg</div></div>
+<div class="card"><small>OBJETIVO</small><div class="value green">75 kg</div></div>
+</div>
+
+<nav>
+<button class="active" onclick="show('Inicio',this)">Inicio</button>
+<button onclick="show('Nutrición',this)">Nutrición</button>
+<button onclick="show('Entrenamiento',this)">Entreno</button>
+<button onclick="show('Suplementos',this)">Suplementos</button>
+<button onclick="show('Control corporal',this)">Peso</button>
+<button onclick="show('Historial',this)">Historial</button>
+</nav>
+
+<section class="card">
+<h2 id="title">Inicio</h2>
+<p id="description">Bienvenido a tu plataforma FITNESS PERFORMANCE PRO.</p>
+<div id="content"></div>
+</section>
+</main>
+<footer>FITNESS PERFORMANCE PRO · 2026</footer>
+
+<script>
+function show(name,btn){
+ document.getElementById('title').textContent=name;
+ document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+ btn.classList.add('active');
+ let descriptions={
+ 'Inicio':'Tu resumen de rendimiento.',
+ 'Nutrición':'Registra tus alimentos y controla tus macros.',
+ 'Entrenamiento':'Organiza tus sesiones de entrenamiento.',
+ 'Suplementos':'Controla tus suplementos diarios.',
+ 'Control corporal':'Registra tu peso y cintura.',
+ 'Historial':'Consulta tu evolución.'
+ };
+ document.getElementById('description').textContent=descriptions[name]||name;
+ document.getElementById('content').innerHTML=
+ '<input placeholder="Registro / observación"><button class="action" onclick="save()">Guardar registro</button><p id="saved"></p>';
+}
+function save(){
+ document.getElementById('saved').textContent='Registro preparado.';
+}
+</script>
+</body>
+</html>
