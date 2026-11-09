@@ -86,7 +86,58 @@ $('nav').addEventListener('click',e=>{let b=e.target.closest('button[data-tab]')
 function foodVals(){let key=$('food').value,g=+$('grams').value||0,v;if(key==='custom')v={n:$('customName').value||'Personalizado',k:+$('customK').value||0,p:+$('customP').value||0,c:+$('customC').value||0,f:+$('customF').value||0};else v=foods[key];return {...v,k:v.k*g/100,p:v.p*g/100,c:v.c*g/100,f:v.f*g/100,g}}
 $('food').onchange=()=>{$('customFood').style.display=$('food').value==='custom'?'grid':'none';preview()};$('grams').oninput=preview;['customK','customP','customC','customF','customName'].forEach(id=>$(id).oninput=preview);
 function preview(){let x=foodVals();$('previewK').textContent=x.k.toFixed(0)+' kcal';$('previewP').textContent=x.p.toFixed(1)+' g';$('previewCF').textContent=x.c.toFixed(1)+' / '+x.f.toFixed(1)+' g'}
-function addFood(){let x=foodVals();if(!x.g||x.g<=0)return alert('Ingresa gramos válidos');db.foods.push({...x,meal:$('meal').value,date:$('foodDate').value,id:Date.now()});save()}
+
+async function addFood(){
+  let x = foodVals();
+
+  if(!x.g || x.g <= 0){
+    return alert('Ingresa gramos válidos');
+  }
+
+  const supabase = window.fpSupabaseClient;
+
+  if(!supabase){
+    return alert('Supabase no está conectado');
+  }
+
+  const {data:{user},error:userError} = await supabase.auth.getUser();
+
+  if(userError || !user){
+    return alert('Debes iniciar sesión');
+  }
+
+  const registro = {
+    fecha: $('foodDate').value,
+    comida: x.n,
+    gramos: x.g,
+    calorias: x.k,
+    proteina: x.p,
+    carbohidratos: x.c,
+    grasas: x.f,
+    user_id: user.id
+  };
+
+  const {error} = await supabase
+    .from('registros_nutricion')
+    .insert(registro);
+
+  if(error){
+    console.error(error);
+    return alert('Error al guardar en Supabase: '+error.message);
+  }
+
+  db.foods.push({
+    ...x,
+    meal: $('meal').value,
+    date: $('foodDate').value,
+    id: Date.now()
+  });
+
+  save();
+
+  alert('Alimento registrado y sincronizado correctamente');
+}
+
 function addWorkout(){db.workouts.push({routine:$('routine').value,minutes:+$('duration').value||0,date:$('workDate').value,id:Date.now()});save()}
 function addSupp(){let n=$('suppName').value.trim();if(!n)return alert('Escribe el suplemento');db.supplements.push({name:n,dose:$('suppDose').value,time:$('suppTime').value,done:false,date:today,id:Date.now()});$('suppName').value=$('suppDose').value=$('suppTime').value='';save()}
 function addMeasure(){let w=+$('weight').value,wa=+$('waist').value;if(!w&&!wa)return alert('Ingresa peso o cintura');db.measures.push({date:$('measureDate').value,weight:w||null,waist:wa||null,id:Date.now()});save()}
