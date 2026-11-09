@@ -109,91 +109,237 @@ function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader
 function clearAll(){if(confirm('¿Borrar todos los registros?')){db={foods:[],workouts:[],supplements:[],measures:[]};save()}}
 renderAll();preview();
 </script>
+
 <!-- SUPABASE AUTH INTEGRATION -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (() => {
   const $ = id => document.getElementById(id);
-  const urlInput = $('sb-url'), keyInput = $('sb-key');
-  const statusEl = $('sb-status'), messageEl = $('sb-message');
-  const configEl = $('sb-config'), authEl = $('sb-auth');
-  let client = null, authSubscription = null;
+  const urlInput = $('sb-url');
+  const keyInput = $('sb-key');
+  const statusEl = $('sb-status');
+  const messageEl = $('sb-message');
+  const configEl = $('sb-config');
+  const authEl = $('sb-auth');
 
-  const saved = (() => { try { return JSON.parse(localStorage.getItem('fp_supabase_config') || '{}'); } catch { return {}; } })();
+  let client = null;
+  let authSubscription = null;
+  let busy = false;
+
+  const saved = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('fp_supabase_config') || '{}');
+    } catch {
+      return {};
+    }
+  })();
+
   if (saved.url) urlInput.value = saved.url;
   if (saved.key) keyInput.value = saved.key;
 
-  function message(text, isError=false) {
+  function message(text, isError = false) {
     messageEl.textContent = text;
     messageEl.style.color = isError ? '#ff8b8b' : '#a8bac8';
   }
-  function status(text, connected=false) {
+
+  function status(text, connected = false) {
     statusEl.textContent = text;
     statusEl.style.background = connected ? '#183527' : '#26313b';
     statusEl.style.color = connected ? '#b8ff3b' : '#c5d2dc';
   }
+
   function setAuthUI(session) {
     const signedIn = !!session?.user;
+
     configEl.style.display = client ? 'none' : 'grid';
     authEl.style.display = client ? 'grid' : 'none';
-    $('sb-user').textContent = signedIn ? 'Sesión activa: ' + session.user.email : 'Proyecto conectado. Inicia sesión o crea tu cuenta.';
+
+    $('sb-user').textContent = signedIn
+      ? 'Sesión activa: ' + session.user.email
+      : 'Proyecto conectado. Inicia sesión o crea tu cuenta.';
+
     $('sb-login').style.display = signedIn ? 'none' : 'block';
     $('sb-signup').style.display = signedIn ? 'none' : 'block';
     $('sb-reset').style.display = signedIn ? 'none' : 'block';
     $('sb-logout').style.display = signedIn ? 'block' : 'none';
+
     status(signedIn ? 'Sesión activa' : 'Proyecto conectado', true);
   }
+
   async function connect() {
-    const url = urlInput.value.trim(), key = keyInput.value.trim();
-    if (!/^https:\/\/[^/]+\.supabase\.co\/?$/.test(url) || !key.startsWith('sb_publishable_')) {
-      message('Revisa el Project URL y confirma que la clave sea sb_publishable_…', true); return;
+    const url = urlInput.value.trim().replace(/\/$/, '');
+    const key = keyInput.value.trim();
+
+    if (!/^https:\/\/[^/]+\.supabase\.co$/.test(url)) {
+      message('Project URL inválida. Revisa la dirección de Supabase.', true);
+      return;
     }
-    if (!window.supabase?.createClient) { message('No se pudo cargar Supabase JS. Revisa tu conexión a internet.', true); return; }
+
+    if (!key.startsWith('sb_publishable_')) {
+      message('La clave debe comenzar con sb_publishable_.', true);
+      return;
+    }
+
+    if (!window.supabase?.createClient) {
+      message('Supabase JS no se cargó. Revisa tu conexión a internet.', true);
+      return;
+    }
+
     try {
-      if (authSubscription) authSubscription.unsubscribe();
-      client = window.supabase.createClient(url.replace(/\/$/, ''), key);
-      localStorage.setItem('fp_supabase_config', JSON.stringify({url: url.replace(/\/$/, ''), key}));
-      const {data, error} = await client.auth.getSession();
+      if (authSubscription) {
+        authSubscription.unsubscribe();
+        authSubscription = null;
+      }
+
+      client = window.supabase.createClient(url, key);
+
+      localStorage.setItem(
+        'fp_supabase_config',
+        JSON.stringify({ url, key })
+      );
+
+      const { data, error } = await client.auth.getSession();
+
       if (error) throw error;
+
       setAuthUI(data.session);
-      authSubscription = client.auth.onAuthStateChange((_event, session) => setAuthUI(session)).data.subscription;
-      message('Conexión inicial correcta. Aún falta validar el guardado de datos en las tablas.');
-    } catch (e) {
-      client = null; setAuthUI(null); status('Error de conexión');
-      message(e.message || 'No fue posible conectar.', true);
+
+      authSubscription = client.auth.onAuthStateChange(
+        (_event, session) => setAuthUI(session)
+      ).data.subscription;
+
+      message('Proyecto conectado correctamente. Puedes iniciar sesión.');
+    } catch (error) {
+      client = null;
+      setAuthUI(null);
+      status('Error de conexión');
+      message('Error al conectar: ' + error.message, true);
     }
   }
-  async function authAction(fn, successText) {
-    const email = $('sb-email').value.trim(), password = $('sb-password').value;
-    if (!email) return message('Ingresa tu correo.', true);
+
+  async function authAction(action, successText) {
+    if (busy) return;
+
+    if (!client) {
+      message('Primero conecta el proyecto Supabase.', true);
+      return;
+    }
+
+    const email = $('sb-email').value.trim();
+    const password = $('sb-password').value;
+
+    if (!email) {
+      message('Ingresa tu correo.', true);
+      return;
+    }
+
+    if (!password) {
+      message('Ingresa tu contraseña.', true);
+      return;
+    }
+
+    busy = true;
+    message('Procesando solicitud...');
+
+    $('sb-login').disabled = true;
+    $('sb-signup').disabled = true;
+
     try {
-      const result = await fn(email, password);
+      const result = await action(email, password);
+
       if (result.error) throw result.error;
-      message(successText);
-      if (result.data?.user && !result.data?.session) message('Cuenta creada. Revisa tu correo para confirmar la dirección y luego inicia sesión.');
-    } catch (e) { message(e.message || 'No se pudo completar la acción.', true); }
+
+      if (result.data?.session) {
+        message('Sesión iniciada correctamente.');
+      } else if (result.data?.user) {
+        message('Cuenta creada. Ya puedes iniciar sesión.');
+      } else {
+        message(successText);
+      }
+    } catch (error) {
+      const msg = error.message || 'Error desconocido';
+
+      if (error.status === 400 && msg.toLowerCase().includes('invalid login')) {
+        message('Correo o contraseña incorrectos.', true);
+      } else if (msg.toLowerCase().includes('already registered')) {
+        message('Este correo ya tiene una cuenta. Usa Iniciar sesión.', true);
+      } else if (msg.toLowerCase().includes('password')) {
+        message('Revisa la contraseña. Debe tener al menos 6 caracteres.', true);
+      } else if (msg.toLowerCase().includes('fetch')) {
+        message('Error de red. Revisa internet y vuelve a intentarlo.', true);
+      } else {
+        message('Error Supabase: ' + msg, true);
+      }
+    } finally {
+      busy = false;
+      $('sb-login').disabled = false;
+      $('sb-signup').disabled = false;
+    }
   }
+
   $('sb-connect').addEventListener('click', connect);
-  $('sb-login').addEventListener('click', () => authAction((email,password) => client.auth.signInWithPassword({email,password}), 'Inicio de sesión correcto.'));
-  $('sb-signup').addEventListener('click', () => authAction((email,password) => {
-    if (password.length < 6) return Promise.resolve({error:new Error('La contraseña debe tener al menos 6 caracteres.')});
-    return client.auth.signUp({email,password});
-  }, 'Registro enviado.'));
+
+  $('sb-login').addEventListener('click', () => {
+    authAction(
+      (email, password) =>
+        client.auth.signInWithPassword({ email, password }),
+      'Inicio de sesión correcto.'
+    );
+  });
+
+  $('sb-signup').addEventListener('click', () => {
+    authAction(
+      (email, password) => {
+        if (password.length < 6) {
+          return Promise.resolve({
+            error: new Error('La contraseña debe tener al menos 6 caracteres.')
+          });
+        }
+
+        return client.auth.signUp({ email, password });
+      },
+      'Registro enviado.'
+    );
+  });
+
   $('sb-reset').addEventListener('click', async () => {
     const email = $('sb-email').value.trim();
-    if (!email) return message('Escribe tu correo y vuelve a pulsar “Olvidé mi contraseña”.', true);
-    const {error} = await client.auth.resetPasswordForEmail(email, {redirectTo: location.href.split('#')[0]});
-    message(error ? error.message : 'Solicitud enviada. Revisa tu correo para restablecer la contraseña.', !!error);
+
+    if (!email) {
+      message('Escribe tu correo primero.', true);
+      return;
+    }
+
+    try {
+      const { error } = await client.auth.resetPasswordForEmail(email, {
+        redirectTo: location.href.split('#')[0]
+      });
+
+      if (error) throw error;
+
+      message('Solicitud enviada. Revisa tu correo.');
+    } catch (error) {
+      message('Error al recuperar contraseña: ' + error.message, true);
+    }
   });
+
   $('sb-logout').addEventListener('click', async () => {
-    const {error} = await client.auth.signOut();
-    message(error ? error.message : 'Sesión cerrada.', !!error);
+    try {
+      const { error } = await client.auth.signOut();
+
+      if (error) throw error;
+
+      message('Sesión cerrada correctamente.');
+    } catch (error) {
+      message('Error al cerrar sesión: ' + error.message, true);
+    }
   });
+
   if (saved.url && saved.key && window.supabase?.createClient) {
-    // Restore configuration, but wait for the user to tap Connect to avoid silent auth actions.
     status('Configuración guardada');
   }
 })();
 </script>
+
 
 </body></html>
