@@ -192,7 +192,7 @@ renderAll();preview();
       }
 
       client = window.supabase.createClient(url, key);
-
+window.fpSupabaseClient = client;
       localStorage.setItem(
         'fp_supabase_config',
         JSON.stringify({ url, key })
