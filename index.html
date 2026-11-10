@@ -153,7 +153,15 @@ const foods={arroz:{n:'Arroz blanco cocido',k:130,p:2.7,c:28.2,f:.3},pollo:{n:'P
 function save(){localStorage.setItem(DBKEY,JSON.stringify(db));renderAll()}
 function macros(){return db.foods.filter(x=>x.date===today).reduce((a,x)=>({k:a.k+x.k,p:a.p+x.p,c:a.c+x.c,f:a.f+x.f}),{k:0,p:0,c:0,f:0})}
 function tab(id){document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));}
-$('nav').addEventListener('click',e=>{let b=e.target.closest('button[data-tab]');if(b)tab(b.dataset.tab)});
+function loadFoodCatalog(){
+  const select = $('food');
+  if(!select)return;
+  select.innerHTML='';
+  Object.entries(foods).forEach(([key,food])=>{
+    select.add(new Option(food.n,key));
+  });
+}
+loadFoodCatalog();
 function foodVals(){let key=$('food').value,g=+$('grams').value||0,v;if(key==='custom')v={n:$('customName').value||'Personalizado',k:+$('customK').value||0,p:+$('customP').value||0,c:+$('customC').value||0,f:+$('customF').value||0};else v=foods[key];return {...v,k:v.k*g/100,p:v.p*g/100,c:v.c*g/100,f:v.f*g/100,g}}
 $('food').onchange=()=>{$('customFood').style.display=$('food').value==='custom'?'grid':'none';preview()};$('grams').oninput=preview;['customK','customP','customC','customF','customName'].forEach(id=>$(id).oninput=preview);
 function preview(){let x=foodVals();$('previewK').textContent=x.k.toFixed(0)+' kcal';$('previewP').textContent=x.p.toFixed(1)+' g';$('previewCF').textContent=x.c.toFixed(1)+' / '+x.f.toFixed(1)+' g'}
