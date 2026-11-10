@@ -494,18 +494,7 @@ window.fpSupabaseClient = client;
   }
 })();
 document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
-  btn.onclick=()=>{
-    const id=btn.dataset.tab;
-    document.querySelectorAll('.section').forEach(s=>{
-      s.classList.toggle('active',s.id===id);
-    });
-    document.querySelectorAll('#nav button').forEach(b=>{
-      b.classList.toggle('active',b===btn);
-    });
-  };
+  btn.addEventListener('click',()=>{
+    tab(btn.dataset.tab);
+  });
 });
-
-</script>
-
-
-</body></html>
