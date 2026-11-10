@@ -166,8 +166,27 @@ function loadFoodCatalog(){
   });
 }
 loadFoodCatalog();
-function foodVals(){let key=$('food').value,g=+$('grams').value||0,v;if(key==='custom')v={n:$('customName').value||'Personalizado',k:+$('customK').value||0,p:+$('customP').value||0,c:+$('customC').value||0,f:+$('customF').value||0};else v=foods[key];return {...v,k:v.k*g/100,p:v.p*g/100,c:v.c*g/100,f:v.f*g/100,g}}
-$('food').onchange=()=>{$('customFood').style.display=$('food').value==='custom'?'grid':'none';preview()};$('grams').oninput=preview;['customK','customP','customC','customF','customName'].forEach(id=>$(id).oninput=preview);
+function foodVals(){
+  const key=$('food').value;
+  const g=+$('grams').value||0;
+  const v=foods[key];
+
+  if(!v){
+    return {n:'',k:0,p:0,c:0,f:0,g};
+  }
+
+  return {
+    ...v,
+    k:v.k*g/100,
+    p:v.p*g/100,
+    c:v.c*g/100,
+    f:v.f*g/100,
+    g
+  };
+}
+
+$('food').onchange=preview;
+$('grams').oninput=preview;
 function preview(){let x=foodVals();$('previewK').textContent=x.k.toFixed(0)+' kcal';$('previewP').textContent=x.p.toFixed(1)+' g';$('previewCF').textContent=x.c.toFixed(1)+' / '+x.f.toFixed(1)+' g'}
 
 async function addFood(){
