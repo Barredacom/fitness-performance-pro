@@ -61,7 +61,78 @@ table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:10px;bor
 <div class="grid4"><div class="card metric"><small>Proteínas</small><strong class="blue" id="kProtein">0 g</strong><div class="bar"><i id="pbar" style="width:0"></i></div><small>Meta 125 g</small></div><div class="card metric"><small>Carbohidratos</small><strong id="kCarbs">0 g</strong><div class="bar"><i id="cbar" style="width:0;background:var(--orange)"></i></div><small>Seguimiento diario</small></div><div class="card metric"><small>Grasas</small><strong class="pink" id="kFat">0 g</strong><div class="bar"><i id="fbar" style="width:0;background:var(--pink)"></i></div><small>Calculadas/registradas</small></div><div class="card metric"><small>Entrenamiento</small><strong class="green" id="kWorkout">0 min</strong><small>Minutos registrados hoy</small></div></div>
 <div class="grid2"><div class="card"><div class="sectionHead"><h3>Progreso de peso</h3><span class="pill">Histórico</span></div><div class="chart" id="weightChart"></div><small class="muted">Datos reales ingresados por ti.</small></div><div class="card"><div class="sectionHead"><h3>Resumen de hoy</h3><span class="pill" id="dateLabel"></span></div><div class="list"><div class="item"><span>Nutrición registrada</span><b id="mealCount">0 alimentos</b></div><div class="item"><span>Suplementos confirmados</span><b id="suppCount">0</b></div><div class="item"><span>Entrenamiento</span><b id="workCount">0 sesiones</b></div></div><p class="muted">Los módulos actualizan automáticamente este panel.</p></div></div></section>
 
-<section id="nutricion" class="section"><div class="sectionHead"><h2>Nutrición inteligente</h2><span class="pill">Alimento + gramos → macros y kcal</span></div><div class="card"><div class="formrow"><label>Alimento<select id="food"><option value="arroz">Arroz blanco cocido</option><option value="pollo">Pechuga de pollo cocida</option><option value="atun">Atún al agua drenado</option><option value="avena">Avena</option><option value="platano">Plátano</option><option value="huevo">Huevo entero</option><option value="salmon">Salmón</option><option value="quinoa">Quinoa cocida</option><option value="custom">Alimento personalizado</option></select></label><label>Gramos<input id="grams" type="number" value="100" min="1"></label><label>Comida<select id="meal"><option>Desayuno</option><option>Almuerzo</option><option>Cena</option><option>Colación</option></select></label><label>Fecha<input id="foodDate" type="date"></label></div><div id="customFood" class="formrow" style="display:none"><label>Nombre<input id="customName" placeholder="Nombre alimento"></label><label>Kcal/100g<input id="customK" type="number"></label><label>Proteína/100g<input id="customP" type="number"></label><label>Carbohidrato/100g<input id="customC" type="number"></label><label>Grasa/100g<input id="customF" type="number"></label></div><div class="kpis"><div><small class="muted">Calorías estimadas</small><strong class="orange" id="previewK">130 kcal</strong></div><div><small class="muted">Proteína</small><strong class="blue" id="previewP">0 g</strong></div><div><small class="muted">Carbohidratos / grasas</small><strong id="previewCF">0 / 0 g</strong></div></div><button onclick="addFood()">＋ Agregar alimento</button></div><div class="card" style="margin-top:12px"><h3>Registros del día</h3><div id="foodList" class="list"></div><div class="item"><b>Total diario</b><b id="foodTotals">0 kcal · P 0 · C 0 · G 0</b></div></div></section>
+
+<section id="nutricion" class="section">
+  <div class="sectionHead">
+    <h2>Nutrición inteligente</h2>
+    <span class="pill">Alimento + gramos → macros y kcal</span>
+  </div>
+
+  <div class="card">
+    <div class="formrow">
+      <label>Alimento
+        <select id="food"></select>
+      </label>
+      <label>Gramos
+        <input id="grams" type="number" value="100" min="1">
+      </label>
+      <label>Comida
+        <select id="meal">
+          <option>Desayuno</option>
+          <option>Almuerzo</option>
+          <option>Cena</option>
+          <option>Colación</option>
+        </select>
+      </label>
+      <label>Fecha
+        <input id="foodDate" type="date">
+      </label>
+    </div>
+
+    <div class="kpis">
+      <div>Calorías estimadas <b id="previewK">0 kcal</b></div>
+      <div>Proteína <b id="previewP">0 g</b></div>
+      <div>Carbohidratos / grasas <b id="previewCF">0 / 0 g</b></div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button onclick="addFood()">＋ Registrar alimento</button>
+      <button onclick="toggleFoodCatalog()">＋ Agregar alimento</button>
+    </div>
+  </div>
+
+  <div id="foodCatalogForm" class="card" style="display:none;margin-top:12px">
+    <h3>Nuevo alimento personalizado</h3>
+    <div class="formrow">
+      <label>Nombre
+        <input id="catalogName" placeholder="Ej. Pechuga de pavo">
+      </label>
+      <label>Kcal / 100 g
+        <input id="catalogK" type="number" min="0">
+      </label>
+      <label>Proteína / 100 g
+        <input id="catalogP" type="number" min="0">
+      </label>
+      <label>Carbohidratos / 100 g
+        <input id="catalogC" type="number" min="0">
+      </label>
+      <label>Grasas / 100 g
+        <input id="catalogF" type="number" min="0">
+      </label>
+    </div>
+    <button onclick="saveCatalogFood()">Guardar en catálogo</button>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <h3>Registros del día</h3>
+    <div id="foodList" class="list"></div>
+    <div class="item">
+      <b>Total diario</b>
+      <b id="foodTotals">0 kcal · P 0 · C 0 · G 0</b>
+    </div>
+  </div>
+</section>
+
 
 <section id="entrenamiento" class="section"><div class="sectionHead"><h2>Entrenamiento guiado</h2><span class="pill">Rutina + técnica YouTube</span></div><div class="card"><div class="formrow three"><label>Rutina<select id="routine"><option>Pecho + tríceps</option><option>Espalda + bíceps</option><option>Piernas</option><option>Hombros + abdomen</option><option>Cardio</option><option>Full body</option></select></label><label>Duración (min)<input id="duration" type="number" value="60"></label><label>Fecha<input id="workDate" type="date"></label></div><button onclick="addWorkout()">Guardar sesión</button></div><div class="grid2" style="margin-top:12px"><div class="card"><h3>Ejercicios sugeridos · Pecho + tríceps</h3><div class="list" id="exerciseList"></div></div><div class="card"><h3>Sesiones registradas</h3><div id="workList" class="list"></div></div></div></section>
 
