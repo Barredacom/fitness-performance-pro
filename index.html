@@ -431,7 +431,10 @@ window.fpSupabaseClient = client;
     }
   }
 
-  $('sb-connect').addEventListener('click', connect);
+  $('sb-connect').onclick = async () => {
+  message('Botón activado. Conectando...');
+  await connect();
+};
 
   $('sb-login').addEventListener('click', () => {
     authAction(
