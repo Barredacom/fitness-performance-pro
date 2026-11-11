@@ -96,8 +96,6 @@ body.view-desktop .grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
 
 /* LOGIN GATE: panel solo cuando no hay sesión; app solo autenticada */
 body:not(.app-ready) .shell{display:none!important}
-body:not(.app-ready) .side,body:not(.app-ready) main{display:none!important}
-body.app-ready #quickPanelToggle{display:flex!important}
 body:not(.app-ready) .quick-panel-logout{display:none!important}
 body:not(.app-ready) #quickPanelBackdrop{display:none!important}
 body.app-ready .shell{display:grid}
@@ -215,9 +213,8 @@ body.view-mobile .day{min-width:0!important;width:auto!important;padding:5px 1px
 .quick-panel-logout{margin-top:14px}
 .quick-panel-logout #sb-logout,.quick-panel-logout-button{display:flex!important;width:100%;justify-content:center;padding:12px!important;background:#17321b!important;border:1px solid #2b7134!important;color:#53ff55!important;border-radius:999px!important;box-shadow:none!important;font-weight:700!important}
 body:not(.app-ready) #quickPanelToggle,body:not(.app-ready) #quickPanel{display:none!important}
-#sb-logout{display:none!important}
-#quickPanel.open #sb-logout{display:flex!important}
 
+#sb-connect:disabled{opacity:.75;cursor:wait}
 </style></head><body>
 
 
@@ -235,7 +232,7 @@ body:not(.app-ready) #quickPanelToggle,body:not(.app-ready) #quickPanel{display:
     <label style="display:grid;gap:6px;color:#b8c6d2;font-size:12px">Project URL
       <input id="sb-url" type="url" value="https://elzdypqxalenicwkexr.supabase.co" placeholder="https://xxxx.supabase.co" style="padding:12px;border-radius:10px;background:#0b1117;color:#edf4f8;border:1px solid #30404d">
     </label>
-    <label style="display:grid;gap:6px;color:#b8c6d2;font-size:12px">Publishable key (sb_publishable_â€¦)
+    <label style="display:grid;gap:6px;color:#b8c6d2;font-size:12px">Clave publicable (sb_publishable_… o anon JWT)
       <input id="sb-key" type="password" autocomplete="off" placeholder="Pega aquí tu clave publicable" style="padding:12px;border-radius:10px;background:#0b1117;color:#edf4f8;border:1px solid #30404d">
     </label>
     <button id="sb-connect" type="button" style="padding:12px;border:0;border-radius:10px;background:#b8ff3b;color:#101510;font-weight:800">Conectar proyecto</button>
@@ -486,7 +483,6 @@ renderAll();preview();
   const configEl = $('sb-config');
   const authEl = $('sb-auth');
 
-  document.body.classList.remove('app-ready');
   let client = null;
   let authSubscription = null;
   let busy = false;
@@ -520,7 +516,6 @@ renderAll();preview();
     document.body.classList.toggle('app-ready', signedIn);
     configEl.style.display = client ? 'none' : 'grid';
     authEl.style.display = client && !signedIn ? 'grid' : 'none';
-    $('supabase-auth-panel').style.display = signedIn ? 'none' : 'block';
 
     $('sb-user').textContent = signedIn
       ? 'Sesión activa: ' + session.user.email
@@ -543,10 +538,9 @@ renderAll();preview();
       return;
     }
 
-    const isPublishable = key.startsWith('sb_publishable_');
-    const isLegacyAnonJWT = /^eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(key);
-    if (!isPublishable && !isLegacyAnonJWT) {
-      message('Clave inválida. Usa la publishable (sb_publishable_) o la anon JWT antigua del proyecto.', true);
+    if (!(key.startsWith('sb_publishable_') || (key.startsWith('eyJ') && (()=>{try{return JSON.parse(atob(key.split('.')[1])).role==='anon'}catch{return false}})()))) {
+      message('Clave no válida. Usa la clave publishable o anon (no secret/service_role).', true);
+      status('Clave no válida');
       return;
     }
 
@@ -561,9 +555,12 @@ renderAll();preview();
         authSubscription = null;
       }
 
-      localStorage.setItem('fp_supabase_config', JSON.stringify({ url, key }));
       client = window.supabase.createClient(url, key);
-      window.fpSupabaseClient = client;
+window.fpSupabaseClient = client;
+      localStorage.setItem(
+        'fp_supabase_config',
+        JSON.stringify({ url, key })
+      );
 
       const { data, error } = await client.auth.getSession();
 
@@ -644,7 +641,16 @@ renderAll();preview();
     }
   }
 
-  $('sb-connect').addEventListener('click', connect);
+  const connectButton = $('sb-connect');
+  connectButton.addEventListener('click', async (event) => {
+    event.preventDefault();
+    connectButton.disabled = true;
+    connectButton.textContent = 'Conectando…';
+    message('Iniciando conexión con Supabase…');
+    status('Conectando…');
+    try { await connect(); } catch (err) { message('No se pudo iniciar la conexión: ' + (err?.message || err), true); status('Error de conexión'); }
+    finally { connectButton.disabled = false; connectButton.textContent = 'Conectar proyecto'; }
+  });
 
   $('sb-login').addEventListener('click', () => {
     authAction(
@@ -705,10 +711,12 @@ renderAll();preview();
   });
 
   // Reconexión automática usando la configuración persistida en localStorage
-  if (saved.url && saved.key && window.supabase?.createClient) {
-    connect();
+  if (saved.url && saved.key) {
+    if (window.supabase?.createClient) connect();
+    else { status('Supabase JS no disponible'); message('No se cargó la biblioteca de Supabase. Revisa internet y recarga la página.', true); }
   } else {
     status('Configura Supabase para comenzar');
+    message('Completa la clave del proyecto y presiona Conectar proyecto.');
   }
 })();
 document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
@@ -732,7 +740,7 @@ document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
  const panel=document.getElementById('quickPanel'), backdrop=document.getElementById('quickPanelBackdrop'), toggle=document.getElementById('quickPanelToggle');
  const closeBtn=document.getElementById('quickPanelClose'), logout=document.getElementById('sb-logout');
  const views=[...document.querySelectorAll('[data-quick-view]')];
- function openQuickPanel(){if(!document.body.classList.contains('app-ready'))return;panel.classList.add('open');backdrop.classList.add('open');panel.setAttribute('aria-hidden','false');}
+ function openQuickPanel(){panel.classList.add('open');backdrop.classList.add('open');panel.setAttribute('aria-hidden','false');}
  function closeQuickPanel(){panel.classList.remove('open');backdrop.classList.remove('open');panel.setAttribute('aria-hidden','true');}
  window.closeQuickPanel=closeQuickPanel;
  toggle?.addEventListener('click',()=>panel.classList.contains('open')?closeQuickPanel():openQuickPanel());
@@ -740,12 +748,15 @@ document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
  function applyView(view){document.body.classList.remove('view-mobile','view-tablet','view-desktop');if(view!=='auto')document.body.classList.add('view-'+view);views.forEach(b=>b.classList.toggle('active',b.dataset.quickView===view));try{localStorage.setItem('fp_view_mode',view)}catch(e){}}
  views.forEach(b=>b.addEventListener('click',()=>applyView(b.dataset.quickView)));
  let saved='auto';try{saved=localStorage.getItem('fp_view_mode')||'auto'}catch(e){}applyView(saved);
- if(logout){logout.textContent='Cerrar sesión';logout.className='quick-panel-logout-button';logout.removeAttribute('style');document.querySelector('.quick-panel-logout')?.appendChild(logout);}
+ if(logout){logout.textContent='Cerrar sesión';logout.className='quick-panel-logout-button';logout.style.display='';document.querySelector('.quick-panel-logout')?.appendChild(logout);}
  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeQuickPanel()});
 })();
 </script>
 
 
+<script>
+document.getElementById('header-logout')?.addEventListener('click',()=>document.getElementById('sb-logout')?.click());
+</script>
 
 
 <div id="quickPanelToggle" aria-label="Ajustes rápidos" title="Ajustes rápidos">⚙</div>
