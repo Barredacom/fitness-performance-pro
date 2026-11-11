@@ -196,6 +196,22 @@ body.view-mobile .day{min-width:0!important;width:auto!important;padding:5px 1px
  body.view-mobile .day{font-size:9px!important}
 }
 
+
+/* FAB ajustes flotantes tipo popover */
+#quickPanelToggle{position:fixed;right:16px;bottom:calc(22px + env(safe-area-inset-bottom));z-index:10020;width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#17321b;border:1px solid #2b7134;color:#53ff55;font-size:24px;box-shadow:0 6px 24px #0008;cursor:pointer}
+#quickPanelBackdrop{position:fixed;inset:0;background:#0007;z-index:10018;display:none}
+#quickPanel{position:fixed;right:16px;bottom:calc(88px + env(safe-area-inset-bottom));z-index:10019;width:min(320px,calc(100vw - 32px));padding:16px;background:#0d1510;border:1px solid #29432d;border-radius:18px;box-shadow:0 18px 50px #0009;display:none;color:#e9f4eb}
+#quickPanel.open,#quickPanelBackdrop.open{display:block}
+.quick-panel-head{display:flex;justify-content:space-between;align-items:center;color:#53ff55;font-weight:800;letter-spacing:1.5px;font-size:12px;margin-bottom:15px}
+#quickPanelClose{border:0;background:transparent;color:#a5b4a8;font-size:28px;padding:0 4px}
+.quick-panel-label{font-size:11px;color:#8e9d91;margin-bottom:8px}
+.quick-panel-views{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.quick-panel-views button{padding:10px 8px;border:1px solid #29432d;border-radius:10px;background:#101b13;color:#a9b8ac}
+.quick-panel-views button.active{background:#17321b;border-color:#2b7134;color:#53ff55}
+.quick-panel-logout{margin-top:14px}
+.quick-panel-logout #sb-logout{display:flex!important;width:100%;justify-content:center;background:#17321b!important;border:1px solid #2b7134!important;color:#53ff55!important;border-radius:999px!important;box-shadow:none!important}
+body:not(.app-ready) #quickPanelToggle,body:not(.app-ready) #quickPanel{display:none!important}
+
 </style></head><body>
 
 
@@ -232,7 +248,7 @@ body.view-mobile .day{min-width:0!important;width:auto!important;padding:5px 1px
       <button id="sb-signup" type="button" style="flex:1;padding:11px;border:1px solid #40515e;border-radius:10px;background:#17222b;color:#eaf2f7;font-weight:700">Crear cuenta</button>
     </div>
     <button id="sb-reset" type="button" style="padding:8px;border:0;background:transparent;color:#91caff;text-align:left">Olvidé mi contraseña</button>
-    <button id="sb-logout" type="button" style="display:none;padding:8px 14px;border:1px solid #2b7134;border-radius:99px;background:#17321b;color:var(--green);font-weight:600">↪ Cerrar sesión</button>
+    <button id="sb-logout" type="button" style="display:none;padding:8px 14px;border:1px solid #2b7134;border-radius:99px;background:#17321b;color:var(--green);font-weight:600">Cerrar sesión</button>
   </div>
   <div id="sb-message" role="status" style="margin-top:12px;color:#a8bac8;font-size:13px;line-height:1.5"></div>
 </section>
@@ -252,7 +268,7 @@ body.view-mobile .day{min-width:0!important;width:auto!important;padding:5px 1px
   <button type="button" data-view="tablet" class="view-btn" title="Vista tablet">Tablet</button>
   <button type="button" data-view="desktop" class="view-btn" title="Vista escritorio">Escritorio</button>
 </div>
-<button type="button" id="header-logout" class="header-logout" aria-label="Cerrar sesión">↪ Cerrar sesión</button>
+<button type="button" id="header-logout" class="header-logout" aria-label="Cerrar sesión">Cerrar sesión</button>
 </div>
 <section id="inicio" class="section active">
 <div class="hero"><div class="heroimg"><div class="eyebrow">FITNESS PERFORMANCE PRO</div><h2>Disciplina, datos<br><span class="green">y constancia.</span></h2><p>Registra tus hábitos y observa cómo avanzas hacia tus objetivos.</p><button onclick="tab('nutricion')" style="width:max-content">＋ Registrar alimentación</button></div><div class="heroStat"><div class="card metric"><small>Peso actual</small><strong id="kWeight">82,3 kg</strong><span class="green">−7,5 kg desde inicio</span></div><div class="card metric"><small>Cintura</small><strong id="kWaist">95 cm</strong><span class="green">Seguimiento</span></div><div class="card metric"><small>Meta final</small><strong>75 kg</strong><span class="green">Meta intermedia 80</span></div><div class="card metric"><small>Calorías hoy</small><strong id="kCal">0</strong><span class="orange">Objetivo 1.800–2.000</span></div></div></div>
@@ -729,5 +745,20 @@ document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
 <script>
 document.getElementById('header-logout')?.addEventListener('click',()=>document.getElementById('sb-logout')?.click());
 </script>
+
+
+<div id="quickPanelToggle" aria-label="Ajustes rápidos" title="Ajustes rápidos">⚙</div>
+<div id="quickPanel" aria-hidden="true">
+  <div class="quick-panel-head"><span>AJUSTES RÁPIDOS</span><button type="button" id="quickPanelClose" aria-label="Cerrar panel">×</button></div>
+  <div class="quick-panel-label">VISTA DE PANTALLA</div>
+  <div class="quick-panel-views" role="group" aria-label="Selector de vista">
+    <button type="button" data-quick-view="auto">Auto</button>
+    <button type="button" data-quick-view="mobile">iPhone</button>
+    <button type="button" data-quick-view="tablet">Tablet</button>
+    <button type="button" data-quick-view="desktop">Escritorio</button>
+  </div>
+  <div class="quick-panel-logout"></div>
+</div>
+<div id="quickPanelBackdrop"></div>
 
 </body></html>
