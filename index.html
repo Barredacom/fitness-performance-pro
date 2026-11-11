@@ -189,6 +189,21 @@ body.view-mobile .day{min-width:0!important;width:auto!important;padding:5px 1px
  body.view-mobile .day{font-size:9px!important}
 }
 
+
+/* FLOATING CONFIG PANEL */
+#fp-settings-toggle{position:fixed;right:18px;bottom:22px;z-index:10020;width:54px;height:54px;border-radius:50%;border:1px solid #3b8c45;background:#14271a;color:#b8ff3b;font-size:25px;box-shadow:0 6px 22px #0009;display:flex;align-items:center;justify-content:center}
+#fp-settings-backdrop{position:fixed;inset:0;background:#0008;backdrop-filter:blur(3px);z-index:10010;display:none}
+#fp-settings-backdrop.open{display:block}
+#fp-settings-panel{position:fixed;right:18px;bottom:88px;width:min(320px,calc(100vw - 28px));z-index:10021;background:#101820;border:1px solid #30404d;border-radius:18px;padding:16px;box-shadow:0 18px 55px #000b;display:none;color:#edf7ef}
+#fp-settings-panel.open{display:block}
+.fp-settings-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;color:#b8ff3b;font-weight:800;letter-spacing:1px}
+#fp-settings-close{font-size:22px;padding:3px 10px;background:#17222b;border-color:#30404d}
+.fp-view-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.fp-view-grid button{padding:11px 8px;background:#0b1117;border:1px solid #30404d;color:#b9c8c2}
+.fp-view-grid button.active{background:#17321b;border-color:#3b8c45;color:#53ff55}
+#fp-settings-logout{width:100%;margin-top:12px;padding:12px;background:#17321b;border:1px solid #3b8c45;color:#b8ff3b;font-weight:800;border-radius:11px}
+body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel,body:not(.app-ready) #fp-settings-backdrop{display:none!important}
+
 </style></head><body>
 
 
@@ -238,12 +253,7 @@ body.view-mobile .day{min-width:0!important;width:auto!important;padding:5px 1px
   <button type="button" data-tab="peso">▣ Peso y medidas</button>
 <button type="button" data-tab="turnos">▦ Turnos 7×7</button></nav></aside>
 <main><div class="top"><div><div class="eyebrow">DARK ATHLETIC CLINICAL</div><h1>Tu rendimiento, bajo control.</h1><div class="muted">Seguimiento de nutrición · entrenamiento · composición corporal</div></div><div class="pill" id="todayShift">● Descanso</div>
-<div class="view-switch" id="viewSwitch" role="group" aria-label="Cambiar vista">
-  <button type="button" data-view="auto" class="view-btn active" title="Adaptación automática">Auto</button>
-  <button type="button" data-view="mobile" class="view-btn" title="Vista iPhone">iPhone</button>
-  <button type="button" data-view="tablet" class="view-btn" title="Vista tablet">Tablet</button>
-  <button type="button" data-view="desktop" class="view-btn" title="Vista escritorio">Escritorio</button>
-</div>
+
 
 </div>
 <section id="inicio" class="section active">
@@ -718,5 +728,36 @@ document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
 </script>
 
 
+
+
+<!-- Floating settings: device modes + logout only here -->
+<div id="fp-settings-backdrop"></div>
+<section id="fp-settings-panel" aria-hidden="true" role="dialog" aria-label="Configuración rápida">
+ <div class="fp-settings-head"><span>CONFIGURACIÓN</span><button id="fp-settings-close" type="button" aria-label="Cerrar">×</button></div>
+ <div style="font-size:11px;color:#91a397;letter-spacing:1px;margin-bottom:8px">VISTA DE PANTALLA</div>
+ <div class="fp-view-grid" role="group" aria-label="Selector de vista">
+  <button type="button" data-fp-view="auto">Auto</button><button type="button" data-fp-view="mobile">iPhone</button>
+  <button type="button" data-fp-view="tablet">Tablet</button><button type="button" data-fp-view="desktop">Escritorio</button>
+ </div>
+ <button id="fp-settings-logout" type="button">Cerrar sesión</button>
+</section>
+<button id="fp-settings-toggle" type="button" aria-label="Abrir configuración" title="Configuración">⚙</button>
+<script>
+(()=>{
+ const panel=document.getElementById('fp-settings-panel'),back=document.getElementById('fp-settings-backdrop'),toggle=document.getElementById('fp-settings-toggle'),close=document.getElementById('fp-settings-close');
+ const viewBtns=[...document.querySelectorAll('[data-fp-view]')];
+ function open(){panel.classList.add('open');back.classList.add('open');panel.setAttribute('aria-hidden','false')}
+ function shut(){panel.classList.remove('open');back.classList.remove('open');panel.setAttribute('aria-hidden','true')}
+ toggle.addEventListener('click',()=>panel.classList.contains('open')?shut():open());close.addEventListener('click',shut);back.addEventListener('click',shut);
+ function setView(v){document.body.classList.remove('view-mobile','view-tablet','view-desktop');if(v!=='auto')document.body.classList.add('view-'+v);viewBtns.forEach(b=>b.classList.toggle('active',b.dataset.fpView===v));try{localStorage.setItem('fp_view_mode',v)}catch(e){}}
+ viewBtns.forEach(b=>b.addEventListener('click',()=>setView(b.dataset.fpView)));
+ let v='auto';try{v=localStorage.getItem('fp_view_mode')||'auto'}catch(e){}setView(v);
+ document.getElementById('fp-settings-logout').addEventListener('click',async()=>{
+   const btn=document.getElementById('fp-settings-logout');btn.disabled=true;btn.textContent='Cerrando sesión…';
+   try{const c=window.fpSupabaseClient;if(!c)throw new Error('Supabase no está conectado');const {error}=await c.auth.signOut();if(error)throw error;shut();document.body.classList.remove('app-ready');location.reload();}
+   catch(e){btn.disabled=false;btn.textContent='Cerrar sesión';alert('No se pudo cerrar sesión: '+(e.message||e));}
+ });document.addEventListener('keydown',e=>{if(e.key==='Escape')shut()});
+})();
+</script>
 
 </body></html>
