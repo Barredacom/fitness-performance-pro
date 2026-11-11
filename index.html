@@ -96,8 +96,6 @@ body.view-desktop .grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
 
 /* LOGIN GATE: panel solo cuando no hay sesión; app solo autenticada */
 body:not(.app-ready) .shell{display:none!important}
-body:not(.app-ready) .quick-panel-logout{display:none!important}
-body:not(.app-ready) #quickPanelBackdrop{display:none!important}
 body.app-ready .shell{display:grid}
 body.app-ready #supabase-auth-panel{display:none!important}
 body:not(.app-ready) #supabase-auth-panel{max-width:460px;margin:clamp(24px,8vh,90px) auto!important}
@@ -110,8 +108,8 @@ body:not(.app-ready)::after{content:"Tu rendimiento, bajo control.";display:bloc
 
 
 /* FIX iPhone overflow + logout shortcut */
-.header-logout{display:none!important}
-body.app-ready .header-logout{display:none!important}
+.header-logout{display:none;background:#241316;border:1px solid #63313b;color:#ff9eaa;padding:8px 12px;border-radius:10px;font-size:12px;white-space:nowrap}
+body.app-ready .header-logout{display:inline-flex;align-items:center}
 html,body{max-width:100%;overflow-x:hidden}
 .shell,main,.section,.card,.top,.hero,.heroStat,.grid2,.grid4,.formrow,.item{min-width:0;max-width:100%}
 .section *{min-width:0}
@@ -198,23 +196,6 @@ body.view-mobile .day{min-width:0!important;width:auto!important;padding:5px 1px
  body.view-mobile .day{font-size:9px!important}
 }
 
-
-/* FAB ajustes flotantes tipo popover */
-#quickPanelToggle{position:fixed;right:16px;bottom:calc(22px + env(safe-area-inset-bottom));z-index:10020;width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#17321b;border:1px solid #2b7134;color:#53ff55;font-size:24px;box-shadow:0 6px 24px #0008;cursor:pointer}
-#quickPanelBackdrop{position:fixed;inset:0;background:#0007;z-index:10018;display:none}
-#quickPanel{position:fixed;right:16px;bottom:calc(88px + env(safe-area-inset-bottom));z-index:10019;width:min(320px,calc(100vw - 32px));padding:16px;background:#0d1510;border:1px solid #29432d;border-radius:18px;box-shadow:0 18px 50px #0009;display:none;color:#e9f4eb}
-#quickPanel.open,#quickPanelBackdrop.open{display:block}
-.quick-panel-head{display:flex;justify-content:space-between;align-items:center;color:#53ff55;font-weight:800;letter-spacing:1.5px;font-size:12px;margin-bottom:15px}
-#quickPanelClose{border:0;background:transparent;color:#a5b4a8;font-size:28px;padding:0 4px}
-.quick-panel-label{font-size:11px;color:#8e9d91;margin-bottom:8px}
-.quick-panel-views{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.quick-panel-views button{padding:10px 8px;border:1px solid #29432d;border-radius:10px;background:#101b13;color:#a9b8ac}
-.quick-panel-views button.active{background:#17321b;border-color:#2b7134;color:#53ff55}
-.quick-panel-logout{margin-top:14px}
-.quick-panel-logout #sb-logout,.quick-panel-logout-button{display:flex!important;width:100%;justify-content:center;padding:12px!important;background:#17321b!important;border:1px solid #2b7134!important;color:#53ff55!important;border-radius:999px!important;box-shadow:none!important;font-weight:700!important}
-body:not(.app-ready) #quickPanelToggle,body:not(.app-ready) #quickPanel{display:none!important}
-
-#sb-connect:disabled{opacity:.75;cursor:wait}
 </style></head><body>
 
 
@@ -232,7 +213,7 @@ body:not(.app-ready) #quickPanelToggle,body:not(.app-ready) #quickPanel{display:
     <label style="display:grid;gap:6px;color:#b8c6d2;font-size:12px">Project URL
       <input id="sb-url" type="url" value="https://elzdypqxalenicwkexr.supabase.co" placeholder="https://xxxx.supabase.co" style="padding:12px;border-radius:10px;background:#0b1117;color:#edf4f8;border:1px solid #30404d">
     </label>
-    <label style="display:grid;gap:6px;color:#b8c6d2;font-size:12px">Clave publicable (sb_publishable_… o anon JWT)
+    <label style="display:grid;gap:6px;color:#b8c6d2;font-size:12px">Publishable key (sb_publishable_â€¦)
       <input id="sb-key" type="password" autocomplete="off" placeholder="Pega aquí tu clave publicable" style="padding:12px;border-radius:10px;background:#0b1117;color:#edf4f8;border:1px solid #30404d">
     </label>
     <button id="sb-connect" type="button" style="padding:12px;border:0;border-radius:10px;background:#b8ff3b;color:#101510;font-weight:800">Conectar proyecto</button>
@@ -251,6 +232,7 @@ body:not(.app-ready) #quickPanelToggle,body:not(.app-ready) #quickPanel{display:
       <button id="sb-signup" type="button" style="flex:1;padding:11px;border:1px solid #40515e;border-radius:10px;background:#17222b;color:#eaf2f7;font-weight:700">Crear cuenta</button>
     </div>
     <button id="sb-reset" type="button" style="padding:8px;border:0;background:transparent;color:#91caff;text-align:left">Olvidé mi contraseña</button>
+    <button id="sb-logout" type="button" style="display:none;padding:8px 14px;border:1px solid #2b7134;border-radius:99px;background:#17321b;color:var(--green);font-weight:600">↪ Cerrar sesión</button>
   </div>
   <div id="sb-message" role="status" style="margin-top:12px;color:#a8bac8;font-size:13px;line-height:1.5"></div>
 </section>
@@ -264,8 +246,13 @@ body:not(.app-ready) #quickPanelToggle,body:not(.app-ready) #quickPanel{display:
   <button type="button" data-tab="peso">▣ Peso y medidas</button>
 <button type="button" data-tab="turnos">▦ Turnos 7×7</button></nav></aside>
 <main><div class="top"><div><div class="eyebrow">DARK ATHLETIC CLINICAL</div><h1>Tu rendimiento, bajo control.</h1><div class="muted">Seguimiento de nutrición · entrenamiento · composición corporal</div></div><div class="pill" id="todayShift">● Descanso</div>
-
-
+<div class="view-switch" id="viewSwitch" role="group" aria-label="Cambiar vista">
+  <button type="button" data-view="auto" class="view-btn active" title="Adaptación automática">Auto</button>
+  <button type="button" data-view="mobile" class="view-btn" title="Vista iPhone">iPhone</button>
+  <button type="button" data-view="tablet" class="view-btn" title="Vista tablet">Tablet</button>
+  <button type="button" data-view="desktop" class="view-btn" title="Vista escritorio">Escritorio</button>
+</div>
+<button type="button" id="header-logout" class="header-logout" aria-label="Cerrar sesión">↪ Cerrar sesión</button>
 </div>
 <section id="inicio" class="section active">
 <div class="hero"><div class="heroimg"><div class="eyebrow">FITNESS PERFORMANCE PRO</div><h2>Disciplina, datos<br><span class="green">y constancia.</span></h2><p>Registra tus hábitos y observa cómo avanzas hacia tus objetivos.</p><button onclick="tab('nutricion')" style="width:max-content">＋ Registrar alimentación</button></div><div class="heroStat"><div class="card metric"><small>Peso actual</small><strong id="kWeight">82,3 kg</strong><span class="green">−7,5 kg desde inicio</span></div><div class="card metric"><small>Cintura</small><strong id="kWaist">95 cm</strong><span class="green">Seguimiento</span></div><div class="card metric"><small>Meta final</small><strong>75 kg</strong><span class="green">Meta intermedia 80</span></div><div class="card metric"><small>Calorías hoy</small><strong id="kCal">0</strong><span class="orange">Objetivo 1.800–2.000</span></div></div></div>
@@ -538,9 +525,8 @@ renderAll();preview();
       return;
     }
 
-    if (!(key.startsWith('sb_publishable_') || (key.startsWith('eyJ') && (()=>{try{return JSON.parse(atob(key.split('.')[1])).role==='anon'}catch{return false}})()))) {
-      message('Clave no válida. Usa la clave publishable o anon (no secret/service_role).', true);
-      status('Clave no válida');
+    if (!key.startsWith('sb_publishable_')) {
+      message('La clave debe comenzar con sb_publishable_.', true);
       return;
     }
 
@@ -641,16 +627,7 @@ window.fpSupabaseClient = client;
     }
   }
 
-  const connectButton = $('sb-connect');
-  connectButton.addEventListener('click', async (event) => {
-    event.preventDefault();
-    connectButton.disabled = true;
-    connectButton.textContent = 'Conectando…';
-    message('Iniciando conexión con Supabase…');
-    status('Conectando…');
-    try { await connect(); } catch (err) { message('No se pudo iniciar la conexión: ' + (err?.message || err), true); status('Error de conexión'); }
-    finally { connectButton.disabled = false; connectButton.textContent = 'Conectar proyecto'; }
-  });
+  $('sb-connect').addEventListener('click', connect);
 
   $('sb-login').addEventListener('click', () => {
     authAction(
@@ -702,8 +679,6 @@ window.fpSupabaseClient = client;
 
       if (error) throw error;
 
-      closeQuickPanel();
-      document.body.classList.remove('app-ready');
       message('Sesión cerrada correctamente.');
     } catch (error) {
       message('Error al cerrar sesión: ' + error.message, true);
@@ -711,12 +686,10 @@ window.fpSupabaseClient = client;
   });
 
   // Reconexión automática usando la configuración persistida en localStorage
-  if (saved.url && saved.key) {
-    if (window.supabase?.createClient) connect();
-    else { status('Supabase JS no disponible'); message('No se cargó la biblioteca de Supabase. Revisa internet y recarga la página.', true); }
+  if (saved.url && saved.key && window.supabase?.createClient) {
+    connect();
   } else {
     status('Configura Supabase para comenzar');
-    message('Completa la clave del proyecto y presiona Conectar proyecto.');
   }
 })();
 document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
@@ -737,19 +710,18 @@ document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
 
 <script>
 (() => {
- const panel=document.getElementById('quickPanel'), backdrop=document.getElementById('quickPanelBackdrop'), toggle=document.getElementById('quickPanelToggle');
- const closeBtn=document.getElementById('quickPanelClose'), logout=document.getElementById('sb-logout');
- const views=[...document.querySelectorAll('[data-quick-view]')];
- function openQuickPanel(){panel.classList.add('open');backdrop.classList.add('open');panel.setAttribute('aria-hidden','false');}
- function closeQuickPanel(){panel.classList.remove('open');backdrop.classList.remove('open');panel.setAttribute('aria-hidden','true');}
- window.closeQuickPanel=closeQuickPanel;
- toggle?.addEventListener('click',()=>panel.classList.contains('open')?closeQuickPanel():openQuickPanel());
- closeBtn?.addEventListener('click',closeQuickPanel);backdrop?.addEventListener('click',closeQuickPanel);
- function applyView(view){document.body.classList.remove('view-mobile','view-tablet','view-desktop');if(view!=='auto')document.body.classList.add('view-'+view);views.forEach(b=>b.classList.toggle('active',b.dataset.quickView===view));try{localStorage.setItem('fp_view_mode',view)}catch(e){}}
- views.forEach(b=>b.addEventListener('click',()=>applyView(b.dataset.quickView)));
- let saved='auto';try{saved=localStorage.getItem('fp_view_mode')||'auto'}catch(e){}applyView(saved);
- if(logout){logout.textContent='Cerrar sesión';logout.className='quick-panel-logout-button';logout.style.display='';document.querySelector('.quick-panel-logout')?.appendChild(logout);}
- document.addEventListener('keydown',e=>{if(e.key==='Escape')closeQuickPanel()});
+ const switcher=document.getElementById('viewSwitch');
+ if(!switcher) return;
+ const buttons=[...switcher.querySelectorAll('[data-view]')];
+ function applyView(view){
+   document.body.classList.remove('view-mobile','view-tablet','view-desktop');
+   if(view!=='auto') document.body.classList.add('view-'+view);
+   buttons.forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+   try{localStorage.setItem('fp_view_mode',view)}catch(e){}
+ }
+ buttons.forEach(b=>b.addEventListener('click',()=>applyView(b.dataset.view)));
+ let saved='auto';try{saved=localStorage.getItem('fp_view_mode')||'auto'}catch(e){}
+ applyView(saved);
 })();
 </script>
 
@@ -757,20 +729,5 @@ document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
 <script>
 document.getElementById('header-logout')?.addEventListener('click',()=>document.getElementById('sb-logout')?.click());
 </script>
-
-
-<div id="quickPanelToggle" aria-label="Ajustes rápidos" title="Ajustes rápidos">⚙</div>
-<div id="quickPanel" aria-hidden="true">
-  <div class="quick-panel-head"><span>AJUSTES RÁPIDOS</span><button type="button" id="quickPanelClose" aria-label="Cerrar panel">×</button></div>
-  <div class="quick-panel-label">VISTA DE PANTALLA</div>
-  <div class="quick-panel-views" role="group" aria-label="Selector de vista">
-    <button type="button" data-quick-view="auto">Auto</button>
-    <button type="button" data-quick-view="mobile">iPhone</button>
-    <button type="button" data-quick-view="tablet">Tablet</button>
-    <button type="button" data-quick-view="desktop">Escritorio</button>
-  </div>
-  <div class="quick-panel-logout" aria-label="Cerrar sesión"></div>
-</div>
-<div id="quickPanelBackdrop"></div>
 
 </body></html>
