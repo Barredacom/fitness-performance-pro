@@ -61,7 +61,7 @@ table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:10px;bor
   <button type="button" data-tab="suplementos">◇ Suplementos</button>
   <button type="button" data-tab="peso">▣ Peso y medidas</button>
 <button type="button" data-tab="turnos">▦ Turnos 7×7</button></nav></aside>
-<main><div class="top"><div><div class="eyebrow">DARK ATHLETIC CLINICAL</div><h1>Tu rendimiento, bajo control.</h1><div class="muted">Seguimiento de nutrición · entrenamiento · composición corporal</div></div><div class="pill" id="todayShift">â— Descanso</div></div>
+<main><div class="top"><div><div class="eyebrow">DARK ATHLETIC CLINICAL</div><h1>Tu rendimiento, bajo control.</h1><div class="muted">Seguimiento de nutrición · entrenamiento · composición corporal</div></div><div class="pill" id="todayShift">● Descanso</div></div>
 <section id="inicio" class="section active">
 <div class="hero"><div class="heroimg"><div class="eyebrow">FITNESS PERFORMANCE PRO</div><h2>Disciplina, datos<br><span class="green">y constancia.</span></h2><p>Registra tus hábitos y observa cómo avanzas hacia tus objetivos.</p><button onclick="tab('nutricion')" style="width:max-content">＋ Registrar alimentación</button></div><div class="heroStat"><div class="card metric"><small>Peso actual</small><strong id="kWeight">82,3 kg</strong><span class="green">−7,5 kg desde inicio</span></div><div class="card metric"><small>Cintura</small><strong id="kWaist">95 cm</strong><span class="green">Seguimiento</span></div><div class="card metric"><small>Meta final</small><strong>75 kg</strong><span class="green">Meta intermedia 80</span></div><div class="card metric"><small>Calorías hoy</small><strong id="kCal">0</strong><span class="orange">Objetivo 1.800–2.000</span></div></div></div>
 <div class="grid4"><div class="card metric"><small>Proteínas</small><strong class="blue" id="kProtein">0 g</strong><div class="bar"><i id="pbar" style="width:0"></i></div><small>Meta 125 g</small></div><div class="card metric"><small>Carbohidratos</small><strong id="kCarbs">0 g</strong><div class="bar"><i id="cbar" style="width:0;background:var(--orange)"></i></div><small>Seguimiento diario</small></div><div class="card metric"><small>Grasas</small><strong class="pink" id="kFat">0 g</strong><div class="bar"><i id="fbar" style="width:0;background:var(--pink)"></i></div><small>Calculadas/registradas</small></div><div class="card metric"><small>Entrenamiento</small><strong class="green" id="kWorkout">0 min</strong><small>Minutos registrados hoy</small></div></div>
@@ -491,8 +491,11 @@ window.fpSupabaseClient = client;
     }
   });
 
+  // Reconexión automática usando la configuración persistida en localStorage
   if (saved.url && saved.key && window.supabase?.createClient) {
-    status('Configuración guardada');
+    connect();
+  } else {
+    status('Configura Supabase para comenzar');
   }
 })();
 document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
