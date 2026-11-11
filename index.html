@@ -221,6 +221,10 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 @media(max-width:760px){.body-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.body-charts,.body-goals{grid-template-columns:1fr}}
 
 
+
+/* CALENDARIO 7x7 PRO */
+.shift-calendar-card{max-width:900px}.shift-monthbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.shift-monthbar strong{font-size:18px;text-transform:capitalize}.shift-monthbar button{font-size:22px;min-width:42px;padding:5px 12px}.shift-legend{display:flex;gap:14px;flex-wrap:wrap;margin:0 0 12px;color:var(--muted);font-size:12px}.shift-legend span{display:flex;align-items:center;gap:6px}.shift-legend i{width:9px;height:9px;border-radius:50%;display:inline-block}.shift-legend i.shift-rest{background:#7bdfff}.shift-legend i.shift-night{background:#ffce68}.shift-legend i.shift-day{background:#7cff85}.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.calendar-weekday{text-align:center;color:var(--muted);font-size:11px;padding:6px 0}.calendar-cell{min-height:65px;border:1px solid #263329;border-radius:9px;padding:7px 4px;text-align:center;background:#0b100d;color:#dce9df;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:5px}.calendar-cell .calendar-num{font-size:13px;font-weight:700}.calendar-cell .calendar-shift{font-size:9px;line-height:1.15}.calendar-cell.shift-rest{background:#102632;border-color:#20516a;color:#9be7ff}.calendar-cell.shift-night{background:#30230d;border-color:#6b4b17;color:#ffce68}.calendar-cell.shift-day{background:#123019;border-color:#286c35;color:#8cff95}.calendar-cell.is-today{outline:2px solid var(--blue);outline-offset:-2px}.calendar-cell.is-selected{box-shadow:0 0 0 2px var(--green),0 0 13px #53ff5530}.calendar-cell.is-outside{opacity:.28}.shift-selected,.shift-next{margin-top:12px;border:1px solid #263329;background:#0b100d;border-radius:10px;padding:12px}.shift-selected strong{color:var(--green)}.shift-next{color:var(--blue)}.shift-note{margin:12px 0 0;font-size:11px}
+@media(max-width:600px){.calendar-grid{gap:3px}.calendar-cell{min-height:54px;padding:5px 1px;border-radius:7px;gap:4px}.calendar-cell .calendar-num{font-size:12px}.calendar-cell .calendar-shift{font-size:8px}.calendar-weekday{font-size:10px}.shift-monthbar strong{font-size:16px}}
 </style></head><body>
 
 
@@ -375,7 +379,17 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 <div class="card" style="margin-top:12px"><div class="sectionHead"><h3>Historial de mediciones</h3><span class="pill" id="measureCount">0 registros</span></div><div id="measureList" class="list"></div></div>
 </section>
 
-<section id="turnos" class="section"><div class="sectionHead"><h2>Calendario rotativo 7×7</h2><span class="pill">Descanso → Noche → Descanso → Día</span></div><div class="card"><p>Referencia definida: <b>03–09 nov descanso · 10–16 nov noche · 17–23 nov descanso · 24–30 nov día</b></p><p class="muted">Turno noche: 19:00–07:00 · Turno día: horario por confirmar.</p><div id="calendar"></div></div></section>
+<section id="turnos" class="section">
+ <div class="sectionHead"><h2>Calendario rotativo 7×7</h2><span class="pill">Descanso → Noche → Descanso → Día</span></div>
+ <div class="card shift-calendar-card">
+  <div class="shift-monthbar"><button type="button" onclick="changeCalendarMonth(-1)" aria-label="Mes anterior">‹</button><strong id="calendarMonthLabel">Noviembre 2026</strong><button type="button" onclick="changeCalendarMonth(1)" aria-label="Mes siguiente">›</button></div>
+  <div class="shift-legend"><span><i class="shift-rest"></i>Descanso</span><span><i class="shift-night"></i>Turno noche</span><span><i class="shift-day"></i>Turno día</span></div>
+  <div id="calendar" aria-label="Calendario mensual de turnos"></div>
+  <div class="shift-selected" id="calendarSelected" aria-live="polite"></div>
+  <div class="shift-next" id="calendarNextShift"></div>
+  <p class="muted shift-note">Ciclo de referencia: 03–09 nov descanso · 10–16 nov noche · 17–23 nov descanso · 24–30 nov día. Turno noche: 19:00–07:00 · Turno día: horario por confirmar.</p>
+ </div>
+</section>
 
 <section id="historial" class="section"><div class="sectionHead"><h2>Historial consultable</h2><span class="pill">Día / mes</span></div><div class="card"><div class="formrow two"><label>Consultar fecha<input id="historyDate" type="date" onchange="renderHistory()"></label><label>Consultar mes<input id="historyMonth" type="month" onchange="renderHistory()"></label></div><div id="historyResult" class="list"></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button onclick="exportData()">Exportar respaldo JSON</button><label style="max-width:230px">Importar respaldo<input type="file" accept=".json" onchange="importData(event)"></label><button onclick="clearAll()">Borrar todos los datos</button></div></div></section>
 <div class="footer">FITNESS PERFORMANCE PRO · Prototipo local V1 · Tus registros se guardan en este navegador</div>
@@ -527,7 +541,30 @@ function drawBodyChart(id,data,key,unit,color){
 }
 
 function renderExercises(){let ex=[['Press banca','4 × 8–10','https://www.youtube.com/results?search_query=press+banca+tecnica+correcta'],['Press inclinado mancuernas','3 × 10–12','https://www.youtube.com/results?search_query=press+inclinado+mancuernas+tecnica'],['Aperturas','3 × 12','https://www.youtube.com/results?search_query=aperturas+pecho+tecnica'],['Extensión tríceps polea','3 × 12','https://www.youtube.com/results?search_query=extension+triceps+polea+tecnica']];$('exerciseList').innerHTML=ex.map(x=>`<div class="item"><span>${x[0]}<small>${x[1]}</small></span><a style="color:var(--green)" href="${x[2]}" target="_blank">▶ YouTube</a></div>`).join('')}
-function renderCalendar(){let start=new Date('2026-11-03T12:00:00'),base=[['Descanso',7,'shift-rest'],['Noche',7,'shift-night'],['Descanso',7,'shift-rest'],['Día',7,'shift-day']];let d=new Date('2026-11-01T12:00:00'),html='<div class="days">'+['L','M','X','J','V','S','D'].map(x=>`<div class="day muted">${x}</div>`).join('');let offset=(d.getDay()+6)%7;for(let i=0;i<offset;i++)html+='<div></div>';for(let n=1;n<=30;n++){let date=new Date(2026,10,n,12),diff=Math.floor((date-start)/86400000),idx=((Math.floor(diff/7)%4)+4)%4,shift=diff<0?'':base[idx][0];html+=`<div class="day ${diff<0?'':base[idx][2]}">${n}<small style="display:block;font-size:9px">${shift}</small></div>`}html+='</div>';$('calendar').innerHTML=html}
+const SHIFT_CYCLE=[{name:'Descanso',cls:'shift-rest'},{name:'Noche',cls:'shift-night'},{name:'Descanso',cls:'shift-rest'},{name:'Día',cls:'shift-day'}];
+let calendarView=new Date(new Date().getFullYear(),new Date().getMonth(),1,12),calendarSelectedDate=localDateISO(new Date());
+function localDateISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function shiftForDate(dateString){const anchor=new Date('2026-11-03T12:00:00'),date=new Date(dateString+'T12:00:00'),days=Math.floor((date-anchor)/86400000),block=((Math.floor(days/7)%4)+4)%4;return SHIFT_CYCLE[block]}
+function changeCalendarMonth(delta){calendarView=new Date(calendarView.getFullYear(),calendarView.getMonth()+delta,1,12);renderCalendar()}
+function selectCalendarDate(dateString){calendarSelectedDate=dateString;renderCalendar()}
+function renderCalendar(){
+ const year=calendarView.getFullYear(),month=calendarView.getMonth(),first=new Date(year,month,1,12),days=new Date(year,month+1,0).getDate(),offset=(first.getDay()+6)%7;
+ $('calendarMonthLabel').textContent=first.toLocaleDateString('es-CL',{month:'long',year:'numeric'});
+ let html='<div class="calendar-grid">'+['L','M','X','J','V','S','D'].map(x=>`<div class="calendar-weekday">${x}</div>`).join('');
+ for(let i=0;i<offset;i++)html+='<div aria-hidden="true"></div>';
+ const todayISO=localDateISO(new Date());
+ for(let n=1;n<=days;n++){
+  const date=new Date(year,month,n,12),iso=localDateISO(date),shift=shiftForDate(iso),classes=['calendar-cell',shift.cls];
+  if(iso===todayISO)classes.push('is-today');if(iso===calendarSelectedDate)classes.push('is-selected');
+  html+=`<button type="button" class="${classes.join(' ')}" onclick="selectCalendarDate('${iso}')" aria-pressed="${iso===calendarSelectedDate}" aria-label="${iso}, ${shift.name}"><span class="calendar-num">${n}</span><span class="calendar-shift">${shift.name}</span></button>`;
+ }
+ html+='</div>';$('calendar').innerHTML=html;
+ const selected=new Date(calendarSelectedDate+'T12:00:00'),sel=shiftForDate(calendarSelectedDate);
+ $('calendarSelected').innerHTML=`<strong>Fecha seleccionada:</strong> ${selected.toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}<br><b>Estado:</b> ${sel.name}${sel.name==='Noche'?' · 19:00–07:00':sel.name==='Día'?' · horario por confirmar':' · recuperación y descanso'}`;
+ let next=new Date(calendarSelectedDate+'T12:00:00');next.setDate(next.getDate()+1);let count=1;
+ while(shiftForDate(localDateISO(next)).name===sel.name&&count<8){next.setDate(next.getDate()+1);count++}
+ $('calendarNextShift').innerHTML=`<strong>Próximo cambio:</strong> ${next.toLocaleDateString('es-CL',{day:'numeric',month:'long'})} · ${shiftForDate(localDateISO(next)).name} (en ${count} ${count===1?'día':'días'})`;
+}
 function renderHistory(){let date=$('historyDate').value,month=$('historyMonth').value;let all=[...db.foods.map(x=>({...x,type:'Alimento'})),...db.workouts.map(x=>({...x,type:'Entrenamiento'})),...db.supplements.map(x=>({...x,type:'Suplemento'})),...db.measures.map(x=>({...x,type:'Medición'}))];let filtered=all.filter(x=>date?x.date===date:month?x.date?.startsWith(month):true).sort((a,b)=>b.date.localeCompare(a.date));$('historyResult').innerHTML=filtered.map(x=>`<div class="item"><span>${x.type}: ${x.n||x.routine||x.name||((x.weight||'')+' kg / '+(x.waist||'')+' cm')}<small>${x.date}</small></span><b>${x.k?Math.round(x.k)+' kcal':x.minutes?x.minutes+' min':x.done?'Consumido':''}</b></div>`).join('')||'<p class="muted">No hay registros para ese filtro.</p>'}
 function exportData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='fitness-performance-respaldo.json';a.click();URL.revokeObjectURL(a.href)}
 function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{db=JSON.parse(r.result);save();alert('Respaldo importado')}catch{alert('Archivo no válido')}};r.readAsText(f)}
