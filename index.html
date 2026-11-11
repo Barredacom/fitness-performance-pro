@@ -357,6 +357,17 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
       <b id="foodTotals">0 kcal · P 0 · C 0 · G 0</b>
     </div>
   </div>
+
+  <div class="card smart-meals" style="margin-top:12px">
+    <div class="sectionHead"><h3>SMART MEALS · Comidas favoritas</h3><span class="pill">Registro rápido</span></div>
+    <p class="muted">Guarda combinaciones habituales y vuelve a cargarlas con un toque.</p>
+    <div class="formrow two">
+      <label>Nombre de la comida<input id="smartMealName" placeholder="Ej. Almuerzo habitual"></label>
+      <label>Comida del registro<select id="smartMealType"><option>Desayuno</option><option>Almuerzo</option><option>Cena</option><option>Colación</option></select></label>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="smartSaveMeal()">★ Guardar alimento como favorito</button><button onclick="smartRefreshMeals()">↻ Actualizar favoritos</button></div>
+    <div id="smartMealList" class="list" style="margin-top:10px"></div>
+  </div>
 </section>
 
 
@@ -896,4 +907,28 @@ document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
 })();
 </script>
 
+
+<script>
+const SMART_MEALS_KEY='fp_smart_meals_v1';
+function smartMealsRead(){try{return JSON.parse(localStorage.getItem(SMART_MEALS_KEY)||'[]')}catch(e){return []}}
+function smartSaveMeal(){
+ const x=foodVals(),name=$('smartMealName').value.trim(),meal=$('smartMealType').value;
+ if(!name)return alert('Ingresa un nombre para la comida');
+ if(!x.g||x.g<=0)return alert('Ingresa gramos válidos');
+ const list=smartMealsRead();list.unshift({id:Date.now(),name,meal,foodKey:$('food').value,foodName:x.n,grams:x.g});
+ localStorage.setItem(SMART_MEALS_KEY,JSON.stringify(list.slice(0,50)));
+ $('smartMealName').value='';smartRefreshMeals();alert('Comida favorita guardada');
+}
+function smartUseMeal(id){
+ const item=smartMealsRead().find(x=>x.id===id);if(!item)return;
+ $('food').value=item.foodKey;$('grams').value=item.grams;$('meal').value=item.meal;$('smartMealType').value=item.meal;
+ preview();alert('Comida cargada. Presiona “Registrar alimento” para guardarla en tu diario.');
+}
+function smartDeleteMeal(id){localStorage.setItem(SMART_MEALS_KEY,JSON.stringify(smartMealsRead().filter(x=>x.id!==id)));smartRefreshMeals()}
+function smartRefreshMeals(){
+ const el=$('smartMealList');if(!el)return;const list=smartMealsRead();
+ el.innerHTML=list.length?list.map(x=>`<div class="item"><div><b>${x.name.replace(/[<>]/g,'')}</b><div class="muted">${x.foodName} · ${x.grams} g · ${x.meal}</div></div><div style="display:flex;gap:6px"><button onclick="smartUseMeal(${x.id})">Usar</button><button onclick="smartDeleteMeal(${x.id})">×</button></div>`).join(''):'<p class="muted">Aún no tienes comidas favoritas guardadas.</p>';
+}
+document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeals();
+</script>
 </body></html>
