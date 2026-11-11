@@ -141,6 +141,30 @@ table{max-width:100%;display:block;overflow-x:auto}
   .header-logout{margin-left:auto}
 }
 
+
+/* MOBILE PORTRAIT FIX: prevent page-level horizontal overflow */
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+*,*::before,*::after{box-sizing:border-box}
+.shell,main,.section,.card,.hero,.heroimg{min-width:0;max-width:100%}
+img,svg,canvas,video{max-width:100%}
+input,select,textarea,button{max-width:100%;min-width:0}
+table{display:block;max-width:100%;overflow-x:auto}
+.days{grid-template-columns:repeat(7,minmax(0,1fr));width:100%;min-width:0}
+.day{min-width:0;overflow-wrap:anywhere;word-break:normal;padding:7px 0;font-size:clamp(9px,2.8vw,12px);line-height:1.2}
+@media(max-width:600px){
+  .shell{width:100%;grid-template-columns:minmax(0,1fr)!important}
+  main{width:100%;padding:10px!important}
+  .section,.card{width:100%;min-width:0}
+  .formrow,.formrow.two,.formrow.three{grid-template-columns:minmax(0,1fr)!important}
+  .formrow>*{width:100%;min-width:0}
+  .view-switch{width:100%;max-width:100%;overflow:hidden}
+  .view-switch .view-btn{min-width:0;white-space:normal}
+  .calendar,.calendar-wrap,.days-wrap{width:100%;max-width:100%;min-width:0;overflow:hidden}
+  .day{font-size:10px;padding:6px 0}
+  .calendar-reference,.shift-reference,.calendar p{max-width:100%;overflow-wrap:anywhere}
+  #sb-logout{background:#17321b!important;border-color:#2b7134!important;color:var(--green)!important;border-radius:99px!important}
+}
+
 </style></head><body>
 
 
@@ -177,7 +201,7 @@ table{max-width:100%;display:block;overflow-x:auto}
       <button id="sb-signup" type="button" style="flex:1;padding:11px;border:1px solid #40515e;border-radius:10px;background:#17222b;color:#eaf2f7;font-weight:700">Crear cuenta</button>
     </div>
     <button id="sb-reset" type="button" style="padding:8px;border:0;background:transparent;color:#91caff;text-align:left">Olvidé mi contraseña</button>
-    <button id="sb-logout" type="button" style="display:none;padding:10px;border:1px solid #40515e;border-radius:10px;background:#17222b;color:#eaf2f7">Cerrar sesión</button>
+    <button id="sb-logout" type="button" style="display:none;padding:8px 14px;border:1px solid #2b7134;border-radius:99px;background:#17321b;color:var(--green);font-weight:600">↪ Cerrar sesión</button>
   </div>
   <div id="sb-message" role="status" style="margin-top:12px;color:#a8bac8;font-size:13px;line-height:1.5"></div>
 </section>
