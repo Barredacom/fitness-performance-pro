@@ -93,6 +93,19 @@ body.view-desktop .grid4{grid-template-columns:repeat(4,minmax(0,1fr))}
 body.view-desktop .grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
 @media(max-width:600px){.view-switch{width:100%;justify-content:space-between}.view-switch .view-btn{flex:1;padding:7px 5px;font-size:11px}}
 
+
+/* LOGIN GATE: panel solo cuando no hay sesión; app solo autenticada */
+body:not(.app-ready) .shell{display:none!important}
+body.app-ready .shell{display:grid}
+body.app-ready #supabase-auth-panel{display:none!important}
+body:not(.app-ready) #supabase-auth-panel{max-width:460px;margin:clamp(24px,8vh,90px) auto!important}
+body:not(.app-ready) #supabase-auth-panel h2{font-size:25px}
+body:not(.app-ready) #supabase-auth-panel #sb-config,
+body:not(.app-ready) #supabase-auth-panel #sb-auth{max-width:100%}
+body:not(.app-ready) #supabase-auth-panel #sb-message{margin-top:16px}
+body:not(.app-ready)::before{content:"FITNESS PERFORMANCE PRO";display:block;text-align:center;margin-top:32px;color:var(--green);font-weight:900;letter-spacing:2px;font-size:clamp(20px,4vw,30px)}
+body:not(.app-ready)::after{content:"Tu rendimiento, bajo control.";display:block;text-align:center;color:#91a397;margin-top:-8px;font-size:14px}
+
 </style></head><body>
 
 
@@ -395,8 +408,10 @@ renderAll();preview();
   function setAuthUI(session) {
     const signedIn = !!session?.user;
 
+    // Login gate: muestra el acceso si no hay sesión; dashboard solo autenticado.
+    document.body.classList.toggle('app-ready', signedIn);
     configEl.style.display = client ? 'none' : 'grid';
-    authEl.style.display = client ? 'grid' : 'none';
+    authEl.style.display = client && !signedIn ? 'grid' : 'none';
 
     $('sb-user').textContent = signedIn
       ? 'Sesión activa: ' + session.user.email
@@ -407,7 +422,7 @@ renderAll();preview();
     $('sb-reset').style.display = signedIn ? 'none' : 'block';
     $('sb-logout').style.display = signedIn ? 'block' : 'none';
 
-    status(signedIn ? 'Sesión activa' : 'Proyecto conectado', true);
+    status(signedIn ? 'Sesión activa' : (client ? 'Proyecto conectado' : 'Sin configurar'), !!client);
   }
 
   async function connect() {
