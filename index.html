@@ -237,7 +237,16 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 .fp-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);z-index:99999;display:none;align-items:center;justify-content:center;padding:18px}
 .fp-modal-backdrop.open{display:flex}.fp-modal{width:min(560px,100%);max-height:90vh;overflow:auto;background:#101511;border:1px solid #53ff55;border-radius:18px;padding:22px;box-shadow:0 0 35px rgba(83,255,85,.18)}
 .fp-modal h2{margin:0 0 8px;color:#53ff55}.fp-modal .muted{color:#91a397}.fp-modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
-</style></head><body>
+</style><style>
+.nutrition-summary .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.nutrition-summary .kpis>div{background:#0c1714;border:1px solid #20382d;border-radius:12px;padding:12px}
+.nutrition-summary .kpis b{display:block;color:#65f28a;font-size:1.05rem;margin-top:5px}
+#nutritionKcalBar{height:8px;background:#35e875;border-radius:10px;transition:width .25s}
+.nutrition-summary .progress{height:8px;background:#23342b;border-radius:10px;overflow:hidden;margin-top:12px}
+.nutrition-action>summary,.smart-meals>summary{cursor:pointer;font-weight:700;color:#70f28e;padding:4px}
+.nutrition-action[open]>summary,.smart-meals[open]>summary{margin-bottom:14px}
+</style>
+</head><body>
 
 
 <!-- SUPABASE AUTH INTEGRATION -->
@@ -296,11 +305,19 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 
 
 <section id="nutricion" class="section">
-  <div class="sectionHead">
-    <h2>Nutrición inteligente</h2>
-    <span class="pill">Alimento + gramos → macros y kcal</span>
+  <div class="sectionHead"><h2>Nutrición</h2><span class="pill">Resumen diario</span></div>
+  <div class="card nutrition-summary">
+    <div class="sectionHead"><h3>Consumo de hoy</h3><span class="pill" id="nutritionRemaining">Meta 1.800 kcal</span></div>
+    <div class="kpis">
+      <div>Calorías <b id="nutritionKcal">0 / 1.800 kcal</b></div>
+      <div>Proteínas <b id="nutritionProtein">0 / 125 g</b></div>
+      <div>Carbohidratos <b id="nutritionCarbs">0 / 200 g</b></div>
+      <div>Grasas <b id="nutritionFat">0 / 60 g</b></div>
+    </div>
+    <div class="progress"><div id="nutritionKcalBar" style="width:0%"></div></div>
   </div>
-
+  <details class="card nutrition-action" open>
+    <summary>＋ Registrar comida</summary>
   <div class="card">
     <div class="formrow">
       <label>Alimento
@@ -342,6 +359,7 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
     <div class="item"><b>Total de la comida</b><b id="mealDraftTotals">0 kcal · P 0 · C 0 · G 0</b></div>
   </div>
 
+  </details>
   <div class="card" style="margin-top:12px">
     <h3>Registros del día</h3>
     <div id="foodList" class="list"></div>
@@ -351,6 +369,9 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
     </div>
   </div>
 
+
+  <details class="card smart-meals" style="margin-top:12px">
+    <summary>Nutrición inteligente · Alimentos y comidas favoritas</summary>
   <div class="card smart-meals" style="margin-top:12px">
     <div class="sectionHead"><h3>SMART MEALS · Comidas favoritas</h3><span class="pill">Registro rápido</span></div>
     <p class="muted">Guarda combinaciones habituales y vuelve a cargarlas con un toque.</p>
@@ -361,9 +382,8 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
     <div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="smartSaveMeal()">★ Guardar alimento como favorito</button><button onclick="smartRefreshMeals()">↻ Actualizar favoritos</button></div>
     <div id="smartMealList" class="list" style="margin-top:10px"></div>
   </div>
+  </details>
 </section>
-
-
 <section id="entrenamiento" class="section"><div class="sectionHead"><h2>Entrenamiento guiado</h2><span class="pill">PLAN ADAPTATIVO 7×7</span></div><div class="card training-adaptive"><div class="training-adaptive-head"><span class="training-kicker">RECOMENDACIÓN SEGÚN TURNO</span><strong id="trainingShiftTitle">Plan del día</strong><p id="trainingShiftDesc" class="muted">Selecciona una fecha para adaptar la propuesta.</p></div><div class="training-adaptive-stats"><span id="trainingIntensity">Intensidad —</span><span id="trainingDuration">Duración sugerida —</span></div><p id="trainingRecovery" class="training-recovery"></p></div><div class="card" style="margin-top:12px"><div class="formrow three"><label>Rutina<select id="routine"><option>Pecho + tríceps</option><option>Espalda + bíceps</option><option>Piernas</option><option>Hombros + abdomen</option><option>Cardio</option><option>Full body</option><option>Movilidad + recuperación</option></select></label><label>Duración (min)<input id="duration" type="number" min="1" value="60"></label><label>Fecha<input id="workDate" type="date" onchange="renderTrainingPlan()"></label></div><button onclick="addWorkout()">Guardar sesión</button></div><div class="card training-library" style="margin-top:12px"><div class="sectionHead"><h3>Biblioteca de ejercicios · tus equipos</h3><span class="pill">TRAINING PRO</span></div><label>Grupo muscular / modalidad<select id="exerciseCategory" onchange="renderExerciseLibrary()"><option value="Pecho">Pecho</option><option value="Espalda">Espalda</option><option value="Piernas">Piernas</option><option value="Hombros">Hombros</option><option value="Bíceps">Bíceps</option><option value="Tríceps">Tríceps</option><option value="Abdomen">Abdomen</option><option value="Cardio">Cardio</option><option value="Movilidad">Movilidad</option><option value="Full body">Full body</option></select></label><div id="exerciseLibraryList" class="list" style="margin-top:10px"></div><small class="muted">Equipo considerado: Home Gym P600 Pro (hasta 65 kg), banco plano, mancuernas de 6 y 10 kg, kettlebell de 14 kg, bicicleta estática y caminadora.</small></div><div class="grid2" style="margin-top:12px"><div class="card"><h3 id="exerciseTitle">Ejercicios sugeridos</h3><div class="list" id="exerciseList"></div></div><div class="card"><h3>Sesiones registradas</h3><div id="workList" class="list"></div></div></div></section>
 
 <section id="suplementos" class="section"><div class="sectionHead"><h2>Suplementación</h2><span class="pill">Confirmar consumo</span></div><div class="card"><div class="formrow three"><label>Suplemento<input id="suppName" placeholder="Ej. Magnesio, Omega 3"></label><label>Dosis<input id="suppDose" placeholder="Ej. 1 cápsula / 5 g"></label><label>Horario<input id="suppTime" placeholder="Ej. desayuno"></label></div><button onclick="addSupp()">＋ Agregar suplemento</button></div><div class="card" style="margin-top:12px"><h3>Lista de suplementos</h3><div id="suppList" class="list"></div></div></section>
@@ -409,6 +429,7 @@ $('foodDate').value=$('workDate').value=$('measureDate').value=today;$('dateLabe
 const DBKEY='fppro_v2';let db=JSON.parse(localStorage.getItem(DBKEY)||'{"foods":[],"workouts":[],"supplements":[],"measures":[{"date":"2026-10-25","weight":82.3,"waist":95}]}');
 const foods={arroz:{n:'Arroz blanco cocido',k:130,p:2.7,c:28.2,f:.3},pollo:{n:'Pechuga de pollo cocida',k:165,p:31,c:0,f:3.6},atun:{n:'Atún al agua drenado',k:116,p:25.5,c:0,f:1},avena:{n:'Avena',k:389,p:16.9,c:66.3,f:6.9},platano:{n:'Plátano',k:89,p:1.1,c:22.8,f:.3},huevo:{n:'Huevo entero',k:143,p:12.6,c:.7,f:9.5},salmon:{n:'Salmón',k:208,p:20.4,c:0,f:13.4},quinoa:{n:'Quinoa cocida',k:120,p:4.4,c:21.3,f:1.9}};
 function save(){localStorage.setItem(DBKEY,JSON.stringify(db));renderAll()}
+function renderNutritionSummary(){const m=macros();const set=(id,v)=>{const e=$(id);if(e)e.textContent=v};set('nutritionKcal',`${Math.round(m.k)} / 1.800 kcal`);set('nutritionProtein',`${m.p.toFixed(1)} / 125 g`);set('nutritionCarbs',`${m.c.toFixed(1)} / 200 g`);set('nutritionFat',`${m.f.toFixed(1)} / 60 g`);set('nutritionRemaining',`${Math.max(0,1800-Math.round(m.k))} kcal disponibles`);const b=$('nutritionKcalBar');if(b)b.style.width=Math.min(100,m.k/1800*100)+'%';}
 function macros(){return db.foods.filter(x=>x.date===today).reduce((a,x)=>({k:a.k+x.k,p:a.p+x.p,c:a.c+x.c,f:a.f+x.f}),{k:0,p:0,c:0,f:0})}
 function tab(id){document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));}
 
@@ -543,7 +564,7 @@ function addMeasure(){let w=+$('weight').value,wa=+$('waist').value,date=$('meas
 function del(arr,id){db[arr]=db[arr].filter(x=>x.id!==id);save()}
 function renderAll(){let m=macros();$('kCal').textContent=Math.round(m.k)+' kcal';$('kProtein').textContent=m.p.toFixed(1)+' g';$('kCarbs').textContent=m.c.toFixed(1)+' g';$('kFat').textContent=m.f.toFixed(1)+' g';$('pbar').style.width=Math.min(100,m.p/125*100)+'%';$('cbar').style.width=Math.min(100,m.c/200*100)+'%';$('fbar').style.width=Math.min(100,m.f/60*100)+'%';$('mealCount').textContent=db.foods.filter(x=>x.date===today).length+' alimentos';$('suppCount').textContent=db.supplements.filter(x=>x.date===today&&x.done).length;$('workCount').textContent=db.workouts.filter(x=>x.date===today).length+' sesiones';$('kWorkout').textContent=db.workouts.filter(x=>x.date===today).reduce((a,x)=>a+x.minutes,0)+' min';
 let last=[...db.measures].reverse().find(x=>x.weight);if(last)$('kWeight').textContent=last.weight+' kg';let lw=[...db.measures].reverse().find(x=>x.waist);if(lw)$('kWaist').textContent=lw.waist+' cm';
-$('foodTotals').textContent=`${Math.round(m.k)} kcal · P ${m.p.toFixed(1)} · C ${m.c.toFixed(1)} · G ${m.f.toFixed(1)}`;
+$('foodTotals').textContent=`${Math.round(m.k)renderNutritionSummary();} kcal · P ${m.p.toFixed(1)} · C ${m.c.toFixed(1)} · G ${m.f.toFixed(1)}`;
 $('foodList').innerHTML=db.foods.filter(x=>x.date===$('foodDate').value).map(x=>`<div class="item"><span>${x.n}<small>${x.meal} · ${x.g} g</small></span><b>${Math.round(x.k)} kcal <button onclick="del('foods',${x.id})">×</button></b></div>`).join('')||'<p class="muted">Sin alimentos registrados para esta fecha.</p>';
 $('workList').innerHTML=db.workouts.map(x=>`<div class="item"><span>${x.routine}<small>${x.date} · ${x.minutes} min</small></span><button onclick="del('workouts',${x.id})">Eliminar</button></div>`).join('')||'<p class="muted">Aún no hay sesiones.</p>';
 $('suppList').innerHTML=db.supplements.map(x=>`<div class="item"><span>${x.name}<small>${x.dose||'Dosis no indicada'} · ${x.time||'Horario libre'} · ${x.date}</small></span><span><button onclick="toggleSupp(${x.id})">${x.done?'✓ Consumido':'Confirmar consumo'}</button> <button onclick="del('supplements',${x.id})">×</button></span></div>`).join('')||'<p class="muted">Agrega tus suplementos.</p>';
