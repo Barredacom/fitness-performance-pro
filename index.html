@@ -308,7 +308,25 @@ document.addEventListener('DOMContentLoaded',function(){
  }
 });
 </script>
-</head><body>
+<style>
+/* Branding personalization and slight typography increase */
+.brand-header-row .brand{font-size:27px!important;line-height:1.12!important}
+.brand-header-row .brand small{font-size:12px!important;letter-spacing:3px!important}
+.brand-clock .live-clock strong{font-size:19px!important}
+.brand-clock .shift-pill{font-size:12px!important;padding:7px 11px!important}
+@media(max-width:900px){
+ .brand-header-row .brand{font-size:19px!important;line-height:1.1!important}
+ .brand-header-row .brand small{font-size:9px!important;letter-spacing:2px!important}
+ .brand-clock .live-clock strong{font-size:16px!important}
+ .brand-clock .shift-pill{font-size:10px!important;padding:6px 8px!important}
+}
+@media(max-width:420px){
+ .brand-header-row .brand{font-size:16px!important;letter-spacing:.6px!important}
+ .brand-header-row .brand small{font-size:8px!important;letter-spacing:1.6px!important}
+ .brand-clock .live-clock strong{font-size:14px!important}
+ .brand-clock .shift-pill{font-size:9px!important;padding:5px 7px!important}
+}
+</style></head><body>
 
 
 <!-- SUPABASE AUTH INTEGRATION -->
@@ -348,7 +366,7 @@ document.addEventListener('DOMContentLoaded',function(){
   <div id="sb-message" role="status" style="margin-top:12px;color:#a8bac8;font-size:13px;line-height:1.5"></div>
 </section>
 
-<div class="shell"><aside class="side"><div class="brand">FITNESS<br>PERFORMANCE <span>PRO</span><small style="display:block;font-size:10px;letter-spacing:3px;color:#8ea394">CLÍNICO DIGITAL</small></div>
+<div class="shell"><aside class="side"><div class="brand">FITNESS<br>PERFORMANCE <span>PRO</span><small style="display:block;font-size:10px;letter-spacing:3px;color:#8ea394">BY ARIEL BARREDA</small></div>
 <nav class="nav" id="nav">
   <button type="button" class="active" data-tab="inicio">⌂ Inicio</button>
   <button type="button" data-tab="nutricion">＋ Nutrición</button>
