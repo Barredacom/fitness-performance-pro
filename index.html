@@ -324,9 +324,17 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
     </div>
 
     <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button type="button" onclick="addFood()">＋ Registrar consumo</button>
+      <button type="button" onclick="addFoodToMeal()">＋ Agregar a la comida</button>
+      <button type="button" onclick="registerMeal()">✓ Registrar comida completa</button>
       <button type="button" onclick="toggleFoodCatalog()">＋ Crear alimento personalizado</button>
     </div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <h3>Comida en preparación</h3>
+    <p class="muted">Agrega varios alimentos y registra todo junto.</p>
+    <div id="mealDraftList" class="list"><p class="muted">Aún no agregas alimentos.</p></div>
+    <div class="item"><b>Total de la comida</b><b id="mealDraftTotals">0 kcal · P 0 · C 0 · G 0</b></div>
   </div>
 
   <div id="foodCatalogForm" class="card" style="display:none;margin-top:12px">
@@ -451,6 +459,40 @@ function foodVals(){
 $('food').onchange=preview;
 $('grams').oninput=preview;
 function preview(){let x=foodVals();$('previewK').textContent=x.k.toFixed(0)+' kcal';$('previewP').textContent=x.p.toFixed(1)+' g';$('previewCF').textContent=x.c.toFixed(1)+' / '+x.f.toFixed(1)+' g'}
+
+
+// SMART MEAL: acumula varios alimentos antes de registrarlos juntos.
+window.mealDraft = window.mealDraft || [];
+function addFoodToMeal(){
+  const x=foodVals();
+  if(!x.g || x.g<=0) return alert('Ingresa una cantidad válida');
+  if(!x.n) return alert('Selecciona un alimento');
+  window.mealDraft.push({...x,meal:$('meal').value,date:$('foodDate').value,draftId:Date.now()+Math.random()});
+  renderMealDraft();
+}
+function renderMealDraft(){
+  const list=$('mealDraftList'); if(!list)return;
+  const arr=window.mealDraft||[];
+  if(!arr.length){list.innerHTML='<p class="muted">Aún no agregas alimentos.</p>';}
+  else list.innerHTML=arr.map((x,i)=>`<div class="item"><span><b>${escapeHtml(x.n)}</b><br><small>${x.g} g · ${x.k.toFixed(0)} kcal · P ${x.p.toFixed(1)} g</small></span><button type="button" onclick="removeMealDraft(${i})">✕</button></div>`).join('');
+  const t=arr.reduce((a,x)=>({k:a.k+x.k,p:a.p+x.p,c:a.c+x.c,f:a.f+x.f}),{k:0,p:0,c:0,f:0});
+  $('mealDraftTotals').textContent=`${t.k.toFixed(0)} kcal · P ${t.p.toFixed(1)} · C ${t.c.toFixed(1)} · G ${t.f.toFixed(1)}`;
+}
+function removeMealDraft(i){window.mealDraft.splice(i,1);renderMealDraft();}
+async function registerMeal(){
+  const arr=window.mealDraft||[];
+  if(!arr.length)return alert('Agrega al menos un alimento a la comida');
+  const supabase=window.fpSupabaseClient;
+  if(!supabase)return alert('Supabase no está conectado');
+  const {data:{user},error:userError}=await supabase.auth.getUser();
+  if(userError||!user)return alert('Debes iniciar sesión');
+  const rows=arr.map(x=>({fecha:x.date||$('foodDate').value,alimento:x.n,comida:x.meal||$('meal').value,gramos:x.g,calorias:x.k,proteina:x.p,carbohidratos:x.c,grasas:x.f,user_id:user.id}));
+  const {error}=await supabase.from('registros_nutricion').insert(rows);
+  if(error){console.error(error);return alert('Error al registrar comida: '+error.message);}
+  arr.forEach(x=>db.foods.push({...x,meal:x.meal||$('meal').value,date:x.date||$('foodDate').value,id:Date.now()+Math.random()}));
+  save();window.mealDraft=[];renderMealDraft();alert('Comida completa registrada correctamente');
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
 async function addFood(){
   let x = foodVals();
@@ -938,4 +980,4 @@ function smartRefreshMeals(){
 }
 document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeals();
 </script>
-</body></html>
+<script>renderMealDraft();</script></body></html>
