@@ -254,7 +254,17 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
  .top .live-clock span:last-child{display:none}
 }
 </style>
-</head><body>
+<style>
+/* Posicionar reloj/turno en la franja superior del encabezado junto al logo */
+.top{margin-top:-12px!important;margin-bottom:18px!important;min-height:0!important;padding-top:0!important}
+.top>div:last-child{top:-78px!important;right:0!important;transform:scale(.76)!important;transform-origin:top right!important}
+.top>div:first-child{padding-right:0!important}
+@media(max-width:600px){
+ .top{margin-top:-8px!important;margin-bottom:14px!important}
+ .top>div:last-child{top:-58px!important;right:0!important;transform:scale(.62)!important}
+ .top>div:first-child{padding-right:0!important}
+}
+</style></head><body>
 
 
 <!-- SUPABASE AUTH INTEGRATION -->
