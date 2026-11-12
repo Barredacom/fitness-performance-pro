@@ -337,8 +337,7 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
     <div class="item"><b>Total de la comida</b><b id="mealDraftTotals">0 kcal · P 0 · C 0 · G 0</b></div>
   </div>
 
-  <div id="foodCatalogBackdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9000" onclick="toggleFoodCatalog(false)"></div>
-  <div id="foodCatalogForm" class="card" style="display:none;position:fixed;z-index:9001;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,620px);max-height:85vh;overflow:auto;margin:0;background:#101713;border:1px solid #31513b;border-radius:18px;padding:22px;box-shadow:0 20px 70px #0009">
+  <div id="foodCatalogForm" class="card" style="display:none;margin-top:12px">
     <h3>Nuevo alimento personalizado</h3>
     <div class="formrow">
       <label>Nombre
@@ -462,42 +461,7 @@ $('grams').oninput=preview;
 function preview(){let x=foodVals();$('previewK').textContent=x.k.toFixed(0)+' kcal';$('previewP').textContent=x.p.toFixed(1)+' g';$('previewCF').textContent=x.c.toFixed(1)+' / '+x.f.toFixed(1)+' g'}
 
 
-
-// CATÁLOGO PERSONALIZADO: formulario modal y persistencia local
-const CUSTOM_FOODS_KEY='fp_custom_foods_v1';
-function toggleFoodCatalog(show){
- const form=document.getElementById('foodCatalogForm'),back=document.getElementById('foodCatalogBackdrop');
- if(!form||!back)return;
- const visible=typeof show==='boolean'?show:form.style.display==='none';
- form.style.display=visible?'block':'none';back.style.display=visible?'block':'none';
- if(visible)document.getElementById('catalogName')?.focus();
-}
-function loadCustomFoods(){
- try{
-  const saved=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'{}');
-  Object.entries(saved).forEach(([key,value])=>{foods[key]=value});
- }catch(e){console.warn('No se pudieron cargar alimentos personalizados',e)}
- loadFoodCatalog();
-}
-function saveCatalogFood(){
- const name=document.getElementById('catalogName').value.trim();
- const k=Number(document.getElementById('catalogK').value),p=Number(document.getElementById('catalogP').value),
- c=Number(document.getElementById('catalogC').value),f=Number(document.getElementById('catalogF').value);
- if(!name)return alert('Ingresa el nombre del alimento');
- if([k,p,c,f].some(v=>!Number.isFinite(v)||v<0))return alert('Ingresa valores nutricionales válidos por 100 g');
- const key='custom_'+Date.now(),food={n:name,k,p,c,f};
- foods[key]=food;
- try{
-  const saved=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'{}');saved[key]=food;
-  localStorage.setItem(CUSTOM_FOODS_KEY,JSON.stringify(saved));
- }catch(e){alert('No se pudo guardar en el dispositivo: '+e.message);return}
- loadFoodCatalog();document.getElementById('food').value=key;preview();
- ['catalogName','catalogK','catalogP','catalogC','catalogF'].forEach(id=>document.getElementById(id).value='');
- toggleFoodCatalog(false);
- alert('Alimento personalizado guardado. Indica los gramos y agrégalo a tu comida.');
-}
-loadCustomFoods();
-\n// SMART MEAL: acumula varios alimentos antes de registrarlos juntos.
+// SMART MEAL: acumula varios alimentos antes de registrarlos juntos.
 window.mealDraft = window.mealDraft || [];
 function addFoodToMeal(){
   const x=foodVals();
