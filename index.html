@@ -325,7 +325,8 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <button onclick="addFood()">＋ Registrar alimento</button>
-      <button onclick="toggleFoodCatalog()">＋ Agregar alimento</button>
+      <button onclick="addFood()">＋ Agregar alimento</button>
+      <button onclick="toggleFoodCatalog()">＋ Crear alimento personalizado</button>
     </div>
   </div>
 
@@ -595,10 +596,46 @@ function chileNowParts(){const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'
 function updateGlobalShiftClock(){const now=new Date();const timeEl=document.getElementById('liveClock'),dateEl=document.getElementById('liveDate'),shiftEl=document.getElementById('todayShift');if(timeEl)timeEl.textContent=new Intl.DateTimeFormat('es-CL',{timeZone:'America/Santiago',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);if(dateEl)dateEl.textContent=new Intl.DateTimeFormat('es-CL',{timeZone:'America/Santiago',weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(now);if(shiftEl){const sh=shiftForDate(chileNowParts());shiftEl.className='pill shift-pill '+sh.cls;shiftEl.textContent='● '+sh.name;}}
 updateGlobalShiftClock();setInterval(updateGlobalShiftClock,1000);
 renderAll();preview();
+
+function saveCatalogFood(){
+  const name=$('catalogName').value.trim();
+  const k=+$('catalogK').value||0, p=+$('catalogP').value||0,
+        c=+$('catalogC').value||0, f=+$('catalogF').value||0;
+  if(!name) return alert('Ingresa el nombre del alimento');
+  if(!k&&!p&&!c&&!f) return alert('Ingresa al menos un valor nutricional');
+  const key='custom_'+Date.now();
+  foods[key]={n:name,k,p,c,f};
+  const select=$('food');
+  if(select){select.add(new Option(name,key));select.value=key;}
+  $('grams').value=100;
+  preview();
+  $('foodCatalogForm').style.display='none';
+  ['catalogName','catalogK','catalogP','catalogC','catalogF'].forEach(id=>$(id).value='');
+  alert('Alimento guardado en el catálogo. Ingresa los gramos y presiona Agregar alimento para registrarlo.');
+}
+
 </script>
 
 <!-- SUPABASE AUTH INTEGRATION -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+function saveCatalogFood(){
+  const name=$('catalogName').value.trim();
+  const k=+$('catalogK').value||0, p=+$('catalogP').value||0,
+        c=+$('catalogC').value||0, f=+$('catalogF').value||0;
+  if(!name) return alert('Ingresa el nombre del alimento');
+  if(!k&&!p&&!c&&!f) return alert('Ingresa al menos un valor nutricional');
+  const key='custom_'+Date.now();
+  foods[key]={n:name,k,p,c,f};
+  const select=$('food');
+  if(select){select.add(new Option(name,key));select.value=key;}
+  $('grams').value=100;
+  preview();
+  $('foodCatalogForm').style.display='none';
+  ['catalogName','catalogK','catalogP','catalogC','catalogF'].forEach(id=>$(id).value='');
+  alert('Alimento guardado en el catálogo. Ingresa los gramos y presiona Agregar alimento para registrarlo.');
+}
+
+</script>
 <script>
 (() => {
   const $ = id => document.getElementById(id);
@@ -843,6 +880,24 @@ document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
   };
 });
 
+
+function saveCatalogFood(){
+  const name=$('catalogName').value.trim();
+  const k=+$('catalogK').value||0, p=+$('catalogP').value||0,
+        c=+$('catalogC').value||0, f=+$('catalogF').value||0;
+  if(!name) return alert('Ingresa el nombre del alimento');
+  if(!k&&!p&&!c&&!f) return alert('Ingresa al menos un valor nutricional');
+  const key='custom_'+Date.now();
+  foods[key]={n:name,k,p,c,f};
+  const select=$('food');
+  if(select){select.add(new Option(name,key));select.value=key;}
+  $('grams').value=100;
+  preview();
+  $('foodCatalogForm').style.display='none';
+  ['catalogName','catalogK','catalogP','catalogC','catalogF'].forEach(id=>$(id).value='');
+  alert('Alimento guardado en el catálogo. Ingresa los gramos y presiona Agregar alimento para registrarlo.');
+}
+
 </script>
 
 
@@ -862,6 +917,24 @@ document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
  let saved='auto';try{saved=localStorage.getItem('fp_view_mode')||'auto'}catch(e){}
  applyView(saved);
 })();
+
+function saveCatalogFood(){
+  const name=$('catalogName').value.trim();
+  const k=+$('catalogK').value||0, p=+$('catalogP').value||0,
+        c=+$('catalogC').value||0, f=+$('catalogF').value||0;
+  if(!name) return alert('Ingresa el nombre del alimento');
+  if(!k&&!p&&!c&&!f) return alert('Ingresa al menos un valor nutricional');
+  const key='custom_'+Date.now();
+  foods[key]={n:name,k,p,c,f};
+  const select=$('food');
+  if(select){select.add(new Option(name,key));select.value=key;}
+  $('grams').value=100;
+  preview();
+  $('foodCatalogForm').style.display='none';
+  ['catalogName','catalogK','catalogP','catalogC','catalogF'].forEach(id=>$(id).value='');
+  alert('Alimento guardado en el catálogo. Ingresa los gramos y presiona Agregar alimento para registrarlo.');
+}
+
 </script>
 
 
@@ -895,6 +968,24 @@ document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
    catch(e){btn.disabled=false;btn.textContent='Cerrar sesión';alert('No se pudo cerrar sesión: '+(e.message||e));}
  });document.addEventListener('keydown',e=>{if(e.key==='Escape')shut()});
 })();
+
+function saveCatalogFood(){
+  const name=$('catalogName').value.trim();
+  const k=+$('catalogK').value||0, p=+$('catalogP').value||0,
+        c=+$('catalogC').value||0, f=+$('catalogF').value||0;
+  if(!name) return alert('Ingresa el nombre del alimento');
+  if(!k&&!p&&!c&&!f) return alert('Ingresa al menos un valor nutricional');
+  const key='custom_'+Date.now();
+  foods[key]={n:name,k,p,c,f};
+  const select=$('food');
+  if(select){select.add(new Option(name,key));select.value=key;}
+  $('grams').value=100;
+  preview();
+  $('foodCatalogForm').style.display='none';
+  ['catalogName','catalogK','catalogP','catalogC','catalogF'].forEach(id=>$(id).value='');
+  alert('Alimento guardado en el catálogo. Ingresa los gramos y presiona Agregar alimento para registrarlo.');
+}
+
 </script>
 
 
@@ -920,6 +1011,24 @@ function smartRefreshMeals(){
  el.innerHTML=list.length?list.map(x=>`<div class="item"><div><b>${x.name.replace(/[<>]/g,'')}</b><div class="muted">${x.foodName} · ${x.grams} g · ${x.meal}</div></div><div style="display:flex;gap:6px"><button onclick="smartUseMeal(${x.id})">Usar</button><button onclick="smartDeleteMeal(${x.id})">×</button></div>`).join(''):'<p class="muted">Aún no tienes comidas favoritas guardadas.</p>';
 }
 document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeals();
+
+function saveCatalogFood(){
+  const name=$('catalogName').value.trim();
+  const k=+$('catalogK').value||0, p=+$('catalogP').value||0,
+        c=+$('catalogC').value||0, f=+$('catalogF').value||0;
+  if(!name) return alert('Ingresa el nombre del alimento');
+  if(!k&&!p&&!c&&!f) return alert('Ingresa al menos un valor nutricional');
+  const key='custom_'+Date.now();
+  foods[key]={n:name,k,p,c,f};
+  const select=$('food');
+  if(select){select.add(new Option(name,key));select.value=key;}
+  $('grams').value=100;
+  preview();
+  $('foodCatalogForm').style.display='none';
+  ['catalogName','catalogK','catalogP','catalogC','catalogF'].forEach(id=>$(id).value='');
+  alert('Alimento guardado en el catálogo. Ingresa los gramos y presiona Agregar alimento para registrarlo.');
+}
+
 </script>
 \n\n<script>\n!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -1248,7 +1357,8 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <button onclick="addFood()">＋ Registrar alimento</button>
-      <button onclick="toggleFoodCatalog()">＋ Agregar alimento</button>
+      <button onclick="addFood()">＋ Agregar alimento</button>
+      <button onclick="toggleFoodCatalog()">＋ Crear alimento personalizado</button>
     </div>
   </div>
 
@@ -1534,10 +1644,46 @@ function chileNowParts(){const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'
 function updateGlobalShiftClock(){const now=new Date();const timeEl=document.getElementById('liveClock'),dateEl=document.getElementById('liveDate'),shiftEl=document.getElementById('todayShift');if(timeEl)timeEl.textContent=new Intl.DateTimeFormat('es-CL',{timeZone:'America/Santiago',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);if(dateEl)dateEl.textContent=new Intl.DateTimeFormat('es-CL',{timeZone:'America/Santiago',weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(now);if(shiftEl){const sh=shiftForDate(chileNowParts());shiftEl.className='pill shift-pill '+sh.cls;shiftEl.textContent='● '+sh.name;}}
 updateGlobalShiftClock();setInterval(updateGlobalShiftClock,1000);
 renderAll();preview();
+
+function saveCatalogFood(){
+  const name=$('catalogName').value.trim();
+  const k=+$('catalogK').value||0, p=+$('catalogP').value||0,
+        c=+$('catalogC').value||0, f=+$('catalogF').value||0;
+  if(!name) return alert('Ingresa el nombre del alimento');
+  if(!k&&!p&&!c&&!f) return alert('Ingresa al menos un valor nutricional');
+  const key='custom_'+Date.now();
+  foods[key]={n:name,k,p,c,f};
+  const select=$('food');
+  if(select){select.add(new Option(name,key));select.value=key;}
+  $('grams').value=100;
+  preview();
+  $('foodCatalogForm').style.display='none';
+  ['catalogName','catalogK','catalogP','catalogC','catalogF'].forEach(id=>$(id).value='');
+  alert('Alimento guardado en el catálogo. Ingresa los gramos y presiona Agregar alimento para registrarlo.');
+}
+
 </script>
 
 <!-- SUPABASE AUTH INTEGRATION -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+function saveCatalogFood(){
+  const name=$('catalogName').value.trim();
+  const k=+$('catalogK').value||0, p=+$('catalogP').value||0,
+        c=+$('catalogC').value||0, f=+$('catalogF').value||0;
+  if(!name) return alert('Ingresa el nombre del alimento');
+  if(!k&&!p&&!c&&!f) return alert('Ingresa al menos un valor nutricional');
+  const key='custom_'+Date.now();
+  foods[key]={n:name,k,p,c,f};
+  const select=$('food');
+  if(select){select.add(new Option(name,key));select.value=key;}
+  $('grams').value=100;
+  preview();
+  $('foodCatalogForm').style.display='none';
+  ['catalogName','catalogK','catalogP','catalogC','catalogF'].forEach(id=>$(id).value='');
+  alert('Alimento guardado en el catálogo. Ingresa los gramos y presiona Agregar alimento para registrarlo.');
+}
+
+</script>
 <script>
 (() => {
   const $ = id => document.getElementById(id);
@@ -1782,6 +1928,24 @@ document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
   };
 });
 
+
+function saveCatalogFood(){
+  const name=$('catalogName').value.trim();
+  const k=+$('catalogK').value||0, p=+$('catalogP').value||0,
+        c=+$('catalogC').value||0, f=+$('catalogF').value||0;
+  if(!name) return alert('Ingresa el nombre del alimento');
+  if(!k&&!p&&!c&&!f) return alert('Ingresa al menos un valor nutricional');
+  const key='custom_'+Date.now();
+  foods[key]={n:name,k,p,c,f};
+  const select=$('food');
+  if(select){select.add(new Option(name,key));select.value=key;}
+  $('grams').value=100;
+  preview();
+  $('foodCatalogForm').style.display='none';
+  ['catalogName','catalogK','catalogP','catalogC','catalogF'].forEach(id=>$(id).value='');
+  alert('Alimento guardado en el catálogo. Ingresa los gramos y presiona Agregar alimento para registrarlo.');
+}
+
 </script>
 
 
@@ -1801,6 +1965,24 @@ document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
  let saved='auto';try{saved=localStorage.getItem('fp_view_mode')||'auto'}catch(e){}
  applyView(saved);
 })();
+
+function saveCatalogFood(){
+  const name=$('catalogName').value.trim();
+  const k=+$('catalogK').value||0, p=+$('catalogP').value||0,
+        c=+$('catalogC').value||0, f=+$('catalogF').value||0;
+  if(!name) return alert('Ingresa el nombre del alimento');
+  if(!k&&!p&&!c&&!f) return alert('Ingresa al menos un valor nutricional');
+  const key='custom_'+Date.now();
+  foods[key]={n:name,k,p,c,f};
+  const select=$('food');
+  if(select){select.add(new Option(name,key));select.value=key;}
+  $('grams').value=100;
+  preview();
+  $('foodCatalogForm').style.display='none';
+  ['catalogName','catalogK','catalogP','catalogC','catalogF'].forEach(id=>$(id).value='');
+  alert('Alimento guardado en el catálogo. Ingresa los gramos y presiona Agregar alimento para registrarlo.');
+}
+
 </script>
 
 
@@ -1834,6 +2016,24 @@ document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
    catch(e){btn.disabled=false;btn.textContent='Cerrar sesión';alert('No se pudo cerrar sesión: '+(e.message||e));}
  });document.addEventListener('keydown',e=>{if(e.key==='Escape')shut()});
 })();
+
+function saveCatalogFood(){
+  const name=$('catalogName').value.trim();
+  const k=+$('catalogK').value||0, p=+$('catalogP').value||0,
+        c=+$('catalogC').value||0, f=+$('catalogF').value||0;
+  if(!name) return alert('Ingresa el nombre del alimento');
+  if(!k&&!p&&!c&&!f) return alert('Ingresa al menos un valor nutricional');
+  const key='custom_'+Date.now();
+  foods[key]={n:name,k,p,c,f};
+  const select=$('food');
+  if(select){select.add(new Option(name,key));select.value=key;}
+  $('grams').value=100;
+  preview();
+  $('foodCatalogForm').style.display='none';
+  ['catalogName','catalogK','catalogP','catalogC','catalogF'].forEach(id=>$(id).value='');
+  alert('Alimento guardado en el catálogo. Ingresa los gramos y presiona Agregar alimento para registrarlo.');
+}
+
 </script>
 
 
@@ -1859,6 +2059,42 @@ function smartRefreshMeals(){
  el.innerHTML=list.length?list.map(x=>`<div class="item"><div><b>${x.name.replace(/[<>]/g,'')}</b><div class="muted">${x.foodName} · ${x.grams} g · ${x.meal}</div></div><div style="display:flex;gap:6px"><button onclick="smartUseMeal(${x.id})">Usar</button><button onclick="smartDeleteMeal(${x.id})">×</button></div>`).join(''):'<p class="muted">Aún no tienes comidas favoritas guardadas.</p>';
 }
 document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeals();
+
+function saveCatalogFood(){
+  const name=$('catalogName').value.trim();
+  const k=+$('catalogK').value||0, p=+$('catalogP').value||0,
+        c=+$('catalogC').value||0, f=+$('catalogF').value||0;
+  if(!name) return alert('Ingresa el nombre del alimento');
+  if(!k&&!p&&!c&&!f) return alert('Ingresa al menos un valor nutricional');
+  const key='custom_'+Date.now();
+  foods[key]={n:name,k,p,c,f};
+  const select=$('food');
+  if(select){select.add(new Option(name,key));select.value=key;}
+  $('grams').value=100;
+  preview();
+  $('foodCatalogForm').style.display='none';
+  ['catalogName','catalogK','catalogP','catalogC','catalogF'].forEach(id=>$(id).value='');
+  alert('Alimento guardado en el catálogo. Ingresa los gramos y presiona Agregar alimento para registrarlo.');
+}
+
 </script>
-\n\n<script>\nfunction sfvGenerate(){\n const input=document.getElementById('sfvFoods');const foods=(input.value||'').trim();if(!foods){input.focus();return;}\n const safe=foods.replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\\\"':'&quot;',"'":'&#39;'}[c]));\n document.getElementById('sfvCaption').textContent='Preparación: '+foods;\n const items=foods.toLowerCase();let emoji='🥗';if(/tost|pan|quesillo|mermelada/.test(items))emoji='🍞';else if(/arroz|at[uú]n|pescado/.test(items))emoji='🍚';else if(/pollo|carne|vacuno/.test(items))emoji='🍗';else if(/yog|fruta|avena/.test(items))emoji='🥣';else if(/huevo/.test(items))emoji='🍳';\n document.getElementById('sfvArt').innerHTML='<svg viewBox="0 0 720 300" role="img" aria-label="Ilustración referencial de '+safe+'" style="width:100%;height:auto;display:block"><defs><linearGradient id="sfvbg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#26392b"/><stop offset="1" stop-color="#0b100d"/></linearGradient><radialGradient id="sfvplate"><stop stop-color="#fffdf5"/><stop offset="1" stop-color="#cbd5c2"/></radialGradient></defs><rect width="720" height="300" rx="18" fill="url(#sfvbg)"/><circle cx="360" cy="150" r="118" fill="#17231a" opacity=".8"/><circle cx="360" cy="145" r="105" fill="url(#sfvplate)"/><circle cx="360" cy="145" r="82" fill="#e6e8dc"/><text x="360" y="170" text-anchor="middle" font-size="94">'+emoji+'</text><text x="360" y="275" text-anchor="middle" font-size="16" fill="#d9f5df">SMART FOOD · REFERENCIA VISUAL</text></svg>';\n document.getElementById('sfvResult').style.display='block';\n}\n</script>\n
+\n\n<script>\nfunction sfvGenerate(){\n const input=document.getElementById('sfvFoods');const foods=(input.value||'').trim();if(!foods){input.focus();return;}\n const safe=foods.replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\\\"':'&quot;',"'":'&#39;'}[c]));\n document.getElementById('sfvCaption').textContent='Preparación: '+foods;\n const items=foods.toLowerCase();let emoji='🥗';if(/tost|pan|quesillo|mermelada/.test(items))emoji='🍞';else if(/arroz|at[uú]n|pescado/.test(items))emoji='🍚';else if(/pollo|carne|vacuno/.test(items))emoji='🍗';else if(/yog|fruta|avena/.test(items))emoji='🥣';else if(/huevo/.test(items))emoji='🍳';\n document.getElementById('sfvArt').innerHTML='<svg viewBox="0 0 720 300" role="img" aria-label="Ilustración referencial de '+safe+'" style="width:100%;height:auto;display:block"><defs><linearGradient id="sfvbg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#26392b"/><stop offset="1" stop-color="#0b100d"/></linearGradient><radialGradient id="sfvplate"><stop stop-color="#fffdf5"/><stop offset="1" stop-color="#cbd5c2"/></radialGradient></defs><rect width="720" height="300" rx="18" fill="url(#sfvbg)"/><circle cx="360" cy="150" r="118" fill="#17231a" opacity=".8"/><circle cx="360" cy="145" r="105" fill="url(#sfvplate)"/><circle cx="360" cy="145" r="82" fill="#e6e8dc"/><text x="360" y="170" text-anchor="middle" font-size="94">'+emoji+'</text><text x="360" y="275" text-anchor="middle" font-size="16" fill="#d9f5df">SMART FOOD · REFERENCIA VISUAL</text></svg>';\n document.getElementById('sfvResult').style.display='block';\n}\n
+function saveCatalogFood(){
+  const name=$('catalogName').value.trim();
+  const k=+$('catalogK').value||0, p=+$('catalogP').value||0,
+        c=+$('catalogC').value||0, f=+$('catalogF').value||0;
+  if(!name) return alert('Ingresa el nombre del alimento');
+  if(!k&&!p&&!c&&!f) return alert('Ingresa al menos un valor nutricional');
+  const key='custom_'+Date.now();
+  foods[key]={n:name,k,p,c,f};
+  const select=$('food');
+  if(select){select.add(new Option(name,key));select.value=key;}
+  $('grams').value=100;
+  preview();
+  $('foodCatalogForm').style.display='none';
+  ['catalogName','catalogK','catalogP','catalogC','catalogF'].forEach(id=>$(id).value='');
+  alert('Alimento guardado en el catálogo. Ingresa los gramos y presiona Agregar alimento para registrarlo.');
+}
+
+</script>\n
 </body></html>
