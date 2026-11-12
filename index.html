@@ -237,7 +237,24 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 .fp-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);z-index:99999;display:none;align-items:center;justify-content:center;padding:18px}
 .fp-modal-backdrop.open{display:flex}.fp-modal{width:min(560px,100%);max-height:90vh;overflow:auto;background:#101511;border:1px solid #53ff55;border-radius:18px;padding:22px;box-shadow:0 0 35px rgba(83,255,85,.18)}
 .fp-modal h2{margin:0 0 8px;color:#53ff55}.fp-modal .muted{color:#91a397}.fp-modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
-</style></head><body>
+</style><style>
+/* Mejora global: reloj y turno compactos en esquina superior derecha */
+.top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
+.top>div:last-child{position:absolute;top:0;right:0;display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:nowrap!important;transform:scale(.82);transform-origin:top right}
+.top .live-clock{margin:0!important;text-align:right!important;font-size:9px!important;letter-spacing:.25px!important;white-space:nowrap}
+.top .live-clock strong{font-size:16px!important;letter-spacing:.5px!important}
+.top .live-clock span:last-child{font-size:9px!important}
+.top .shift-pill{font-size:10px!important;padding:7px 10px!important;white-space:nowrap}
+.top>div:first-child{padding-right:180px}
+@media(max-width:600px){
+ .top{min-height:58px;padding-top:0}
+ .top>div:last-child{transform:scale(.68);right:0;top:0}
+ .top>div:first-child{padding-right:125px}
+ .top .live-clock strong{font-size:15px!important}
+ .top .live-clock span:last-child{display:none}
+}
+</style>
+</head><body>
 
 
 <!-- SUPABASE AUTH INTEGRATION -->
