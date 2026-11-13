@@ -241,7 +241,7 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 /* TRAINING PRO visual reconstruction */
 .training-pro-shell{display:grid;gap:15px}
 .tp-hero{position:relative;overflow:hidden;min-height:245px;border-radius:22px;background:radial-gradient(circle at 75% 25%,#263b2a 0,#111714 38%,#050706 78%);border:1px solid #26352b;padding:24px;display:flex;align-items:flex-end;isolation:isolate}
-.tp-hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.93) 0%,rgba(0,0,0,.62) 48%,rgba(0,0,0,.08) 100%),url('./supplements_banner.webp') center 35%/cover;opacity:.78;z-index:-2}
+.tp-hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.93) 0%,rgba(0,0,0,.62) 48%,rgba(0,0,0,.08) 100%),url('https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&w=1200&q=85') center 35%/cover;opacity:.78;z-index:-2}
 .tp-hero:after{content:"";position:absolute;width:260px;height:330px;right:-90px;bottom:-135px;border:18px solid #7cff00;transform:rotate(28deg);opacity:.38;z-index:-1}
 .tp-hero-copy{max-width:70%;position:relative}.tp-eyebrow{font-size:11px;letter-spacing:2px;color:#8dff28;font-weight:800}.tp-hero h2{font-size:clamp(27px,4vw,42px);font-weight:900;line-height:1;margin:9px 0;text-transform:uppercase;color:#f8fafc}.tp-hero p{margin:0;color:#c7d0c8;font-weight:600}.tp-brand-mini{font-size:12px;font-weight:900;letter-spacing:1px;color:#e7f4e8;margin-bottom:15px}.tp-brand-mini b{color:#8dff28}
 .tp-shift-reco{margin-top:13px;max-width:650px}.tp-shift-kicker{font-size:10px;letter-spacing:2px;color:#8dff28;font-weight:900;margin-bottom:5px}.tp-shift-title{font-size:clamp(17px,2.5vw,25px);font-weight:850;color:#f4f8f5;line-height:1.15;margin-bottom:5px}.tp-shift-desc{font-size:13px;color:#c5d1c9;line-height:1.4;margin-bottom:9px}.tp-shift-tags{display:flex;gap:7px;flex-wrap:wrap}.tp-shift-tag{border:1px solid #477253;background:rgba(19,52,34,.72);color:#9dffbd;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800}.tp-shift-note{font-size:12px;color:#d0ddd4;margin-top:8px;line-height:1.35}
@@ -252,33 +252,18 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 @media(max-width:600px){.tp-hero{min-height:205px;padding:18px}.tp-hero-copy{max-width:78%}.tp-stats{padding:12px 3px}.tp-stat{gap:6px;padding:0 3px;flex-direction:column;text-align:center}.tp-stat strong{font-size:14px}.tp-stat small{font-size:10px}.tp-ex-card{grid-template-columns:85px 1fr 38px;gap:9px;padding:7px;min-height:90px}.tp-ex-img{height:76px}.tp-ex-info strong{font-size:13px}.tp-ex-meta{gap:8px;font-size:10px}.tp-play{width:34px;height:34px;font-size:14px}.tp-start{font-size:16px;padding:16px}}
 
 
-/* Banners locales por sección: Nutrición, Entrenamiento y Suplementos */
-.nutrition-tp-hero:before{
- background:linear-gradient(90deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.48) 48%,rgba(0,0,0,.06) 100%),url('./nutrition_banner.webp') center/cover;
-}
-.training-pro-shell .tp-hero:not(.nutrition-tp-hero):not(.supplements-tp-hero):before{
- background:linear-gradient(90deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.48) 48%,rgba(0,0,0,.06) 100%),url('./training_banner.webp') center/cover;
-}
-.tp-hero.supplements-tp-hero:before{
- background:linear-gradient(90deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.48) 48%,rgba(0,0,0,.06) 100%),url('./supplements_banner.webp') center/cover;
-}
-
-
-/* FIX DEFINITIVO: imágenes visibles en los 3 banners */
-#nutricion .nutrition-tp-hero,
+/* Solicitud: retirar banners de secciones internas; conservar banner principal */
+#nutricion .tp-hero,
 #entrenamiento .tp-hero,
-#suplementos .supplements-tp-hero{
- background-color:#050706 !important;
- background-repeat:no-repeat !important;
- background-position:center center !important;
- background-size:cover !important;
+#suplementos .tp-hero{
+ background-image:none !important;
+ background-color:#101412 !important;
 }
-#nutricion .nutrition-tp-hero{background-image:linear-gradient(90deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.48) 48%,rgba(0,0,0,.08) 100%),url('./nutrition_banner.webp') !important;}
-#entrenamiento .tp-hero{background-image:linear-gradient(90deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.48) 48%,rgba(0,0,0,.08) 100%),url('./training_banner.webp') !important;}
-#suplementos .supplements-tp-hero{background-image:linear-gradient(90deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.48) 48%,rgba(0,0,0,.08) 100%),url('./supplements_banner.webp') !important;}
-#nutricion .nutrition-tp-hero:before,
+#nutricion .tp-hero:before,
 #entrenamiento .tp-hero:before,
-#suplementos .supplements-tp-hero:before{content:none !important;display:none !important;}
+#suplementos .tp-hero:before{
+ content:none !important;display:none !important;background-image:none !important;
+}
 
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
@@ -515,7 +500,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
 </div></section>
 <section id="suplementos" class="section"><div class="sectionHead"><h2>Suplementación</h2><span class="pill">Confirmar consumo</span></div>
-<div class="training-pro-shell"><div class="tp-hero supplements-tp-hero"><div class="tp-hero-copy"><h2>Suplementación</h2><div class="tp-shift-reco"><div class="tp-shift-kicker">RECOMENDACIÓN SEGÚN TURNO</div><div class="tp-shift-title" id="supplementBannerTitle">Hábitos diarios</div><div class="tp-shift-desc" id="supplementBannerDesc">Recordatorios simples para acompañar tu nutrición y recuperación.</div><div class="tp-shift-tags"><span class="tp-shift-tag" id="suppWaterTag">Agua: mantener hidratación</span><span class="tp-shift-tag" id="suppCreatineTag">Creatina: consumo diario</span></div><div class="tp-shift-note" id="suppBannerNote">Omega 3 · Magnesio: según tu rutina de suplementación.</div></div></div></div><div class="card"><div class="formrow three"><label>Suplemento<input id="suppName" placeholder="Ej. Magnesio, Omega 3"></label><label>Dosis<input id="suppDose" placeholder="Ej. 1 cápsula / 5 g"></label><label>Horario<input id="suppTime" placeholder="Ej. desayuno"></label></div><button onclick="addSupp()">＋ Agregar suplemento</button></div><div class="card" style="margin-top:12px"><h3>Lista de suplementos</h3><div id="suppList" class="list"></div></div></section>
+<div class="training-pro-shell"><div class="tp-hero"><div class="tp-hero-copy"><h2>Suplementación</h2><div class="tp-shift-reco"><div class="tp-shift-kicker">RECOMENDACIÓN SEGÚN TURNO</div><div class="tp-shift-title" id="supplementBannerTitle">Hábitos diarios</div><div class="tp-shift-desc" id="supplementBannerDesc">Recordatorios simples para acompañar tu nutrición y recuperación.</div><div class="tp-shift-tags"><span class="tp-shift-tag" id="suppWaterTag">Agua: mantener hidratación</span><span class="tp-shift-tag" id="suppCreatineTag">Creatina: consumo diario</span></div><div class="tp-shift-note" id="suppBannerNote">Omega 3 · Magnesio: según tu rutina de suplementación.</div></div></div></div><div class="card"><div class="formrow three"><label>Suplemento<input id="suppName" placeholder="Ej. Magnesio, Omega 3"></label><label>Dosis<input id="suppDose" placeholder="Ej. 1 cápsula / 5 g"></label><label>Horario<input id="suppTime" placeholder="Ej. desayuno"></label></div><button onclick="addSupp()">＋ Agregar suplemento</button></div><div class="card" style="margin-top:12px"><h3>Lista de suplementos</h3><div id="suppList" class="list"></div></div></section>
 
 <section id="peso" class="section">
 <div class="sectionHead"><h2>Peso y medidas</h2><span class="pill">BODY EVOLUTION PRO</span></div>
