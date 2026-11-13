@@ -263,6 +263,23 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
  background:linear-gradient(90deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.48) 48%,rgba(0,0,0,.06) 100%),url('./supplements_banner.webp') center/cover;
 }
 
+
+/* FIX DEFINITIVO: imágenes visibles en los 3 banners */
+#nutricion .nutrition-tp-hero,
+#entrenamiento .tp-hero,
+#suplementos .supplements-tp-hero{
+ background-color:#050706 !important;
+ background-repeat:no-repeat !important;
+ background-position:center center !important;
+ background-size:cover !important;
+}
+#nutricion .nutrition-tp-hero{background-image:linear-gradient(90deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.48) 48%,rgba(0,0,0,.08) 100%),url('./nutrition_banner.webp') !important;}
+#entrenamiento .tp-hero{background-image:linear-gradient(90deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.48) 48%,rgba(0,0,0,.08) 100%),url('./training_banner.webp') !important;}
+#suplementos .supplements-tp-hero{background-image:linear-gradient(90deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.48) 48%,rgba(0,0,0,.08) 100%),url('./supplements_banner.webp') !important;}
+#nutricion .nutrition-tp-hero:before,
+#entrenamiento .tp-hero:before,
+#suplementos .supplements-tp-hero:before{content:none !important;display:none !important;}
+
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
