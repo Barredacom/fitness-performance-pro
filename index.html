@@ -211,16 +211,16 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 .body-kpi small{display:block;color:var(--muted);font-size:11px}
 .body-kpi strong{display:block;font-size:clamp(20px,3vw,28px);margin:6px 0;color:#53ff9a}
 .body-kpi em{font-style:normal;color:#9bad9f;font-size:12px}
-.body-charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
-.body-chart-card{background:linear-gradient(145deg,#121a14,#0b100d);border:1px solid var(--line);border-radius:15px;padding:15px;min-width:0}
-.body-chart-card h3{margin:0 0 8px}
-.body-goals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
-.goal-line{height:9px;background:#263329;border-radius:99px;overflow:hidden;margin:9px 0}
-.goal-line span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#31c96b,#53ff9a)}
-.goal-line.blue span{background:linear-gradient(90deg,#1689d8,#53d7ff)}
-.body-chart{height:210px;width:100%;overflow:hidden}
-.body-chart svg{width:100%;height:100%;display:block}
-@media(max-width:760px){.body-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.body-charts,.body-goals{grid-template-columns:1fr}}
+
+
+
+
+
+
+
+
+
+@media(max-width:760px){.body-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.body-charts,}
 
 
 
@@ -495,14 +495,6 @@ document.addEventListener('DOMContentLoaded',function(){
  <div class="body-kpi"><small>PROMEDIO 7 DÍAS</small><strong id="bodyWeeklyAvg">—</strong><em>Registros de peso</em></div>
  <div class="body-kpi"><small>HASTA META 80 KG</small><strong id="bodyTo80">—</strong><em id="bodyTo75">Meta final: —</em></div>
 </div>
-<div class="body-charts">
- <div class="body-chart-card"><h3>⚖️ Evolución del peso</h3><div id="bodyWeightChart" class="body-chart"></div><small class="muted">Historial de mediciones registradas</small></div>
- <div class="body-chart-card"><h3>📏 Evolución de cintura</h3><div id="bodyWaistChart" class="body-chart"></div><small class="muted">Historial de medidas registradas</small></div>
-</div>
-<div class="body-goals">
- <div class="body-chart-card"><h3>Meta intermedia · 80 kg</h3><strong id="goal80Label" class="green">—</strong><div class="goal-line"><span id="goal80Bar" style="width:0%"></span></div><small id="goal80Sub" class="muted">Progreso calculado desde el peso inicial</small></div>
- <div class="body-chart-card"><h3>Meta final · 75 kg</h3><strong id="goal75Label" class="blue">—</strong><div class="goal-line blue"><span id="goal75Bar" style="width:0%"></span></div><small id="goal75Sub" class="muted">Progreso calculado desde el peso inicial</small></div>
-</div>
 <div class="card" style="margin-top:12px"><h3>＋ Registrar medición</h3><div class="formrow three"><label>Peso (kg)<input id="weight" type="number" step=".1" min="1" placeholder="82.3"></label><label>Cintura (cm)<input id="waist" type="number" step=".1" min="1" placeholder="95"></label><label>Fecha<input id="measureDate" type="date"></label></div><button onclick="addMeasure()">＋ Guardar medición</button></div>
 <div class="card" style="margin-top:12px"><div class="sectionHead"><h3>Historial de mediciones</h3><span class="pill" id="measureCount">0 registros</span></div><div id="measureList" class="list"></div></div>
 </section>
@@ -684,32 +676,8 @@ function renderBodyEvolution(){
  $('bodyWeeklyAvg').textContent=last7.length?(last7.reduce((s,x)=>s+Number(x.weight),0)/last7.length).toFixed(1)+' kg':'—';
  $('bodyTo80').textContent=w?Math.max(0,Number(w.weight)-80).toFixed(1)+' kg':'—';
  $('bodyTo75').textContent=w?'Restan '+Math.max(0,Number(w.weight)-75).toFixed(1)+' kg':'Meta final: —';
- const initial=weights.length?Number(weights[0].weight):null, current=w?Number(w.weight):null;
- function goal(target,idLabel,idBar,idSub){
-  if(initial===null||current===null){$(idLabel).textContent='—';$(idBar).style.width='0%';$(idSub).textContent='Registra peso para calcular';return}
-  const total=Math.max(.1,initial-target),done=Math.max(0,initial-current),pct=Math.min(100,Math.max(0,done/total*100));
-  $(idLabel).textContent=pct.toFixed(0)+'% completado';$(idBar).style.width=pct+'%';
-  $(idSub).textContent=current<=target?'¡Meta alcanzada!':(current-target).toFixed(1)+' kg para llegar · desde '+initial.toFixed(1)+' kg';
- }
- goal(80,'goal80Label','goal80Bar','goal80Sub');goal(75,'goal75Label','goal75Bar','goal75Sub');
  $('measureCount').textContent=rows.length+' registros';
- drawBodyChart('bodyWeightChart',weights,'weight','kg','#53ff9a');
- drawBodyChart('bodyWaistChart',waists,'waist','cm','#53d7ff');
 }
-function drawBodyChart(id,data,key,unit,color){
- const el=$(id);if(!data.length){el.innerHTML='<p class="muted">Registra '+(key==='weight'?'peso':'cintura')+' para visualizar la evolución.</p>';return}
- const vals=data.map(x=>Number(x[key])),lo=Math.min(...vals),hi=Math.max(...vals),pad=Math.max((hi-lo)*.18, key==='weight'?.5:1),min=lo-pad,max=hi+pad;
- const x=i=>30+i*340/Math.max(1,vals.length-1),y=v=>165-(v-min)/(max-min)*125;
- const pts=vals.map((v,i)=>x(i)+','+y(v)).join(' ');
- const labels=data.length>1?[data[0].date.slice(5),data[data.length-1].date.slice(5)]:[data[0].date.slice(5)];
- el.innerHTML=`<svg viewBox="0 0 400 205" preserveAspectRatio="none" role="img" aria-label="Evolución de ${key}">
- <g stroke="#263329" stroke-dasharray="4 4"><path d="M25 40H380M25 100H380M25 165H380"/></g>
- <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
- ${vals.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="3.5" fill="${color}"/>`).join('')}
- <text x="27" y="25" fill="#9bad9f" font-size="11">${max.toFixed(1)} ${unit}</text><text x="27" y="190" fill="#9bad9f" font-size="11">${min.toFixed(1)} ${unit}</text>
- <text x="30" y="203" fill="#9bad9f" font-size="10">${labels[0]}</text><text x="340" y="203" fill="#9bad9f" font-size="10" text-anchor="end">${labels[labels.length-1]}</text></svg>`;
-}
-
 const EXERCISE_LIBRARY={
 'Pecho':[['Press de pecho en Home Gym','Máquina · 3×8–12'],['Press con mancuernas en banco','Mancuernas 6/10 kg · 3×8–12'],['Aperturas con mancuernas','Banco + mancuernas · 3×10–15'],['Flexiones','Peso corporal · 2–3×8–15']],
 'Espalda':[['Jalón al pecho','Home Gym · 3×8–12'],['Remo sentado','Home Gym · 3×8–12'],['Remo unilateral','Mancuerna 10 kg · 3×10–12/lado'],['Pullover','Mancuerna · 2–3×10–12']],
