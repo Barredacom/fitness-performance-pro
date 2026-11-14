@@ -235,7 +235,7 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 
 /* Modal alimento personalizado */
 .fp-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);z-index:99999;display:none;align-items:center;justify-content:center;padding:18px}
-.fp-modal-backdrop.open{display:flex}.fp-modal{width:min(560px,100%);max-height:90vh;overflow:auto;background:#101511;border:1px solid #53ff55;border-radius:18px;padding:22px;box-shadow:0 0 35px rgba(83,255,85,.18)}
+.fp-modal-backdrop.open{display:flex}.fp-modal{width:min(440px,100%);max-height:82vh;overflow:auto;background:#101511;border:1px solid #A4FF28;border-radius:16px;padding:14px;box-shadow:0 0 28px rgba(164,255,40,.14)}.fp-modal h2{font-size:1.05rem}.fp-modal .muted{font-size:.78rem;line-height:1.35;margin:4px 0 10px}.fp-modal .formrow{gap:8px}.fp-modal label{font-size:.78rem}.fp-modal input,.fp-modal select{padding:9px;font-size:.9rem}.fp-modal-actions{margin-top:10px}.fp-modal-actions button{padding:10px 14px;border-radius:10px}@media(max-width:520px){.fp-modal-backdrop{padding:10px;align-items:center}.fp-modal{max-height:78vh;padding:12px;border-radius:14px}}
 .fp-modal h2{margin:0 0 8px;color:#53ff55}.fp-modal .muted{color:#91a397}.fp-modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
 
 /* TRAINING PRO visual reconstruction */
@@ -551,8 +551,32 @@ function tab(id){document.querySelectorAll('.section').forEach(s=>s.classList.to
 
 // Catálogo personal persistente
 const CUSTOM_FOODS_KEY='fp_custom_foods_v1';
+function updateCatalogUnitLabels(){const u=$('catalogUnit')?.value||'g';$('catalogUnitLabel').textContent=u;document.querySelectorAll('.unitLabel').forEach(e=>e.textContent=u);}
+function useManualFood(){ $('catalogSearchStatus').textContent='Completa los nutrientes según la etiqueta del producto.'; $('catalogName').value=$('catalogSearch').value.trim(); $('catalogK').focus(); }
+async function searchOpenFoodFacts(){
+ const q=$('catalogSearch').value.trim(),status=$('catalogSearchStatus'),results=$('catalogSearchResults');
+ if(!q){status.textContent='Escribe el nombre o marca del alimento.';return;}
+ status.textContent='Buscando productos…';results.innerHTML='';
+ try{
+  const url='https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(q)+'&search_simple=1&action=process&json=1&page_size=8&fields=code,product_name,brands,nutriments,quantity';
+  const r=await fetch(url,{headers:{Accept:'application/json'}});if(!r.ok)throw new Error('HTTP '+r.status);
+  const data=await r.json(),items=(data.products||[]).filter(p=>p.product_name&&p.nutriments);
+  if(!items.length){status.textContent='No se encontraron resultados. Puedes ingresar los valores manualmente.';return;}
+  status.textContent='Selecciona el producto correcto:';
+  results.innerHTML=items.map((p,i)=>`<button type="button" class="catalog-result" style="display:block;width:100%;text-align:left;margin:5px 0;padding:9px;border:1px solid #344334;border-radius:9px;background:#172017;color:#edf7ef" onclick="selectOpenFoodFacts(${i})"><b>${escapeHtml(p.product_name)}</b><small style="display:block;color:#91a397">${escapeHtml(p.brands||'Marca no indicada')} · ${escapeHtml(p.quantity||'')}</small></button>`).join('');
+  window.fpOFFResults=items;
+ }catch(e){status.textContent='No se pudo conectar al catálogo. Revisa internet o ingresa los valores manualmente.';console.warn('Open Food Facts',e);}
+}
+function selectOpenFoodFacts(i){
+ const p=window.fpOFFResults?.[i];if(!p)return;const n=p.nutriments||{};
+ const val=(...keys)=>{for(const k of keys){const x=n[k];if(x!==undefined&&x!==null&&Number.isFinite(+x))return +x;}return 0;};
+ $('catalogName').value=[p.product_name,p.brands].filter(Boolean).join(' · ');
+ $('catalogUnit').value='g';$('catalogK').value=val('energy-kcal_100g','energy-kcal_value');$('catalogP').value=val('proteins_100g');$('catalogC').value=val('carbohydrates_100g');$('catalogF').value=val('fat_100g');updateCatalogUnitLabels();
+ $('catalogSearchStatus').textContent='Valores importados por 100 g. Verifica la etiqueta antes de guardar.';
+ $('catalogSearchResults').innerHTML='';
+}
 function loadCustomFoods(){try{const arr=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');arr.forEach((f,i)=>{foods[f.key||('custom_'+i)]={n:f.n,k:+f.k,p:+f.p,c:+f.c,f:+f.f,unit:f.unit||'g'};});}catch(e){console.warn('No se pudo cargar catálogo personal',e)}}
-function toggleFoodCatalog(show){const modal=$('customFoodModal');if(!modal)return;const open=show===undefined?!modal.classList.contains('open'):!!show;modal.classList.toggle('open',open);if(open){$('catalogName').focus();}else{}}
+function toggleFoodCatalog(show){const modal=$('customFoodModal');if(!modal)return;const open=show===undefined?!modal.classList.contains('open'):!!show;modal.classList.toggle('open',open);if(open){$('catalogSearch').focus();updateCatalogUnitLabels();}else{}}
 function saveCatalogFood(){const n=$('catalogName').value.trim(),k=+$('catalogK').value,p=+$('catalogP').value,c=+$('catalogC').value,f=+$('catalogF').value;if(!n)return alert('Ingresa el nombre del alimento');if(['catalogK','catalogP','catalogC','catalogF'].some(id=>$(id).value===''||+$(id).value<0))return alert('Completa los valores nutricionales con números iguales o mayores a 0');const key='custom_'+Date.now();const unit=$('catalogUnit').value;const item={key,n,k,p,c,f,unit};foods[key]={n,k,p,c,f,unit};const list=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');list.push(item);localStorage.setItem(CUSTOM_FOODS_KEY,JSON.stringify(list));loadFoodCatalog();$('food').value=key;$('grams').value=100;preview();toggleFoodCatalog(false);['catalogName','catalogK','catalogP','catalogC','catalogF'].forEach(id=>$(id).value='');alert('Alimento guardado en tu catálogo personal y seleccionado.');}
 
 loadCustomFoods();
@@ -1095,8 +1119,11 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
 (function(){const sw=document.getElementById('tpWarmSwitch');if(sw)sw.addEventListener('click',()=>{const on=sw.classList.toggle('on');sw.setAttribute('aria-pressed',String(on));sw.setAttribute('aria-label',on?'Activar calentamiento':'Desactivar calentamiento');const card=document.querySelector('.tp-ex-card');if(card)card.style.opacity=on?'1':'.55'});const st=document.getElementById('tpStartWorkout');if(st)st.addEventListener('click',()=>{const d=document.getElementById('duration');if(d&&!d.value)d.value=45;const date=document.getElementById('workDate');if(date&&!date.value)date.value=new Date().toISOString().slice(0,10);if(typeof addWorkout==='function')addWorkout();});})();
 </script>
 <div id="customFoodModal" class="fp-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="customFoodTitle" onclick="if(event.target===this)toggleFoodCatalog(false)">
- <div class="fp-modal"><h2 id="customFoodTitle">＋ Crear alimento personalizado</h2><p class="muted">Selecciona cómo medirás el alimento (g o ml). Las calorías se expresan en kcal y proteínas, carbohidratos y grasas siempre en gramos (g), por cada 100 g o 100 ml del alimento.</p>
- <div class="formrow two"><label>Unidad de medida<select id="catalogUnit"><option value="g">Gramos (g)</option><option value="ml">Mililitros (ml)</option></select></label><label>Nombre del alimento<input id="catalogName" placeholder="Ej. Yogurt Protein" maxlength="70"></label></div>
- <div class="formrow two"><label>Calorías por 100 <span id="catalogUnitLabel">g</span><input id="catalogK" type="number" min="0" step="0.1" placeholder="kcal"></label><label>Proteínas (g) por 100 <span class="unitLabel">g</span><input id="catalogP" type="number" min="0" step="0.1" placeholder="g"></label><label>Carbohidratos (g) por 100 <span class="unitLabel">g</span><input id="catalogC" type="number" min="0" step="0.1" placeholder="g"></label><label>Grasas (g) por 100 <span class="unitLabel">g</span><input id="catalogF" type="number" min="0" step="0.1" placeholder="g"></label></div>
- <div class="fp-modal-actions"><button type="button" onclick="toggleFoodCatalog(false)">Cancelar</button><button type="button" onclick="saveCatalogFood()">Guardar alimento</button></div></div></div>
-</body></html>
+ <div class="fp-modal"><h2 id="customFoodTitle">＋ Alimento personalizado</h2>
+ <p class="muted">Busca el producto para importar sus nutrientes; si no aparece, completa los valores manualmente.</p>
+ <label>Buscar alimento / marca<input id="catalogSearch" placeholder="Ej. Pan integral Vivo" maxlength="90"></label>
+ <div style="display:flex;gap:7px;margin:7px 0"><button type="button" onclick="searchOpenFoodFacts()" style="flex:1">Buscar en catálogo online</button><button type="button" onclick="useManualFood()" style="flex:1">Ingreso manual</button></div>
+ <div id="catalogSearchStatus" class="muted" aria-live="polite"></div><div id="catalogSearchResults"></div>
+ <div class="formrow two"><label>Nombre<input id="catalogName" placeholder="Nombre del alimento" maxlength="70"></label><label>Unidad base<select id="catalogUnit" onchange="updateCatalogUnitLabels()"><option value="g">Gramos (g)</option><option value="ml">Mililitros (ml)</option></select></label></div>
+ <div class="formrow two"><label>Kcal por 100 <span id="catalogUnitLabel">g</span><input id="catalogK" type="number" min="0" step="0.1" placeholder="kcal"></label><label>Proteína (g)<input id="catalogP" type="number" min="0" step="0.1" placeholder="g"></label><label>Carbohidratos (g)<input id="catalogC" type="number" min="0" step="0.1" placeholder="g"></label><label>Grasas (g)<input id="catalogF" type="number" min="0" step="0.1" placeholder="g"></label></div>
+ <div class="fp-modal-actions"><button type="button" onclick="toggleFoodCatalog(false)">Cancelar</button><button type="button" onclick="saveCa
