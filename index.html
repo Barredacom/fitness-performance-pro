@@ -259,6 +259,33 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 .fp-custom-qty{background:#0b0e0b;border:1px solid #29372a;border-radius:12px;padding:10px;margin:8px 0 12px}.fp-custom-qty-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.fp-custom-qty input[type=range]{width:100%;accent-color:#A4FF28;margin:10px 0}.fp-custom-qty input[type=number]{width:90px}
 .fp-custom-macros{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}.fp-custom-macro{background:#171d17;border:1px solid #2b3a2c;border-radius:10px;padding:10px;min-width:0}.fp-custom-macro label{display:block;font-size:.82rem;color:#91a397;margin-bottom:5px}.fp-custom-macro input{width:100%;min-width:0;box-sizing:border-box}
 .fp-custom-results{display:grid;gap:6px;max-height:145px;overflow:auto;margin:6px 0}.fp-custom-result{width:100%;text-align:left;background:#172017;border:1px solid #344334;border-radius:9px;padding:9px;color:#edf7ef}.fp-custom-result small{display:block;color:#91a397;margin-top:3px}.fp-custom-status{font-size:.82rem;color:#91a397;margin:5px 0}
+
+/* FIX slider cantidad modal: control táctil visible y arrastrable */
+.fp-custom-qty input[type="range"]{
+  -webkit-appearance:none!important;appearance:none!important;
+  display:block;width:100%!important;height:12px!important;
+  padding:0!important;margin:18px 0 12px!important;
+  border:0!important;border-radius:999px!important;
+  background:linear-gradient(90deg,#A4FF28 0%,#A4FF28 10%,#26352a 10%,#26352a 100%)!important;
+  accent-color:#A4FF28!important;cursor:pointer!important;
+  touch-action:pan-y!important;pointer-events:auto!important;
+}
+.fp-custom-qty input[type="range"]::-webkit-slider-runnable-track{
+  height:8px;border-radius:999px;background:transparent;border:1px solid #d8d8d8;
+}
+.fp-custom-qty input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:26px;height:26px;
+  margin-top:-10px;border-radius:50%;background:#A4FF28;
+  border:3px solid #101410;box-shadow:0 0 0 2px #A4FF28;
+}
+.fp-custom-qty input[type="range"]::-moz-range-track{
+  height:8px;border-radius:999px;background:#26352a;border:1px solid #d8d8d8;
+}
+.fp-custom-qty input[type="range"]::-moz-range-thumb{
+  width:20px;height:20px;border-radius:50%;background:#A4FF28;
+  border:3px solid #101410;box-shadow:0 0 0 2px #A4FF28;
+}
+
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
@@ -561,7 +588,7 @@ const CUSTOM_FOODS_KEY='fp_custom_foods_v1';
 let customFoodUnit='g';
 function setCustomFoodUnit(u){customFoodUnit=u;[['g','customUnitG'],['ml','customUnitMl'],['unit','customUnitEach']].forEach(([v,id])=>$(id).classList.toggle('active',v===u));const max=u==='unit'?100:1000;$('customQuantity').max=max;$('customQuantityRange').max=max;syncCustomQuantity();}
 function syncCustomQuantity(){const n=$('customQuantity'),r=$('customQuantityRange');if(!n||!r)return;const v=Math.max(1,Math.min(+r.max,+n.value||1));n.value=v;r.value=v;$('customQtyLabel').textContent='Cantidad: '+v+' '+(customFoodUnit==='g'?'g':customFoodUnit==='ml'?'ml':'unidades');const pct=(v-1)/((+r.max)-1||1)*100;r.style.background=`linear-gradient(90deg,#A4FF28 0%,#A4FF28 ${pct}%,#26352a ${pct}%,#26352a 100%)`;}
-$('customQuantity').addEventListener('input',syncCustomQuantity);$('customQuantityRange').addEventListener('input',()=>{$('customQuantity').value=$('customQuantityRange').value;syncCustomQuantity();});
+$('customQuantity').addEventListener('input',syncCustomQuantity);$('customQuantityRange').addEventListener('input',()=>{const v=$('customQuantityRange').value;$('customQuantity').value=v;$('customQtyLabel').textContent='Cantidad: '+v+' '+(customFoodUnit==='g'?'g':customFoodUnit==='ml'?'ml':'unidades');});
 function escCatalog(x){return String(x||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 async function searchChileFoods(){const q=$('catalogSearch').value.trim(),st=$('catalogSearchStatus'),box=$('catalogSearchResults');if(!q){st.textContent='Escribe nombre o marca.';return;}st.textContent='Buscando productos registrados en Chile…';box.innerHTML='';try{const url='https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(q)+'&search_simple=1&action=process&json=1&page_size=12&tagtype_0=countries&tag_contains_0=contains&tag_0=chile&fields=product_name,brands,quantity,nutriments,countries_tags';const res=await fetch(url,{headers:{Accept:'application/json'}});if(!res.ok)throw Error('HTTP '+res.status);const data=await res.json(),items=(data.products||[]).filter(x=>x.product_name&&x.nutriments);window.chileFoodResults=items;if(!items.length){st.textContent='Sin resultados registrados en Chile. Puedes ingresar los datos manualmente.';return;}st.textContent='Selecciona el producto correcto:';box.innerHTML=items.map((x,i)=>`<button type="button" class="fp-custom-result" onclick="selectChileFood(${i})"><b>${escCatalog(x.product_name)}</b><small>${escCatalog(x.brands||'Marca no indicada')} · ${escCatalog(x.quantity||'')}</small></button>`).join('');}catch(e){st.textContent='No se pudo consultar el catálogo. Revisa internet o ingresa manualmente.';console.warn('Catálogo Chile',e);}}
 function selectChileFood(i){const x=window.chileFoodResults?.[i];if(!x)return;const n=x.nutriments||{};$('catalogName').value=[x.product_name,x.brands].filter(Boolean).join(' · ');$('catalogK').value=Number(n['energy-kcal_100g']??n['energy-kcal_value']??0);$('catalogP').value=Number(n.proteins_100g||0);$('catalogC').value=Number(n.carbohydrates_100g||0);$('catalogF').value=Number(n.fat_100g||0);setCustomFoodUnit('g');$('catalogSearchStatus').textContent='Importado por 100 g. Confirma los datos con la etiqueta.';$('catalogSearchResults').innerHTML='';}
