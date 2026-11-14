@@ -410,61 +410,16 @@ document.addEventListener('DOMContentLoaded',function(){
 <div class="tp-hero nutrition-tp-hero"><div class="tp-hero-copy"><h2>Nutrición</h2><div class="tp-shift-reco"><div class="tp-shift-kicker">RECOMENDACIÓN SEGÚN TURNO</div><div class="tp-shift-title">Alimentación equilibrada y sostenida</div><div class="tp-shift-desc">Organiza tus comidas según tu jornada y prioriza energía, saciedad y recuperación.</div><div class="tp-shift-tags"><span class="tp-shift-tag">Objetivo: 1.800–2.000 kcal</span><span class="tp-shift-tag">Proteína: 120–130 g/día</span></div><div class="tp-shift-note">Hidratación constante y comidas de buena calidad durante el día.</div></div></div>
 </div>
 
-  <div class="sectionHead">
-    <h2>Nutrición inteligente</h2>
-    <span class="pill">Alimento + gramos → macros y kcal</span>
+  <!-- Nutrición simplificada: estructura técnica oculta temporalmente para mantener compatibilidad con el JavaScript existente -->
+  <div id="nutritionTechnicalSupport" hidden>
+    <select id="food"></select>
+    <input id="grams" type="number" value="100" min="1">
+    <select id="meal"><option>Desayuno</option><option>Almuerzo</option><option>Cena</option><option>Colación</option></select>
+    <input id="foodDate" type="date">
+    <span id="previewK">0 kcal</span><span id="previewP">0 g</span><span id="previewCF">0 / 0 g</span>
+    <div id="mealDraftList"></div><span id="mealDraftTotals">0 kcal · P 0 · C 0 · G 0</span>
+    <div id="foodList"></div><span id="foodTotals">0 kcal · P 0 · C 0 · G 0</span>
   </div>
-
-  <div class="card">
-    <div class="formrow">
-      <label>Alimento
-        <select id="food"></select>
-      </label>
-      <label>Gramos
-        <input id="grams" type="number" value="100" min="1">
-      </label>
-      <label>Comida
-        <select id="meal">
-          <option>Desayuno</option>
-          <option>Almuerzo</option>
-          <option>Cena</option>
-          <option>Colación</option>
-        </select>
-      </label>
-      <label>Fecha
-        <input id="foodDate" type="date">
-      </label>
-    </div>
-
-    <div class="kpis">
-      <div>Calorías estimadas <b id="previewK">0 kcal</b></div>
-      <div>Proteína <b id="previewP">0 g</b></div>
-      <div>Carbohidratos / grasas <b id="previewCF">0 / 0 g</b></div>
-    </div>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button type="button" onclick="addFoodToMeal()">＋ Agregar a la comida</button>
-      <button type="button" onclick="registerMeal()">✓ Registrar comida completa</button>
-      <button type="button" onclick="toggleFoodCatalog()">＋ Crear alimento personalizado</button>
-    </div>
-  </div>
-
-  <div class="card" style="margin-top:12px">
-    <h3>Comida en preparación</h3>
-    <p class="muted">Agrega varios alimentos y registra todo junto.</p>
-    <div id="mealDraftList" class="list"><p class="muted">Aún no agregas alimentos.</p></div>
-    <div class="item"><b>Total de la comida</b><b id="mealDraftTotals">0 kcal · P 0 · C 0 · G 0</b></div>
-  </div>
-
-  <div class="card" style="margin-top:12px">
-    <h3>Registros del día</h3>
-    <div id="foodList" class="list"></div>
-    <div class="item">
-      <b>Total diario</b>
-      <b id="foodTotals">0 kcal · P 0 · C 0 · G 0</b>
-    </div>
-  </div>
-
 
 </section>
 
