@@ -233,15 +233,6 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 .training-adaptive-head{display:flex;flex-direction:column;gap:7px}.training-kicker{font-size:11px;letter-spacing:1.4px;color:#67f5a6;font-weight:800}.training-adaptive-head strong{font-size:22px;color:#f3fff7}.training-adaptive-head p{margin:0;line-height:1.45}.training-adaptive-stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.training-adaptive-stats span{border:1px solid #315b49;background:#142c22;color:#a5ffca;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:700}.training-recovery{margin:12px 0 0;color:#c6d6cc;font-size:13px;line-height:1.45}
 
 
-/* Interior compacto alimento personalizado; conserva dimensiones/posición originales del modal */
-.fp-food-search{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:stretch;margin:8px 0}
-.fp-food-search button,.fp-food-mode button{border:1px solid #34513a;background:#17251a;color:#dff5e4;border-radius:12px;padding:10px 13px;font-weight:700}
-.fp-food-mode{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.fp-food-mode button.active{border-color:#A4FF28;color:#A4FF28;background:#1b2b17}
-.fp-food-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:10px}
-.fp-food-fields label{display:block;min-width:0}.fp-food-fields input,.fp-food-fields select{width:100%;box-sizing:border-box}
-.fp-food-results{display:grid;gap:6px;margin:7px 0;max-height:150px;overflow:auto}.fp-food-results button{width:100%;text-align:left;background:#151d17;border:1px solid #344334;color:#eef7ef;border-radius:10px;padding:9px}
-@media(max-width:480px){.fp-food-fields{gap:7px}.fp-food-search button{padding:9px 10px}}
-
 /* Modal alimento personalizado */
 .fp-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);z-index:99999;display:none;align-items:center;justify-content:center;padding:18px}
 .fp-modal-backdrop.open{display:flex}.fp-modal{width:min(560px,100%);max-height:90vh;overflow:auto;background:#101511;border:1px solid #53ff55;border-radius:18px;padding:22px;box-shadow:0 0 35px rgba(83,255,85,.18)}
@@ -561,11 +552,30 @@ function tab(id){document.querySelectorAll('.section').forEach(s=>s.classList.to
 // Catálogo personal persistente
 const CUSTOM_FOODS_KEY='fp_custom_foods_v1';
 function loadCustomFoods(){try{const arr=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');arr.forEach((f,i)=>{foods[f.key||('custom_'+i)]={n:f.n,k:+f.k,p:+f.p,c:+f.c,f:+f.f,unit:f.unit||'g'};});}catch(e){console.warn('No se pudo cargar catálogo personal',e)}}
-function toggleFoodCatalog(show){const modal=$('customFoodModal');if(!modal)return;const open=show===undefined?!modal.classList.contains('open'):!!show;modal.classList.toggle('open',open);if(open){setTimeout(()=> $('catalogSearch').focus(),40);updateCatalogUnitLabels();}}
-function updateCatalogUnitLabels(){const u=$('catalogUnit')?.value||'g';const el=$('catalogUnitLabel');if(el)el.textContent=u;}
-function fpEsc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-async function searchOpenFoodFacts(){const q=$('catalogSearch').value.trim(),st=$('catalogSearchStatus'),box=$('catalogSearchResults');if(!q){st.textContent='Escribe un alimento o marca.';return;}st.textContent='Buscando…';box.innerHTML='';try{const u='https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(q)+'&search_simple=1&action=process&json=1&page_size=8&fields=code,product_name,brands,nutriments,quantity';const r=await fetch(u);if(!r.ok)throw Error('HTTP '+r.status);const d=await r.json();window.fpFoodSearchResults=(d.products||[]).filter(x=>x.product_name&&x.nutriments);if(!window.fpFoodSearchResults.length){st.textContent='Sin resultados. Puedes ingresar los valores de la etiqueta.';return;}st.textContent='Selecciona el producto correcto:';box.innerHTML=window.fpFoodSearchResults.map((x,i)=>`<button type="button" onclick="selectOpenFoodFacts(${i})"><strong>${fpEsc(x.product_name)}</strong><small style="display:block;color:#91a397">${fpEsc(x.brands||'Marca no indicada')} · ${fpEsc(x.quantity||'')}</small></button>`).join('');}catch(e){st.textContent='No se pudo consultar el catálogo. Revisa internet o ingresa los datos manualmente.';console.warn('Open Food Facts',e);}}
-function selectOpenFoodFacts(i){const x=window.fpFoodSearchResults?.[i];if(!x)return;const n=x.nutriments||{},get=(...k)=>{for(const a of k)if(n[a]!=null&&Number.isFinite(+n[a]))return +n[a];return 0;};$('catalogName').value=[x.product_name,x.brands].filter(Boolean).join(' · ');$('catalogUnit').value='g';$('catalogK').value=get('energy-kcal_100g');$('catalogP').value=get('proteins_100g');$('catalogC').value=get('carbohydrates_100g');$('catalogF').value=get('fat_100g');updateCatalogUnitLabels();$('catalogSearchStatus').textContent='Datos importados por 100 g. Verifica la etiqueta del producto.';$('catalogSearchResults').innerHTML='';}
+function toggleFoodCatalog(show){const modal=$('customFoodModal');if(!modal)return;const open=show===undefined?!modal.classList.contains('open'):!!show;modal.classList.toggle('open',open);if(open){$('catalogSearch').focus();}else{}}
+function searchChileFoods(){
+ const q=$('catalogSearch').value.trim(),status=$('catalogSearchStatus'),box=$('catalogSearchResults');
+ if(!q){status.textContent='Escribe alimento o marca chilena.';return;}
+ status.textContent='Buscando productos registrados para Chile…';box.innerHTML='';
+ fetch('https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(q)+'&countries_tags=chile&action=process&json=1&page_size=10&fields=code,product_name,brands,nutriments,quantity,countries_tags')
+ .then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json()})
+ .then(data=>{
+  const arr=(data.products||[]).filter(x=>x.product_name&&x.nutriments);
+  window.fpChileProducts=arr;
+  if(!arr.length){status.textContent='Sin coincidencias para Chile. Puedes completar desde la etiqueta.';return;}
+  status.textContent='Resultados de productos registrados en Chile. Verifica marca y variedad.';
+  box.innerHTML=arr.map((x,i)=>'<button type="button" class="catalog-result" onclick="chooseChileFood('+i+')" style="display:block;width:100%;text-align:left;margin:5px 0;padding:9px;border:1px solid #354438;border-radius:9px;background:#172119;color:#eaf2e7"><b>'+escapeHtml(x.product_name)+'</b><small style="display:block;color:#9ba69e">'+escapeHtml(x.brands||'Marca no informada')+' · '+escapeHtml(x.quantity||'')+'</small></button>').join('');
+ }).catch(e=>{status.textContent='No se pudo consultar el catálogo chileno. Revisa conexión o ingresa manualmente.';console.warn(e)});
+}
+function chooseChileFood(i){
+ const x=window.fpChileProducts?.[i];if(!x)return;const n=x.nutriments||{};
+ const num=(...keys)=>{for(const k of keys){if(n[k]!=null&&Number.isFinite(Number(n[k])))return Number(n[k]);}return 0};
+ $('catalogName').value=[x.product_name,x.brands].filter(Boolean).join(' - ');
+ $('catalogUnit').value='g';$('catalogUnitLabel').textContent='g';
+ $('catalogK').value=num('energy-kcal_100g');$('catalogP').value=num('proteins_100g');$('catalogC').value=num('carbohydrates_100g');$('catalogF').value=num('fat_100g');
+ $('catalogSearchStatus').textContent='Datos por 100 g importados. Confirma con la etiqueta del envase.';
+ $('catalogSearchResults').innerHTML='';
+}
 function saveCatalogFood(){const n=$('catalogName').value.trim(),k=+$('catalogK').value,p=+$('catalogP').value,c=+$('catalogC').value,f=+$('catalogF').value;if(!n)return alert('Ingresa el nombre del alimento');if(['catalogK','catalogP','catalogC','catalogF'].some(id=>$(id).value===''||+$(id).value<0))return alert('Completa los valores nutricionales con números iguales o mayores a 0');const key='custom_'+Date.now();const unit=$('catalogUnit').value;const item={key,n,k,p,c,f,unit};foods[key]={n,k,p,c,f,unit};const list=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');list.push(item);localStorage.setItem(CUSTOM_FOODS_KEY,JSON.stringify(list));loadFoodCatalog();$('food').value=key;$('grams').value=100;preview();toggleFoodCatalog(false);['catalogName','catalogK','catalogP','catalogC','catalogF'].forEach(id=>$(id).value='');alert('Alimento guardado en tu catálogo personal y seleccionado.');}
 
 loadCustomFoods();
@@ -1108,11 +1118,9 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
 (function(){const sw=document.getElementById('tpWarmSwitch');if(sw)sw.addEventListener('click',()=>{const on=sw.classList.toggle('on');sw.setAttribute('aria-pressed',String(on));sw.setAttribute('aria-label',on?'Activar calentamiento':'Desactivar calentamiento');const card=document.querySelector('.tp-ex-card');if(card)card.style.opacity=on?'1':'.55'});const st=document.getElementById('tpStartWorkout');if(st)st.addEventListener('click',()=>{const d=document.getElementById('duration');if(d&&!d.value)d.value=45;const date=document.getElementById('workDate');if(date&&!date.value)date.value=new Date().toISOString().slice(0,10);if(typeof addWorkout==='function')addWorkout();});})();
 </script>
 <div id="customFoodModal" class="fp-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="customFoodTitle" onclick="if(event.target===this)toggleFoodCatalog(false)">
- <div class="fp-modal"><h2 id="customFoodTitle">＋ Crear alimento personalizado</h2>
- <p class="muted">Busca el producto y selecciona su información. También puedes completar los datos manualmente.</p>
- <label>Buscar alimento / marca</label><div class="fp-food-search"><input id="catalogSearch" placeholder="Ej. Pan integral Vivo" maxlength="90"><button type="button" onclick="searchOpenFoodFacts()">Buscar</button></div>
- <div id="catalogSearchStatus" class="muted" aria-live="polite"></div><div id="catalogSearchResults" class="fp-food-results"></div>
- <div class="fp-food-fields"><label>Nombre del alimento<input id="catalogName" placeholder="Ej. Yogurt Protein" maxlength="70"></label><label>Unidad base<select id="catalogUnit" onchange="updateCatalogUnitLabels()"><option value="g">Gramos (g)</option><option value="ml">Mililitros (ml)</option></select></label>
- <label>Kcal por 100 <span id="catalogUnitLabel">g</span><input id="catalogK" type="number" min="0" step="0.1" placeholder="kcal"></label><label>Proteínas (g)<input id="catalogP" type="number" min="0" step="0.1" placeholder="g"></label><label>Carbohidratos (g)<input id="catalogC" type="number" min="0" step="0.1" placeholder="g"></label><label>Grasas (g)<input id="catalogF" type="number" min="0" step="0.1" placeholder="g"></label></div>
+ <div class="fp-modal"><h2 id="customFoodTitle">＋ Crear alimento personalizado</h2><p class="muted">Busca productos comercializados en Chile; si no aparecen, usa los datos de su etiqueta.</p>
+ <div class="formrow"><label>Buscar alimento / marca<input id="catalogSearch" placeholder="Ej. Pan integral Vivo" maxlength="90"></label><button type="button" onclick="searchChileFoods()">Buscar en Chile</button></div><div id="catalogSearchStatus" class="muted" aria-live="polite"></div><div id="catalogSearchResults"></div>
+ <div class="formrow two"><label>Nombre del alimento<input id="catalogName" placeholder="Nombre / marca" maxlength="70"></label><label>Unidad base<select id="catalogUnit" onchange="$('catalogUnitLabel').textContent=this.value"><option value="g">Gramos (g)</option><option value="ml">Mililitros (ml)</option></select></label></div>
+ <div class="formrow two"><label>Kcal por 100 <span id="catalogUnitLabel">g</span><input id="catalogK" type="number" min="0" step="0.1" placeholder="kcal"></label><label>Proteínas (g)<input id="catalogP" type="number" min="0" step="0.1" placeholder="g"></label><label>Carbohidratos (g)<input id="catalogC" type="number" min="0" step="0.1" placeholder="g"></label><label>Grasas (g)<input id="catalogF" type="number" min="0" step="0.1" placeholder="g"></label></div>
  <div class="fp-modal-actions"><button type="button" onclick="toggleFoodCatalog(false)">Cancelar</button><button type="button" onclick="saveCatalogFood()">Guardar alimento</button></div></div></div>
 </body></html>
