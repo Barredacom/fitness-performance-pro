@@ -391,10 +391,10 @@ document.addEventListener('DOMContentLoaded',function(){
 .nutrition-intel-card{background:linear-gradient(145deg,#0d120f,#080b09);border:1px solid #29352c;border-radius:23px;padding:clamp(16px,3vw,25px);box-shadow:0 12px 30px #0002}
 .nutrition-card-kicker{font-size:14px;font-weight:850;letter-spacing:.6px;color:#f2f5f1;margin-bottom:19px;display:flex;align-items:center;gap:9px}
 .nutrition-card-kicker span{color:#a4ff28;font-size:23px}
-.nutrition-form-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:13px}
-.nutrition-field{display:flex;flex-direction:column;gap:8px;color:#a4ff28;font-size:10px;font-weight:850;letter-spacing:1px;min-width:0}
+.nutrition-form-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);gap:13px;min-width:0;overflow:hidden}
+.nutrition-field{display:flex;flex-direction:column;gap:8px;color:#a4ff28;font-size:10px;font-weight:850;letter-spacing:1px;min-width:0;max-width:100%;box-sizing:border-box}
 .nutrition-field-wide{grid-column:span 1}
-.nutrition-field select,.nutrition-field input{width:100%;min-width:0;box-sizing:border-box;background:#151d17!important;color:#edf3ed!important;border:1px solid #2b3b2e!important;border-radius:12px!important;padding:13px 12px!important;min-height:47px;font-size:14px!important;outline:none}
+.nutrition-field select,.nutrition-field input{width:100%;max-width:100%;min-width:0;box-sizing:border-box;background:#151d17!important;color:#edf3ed!important;border:1px solid #2b3b2e!important;border-radius:12px!important;padding:13px 12px!important;min-height:47px;font-size:14px!important;outline:none}
 .nutrition-field select:focus,.nutrition-field input:focus{border-color:#a4ff28!important;box-shadow:0 0 0 3px #a4ff2815}
 .nutrition-preview-title{margin:22px 0 11px;color:#829087;font-size:10px;font-weight:850;letter-spacing:1.2px}
 .nutrition-macro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
@@ -421,7 +421,7 @@ document.addEventListener('DOMContentLoaded',function(){
 .nutrition-quantity-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:21px;height:21px;border-radius:50%;background:#a4ff28;border:3px solid #0d120f;box-shadow:0 0 0 2px #a4ff28,0 0 12px #a4ff2850}
 .nutrition-quantity-range::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#a4ff28;border:3px solid #0d120f;box-shadow:0 0 0 2px #a4ff28}
 .nutrition-range-labels{display:flex;justify-content:space-between;color:#718076;font-size:10px;font-weight:650}
-</style></head><body>
+.nutrition-field input[type=date]{display:block;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;overflow:hidden!important}.nutrition-field-wide{min-width:0;max-width:100%;overflow:hidden}\n</style></head><body>
 
 
 <!-- SUPABASE AUTH INTEGRATION -->
@@ -497,7 +497,7 @@ document.addEventListener('DOMContentLoaded',function(){
         <select id="food"></select>
       </label>
       <div class="nutrition-field nutrition-quantity-field">
-        <div class="nutrition-quantity-head"><label for="grams" id="quantityLabel">GRAMOS</label><div class="nutrition-unit-switch" role="group" aria-label="Unidad de cantidad"><button type="button" class="active" id="unitGrams" aria-pressed="true" onclick="setNutritionUnit('g')">g</button><button type="button" id="unitMl" aria-pressed="false" onclick="setNutritionUnit('ml')">ml</button></div></div>
+        <div class="nutrition-quantity-head"><label for="grams" id="quantityLabel">GRAMOS</label><div class="nutrition-unit-switch" role="group" aria-label="Unidad de cantidad"><button type="button" class="active" id="unitGrams" aria-pressed="true" onclick="setNutritionUnit('g')">g</button><button type="button" id="unitMl" aria-pressed="false" onclick="setNutritionUnit('ml')">ml</button><button type="button" id="unitPieces" aria-pressed="false" onclick="setNutritionUnit('unit')">ud</button></div></div>
         <input id="grams" type="number" value="100" min="1" max="1000" step="1" inputmode="decimal" aria-label="Cantidad de alimento">
         <input id="quantityRange" class="nutrition-quantity-range" type="range" min="1" max="1000" step="1" value="100" aria-label="Ajustar cantidad de alimento">
         <div class="nutrition-range-labels"><span>1</span><span>1000</span></div>
@@ -589,9 +589,9 @@ let customFoodUnit='g';
 function escCatalog(x){return String(x||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 async function searchChileFoods(){const q=$('catalogSearch').value.trim(),st=$('catalogSearchStatus'),box=$('catalogSearchResults');if(!q){st.textContent='Escribe nombre o marca.';return;}st.textContent='Buscando productos registrados en Chile…';box.innerHTML='';try{const url='https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(q)+'&search_simple=1&action=process&json=1&page_size=12&tagtype_0=countries&tag_contains_0=contains&tag_0=chile&fields=product_name,brands,quantity,nutriments,countries_tags';const res=await fetch(url,{headers:{Accept:'application/json'}});if(!res.ok)throw Error('HTTP '+res.status);const data=await res.json(),items=(data.products||[]).filter(x=>x.product_name&&x.nutriments);window.chileFoodResults=items;if(!items.length){st.textContent='Sin resultados registrados en Chile. Puedes ingresar los datos manualmente.';return;}st.textContent='Selecciona el producto correcto:';box.innerHTML=items.map((x,i)=>`<button type="button" class="fp-custom-result" onclick="selectChileFood(${i})"><b>${escCatalog(x.product_name)}</b><small>${escCatalog(x.brands||'Marca no indicada')} · ${escCatalog(x.quantity||'')}</small></button>`).join('');}catch(e){st.textContent='No se pudo consultar el catálogo. Revisa internet o ingresa manualmente.';console.warn('Catálogo Chile',e);}}
 function selectChileFood(i){const x=window.chileFoodResults?.[i];if(!x)return;const n=x.nutriments||{};$('catalogName').value=[x.product_name,x.brands].filter(Boolean).join(' · ');$('catalogK').value=Number(n['energy-kcal_100g']??n['energy-kcal_value']??0);$('catalogP').value=Number(n.proteins_100g||0);$('catalogC').value=Number(n.carbohydrates_100g||0);$('catalogF').value=Number(n.fat_100g||0);setCustomFoodUnit('g');$('catalogSearchStatus').textContent='Importado por 100 g. Confirma los datos con la etiqueta.';$('catalogSearchResults').innerHTML='';}
-function loadCustomFoods(){try{const arr=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');arr.forEach((f,i)=>{foods[f.key||('custom_'+i)]={n:f.n,k:+f.k,p:+f.p,c:+f.c,f:+f.f,unit:f.unit||'g'};});}catch(e){console.warn('No se pudo cargar catálogo personal',e)}}
+function loadCustomFoods(){try{const arr=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');arr.forEach((f,i)=>{foods[f.key||('custom_'+i)]={n:f.n,k:+f.k,p:+f.p,c:+f.c,f:+f.f,unit:f.unit||'g',unitWeight:Number(f.unitWeight)||0};});}catch(e){console.warn('No se pudo cargar catálogo personal',e)}}
 function toggleFoodCatalog(show){const modal=$('customFoodModal');if(!modal)return;const open=show===undefined?!modal.classList.contains('open'):!!show;modal.classList.toggle('open',open);if(open){$('catalogSearch').focus();syncCustomQuantity();}else{}}
-function saveCatalogFood(){const n=$('catalogName').value.trim(),k=+$('catalogK').value,p=+$('catalogP').value,c=+$('catalogC').value,f=+$('catalogF').value;if(!n)return alert('Ingresa el nombre del alimento');if(['catalogK','catalogP','catalogC','catalogF'].some(id=>$(id).value===''||+$(id).value<0))return alert('Completa los valores nutricionales con números iguales o mayores a 0');const key='custom_'+Date.now(),unit=customFoodUnit==='ml'?'ml':'g';const item={key,n,k,p,c,f,unit,portionUnit:customFoodUnit==='unit'?'unit':unit,unitWeight:customFoodUnit==='unit'?Math.max(1,+$('customQuantity').value||1):100};foods[key]={n,k,p,c,f,unit};const list=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');list.push(item);localStorage.setItem(CUSTOM_FOODS_KEY,JSON.stringify(list));loadFoodCatalog();$('food').value=key;$('grams').value=100;preview();toggleFoodCatalog(false);['catalogName','catalogK','catalogP','catalogC','catalogF','catalogSearch'].forEach(id=>$(id).value='');$('catalogSearchResults').innerHTML='';alert('Alimento guardado en tu catálogo personal y seleccionado.');}
+function saveCatalogFood(){const n=$('catalogName').value.trim(),k=+$('catalogK').value,p=+$('catalogP').value,c=+$('catalogC').value,f=+$('catalogF').value;if(!n)return alert('Ingresa el nombre del alimento');if(['catalogK','catalogP','catalogC','catalogF'].some(id=>$(id).value===''||+$(id).value<0))return alert('Completa los valores nutricionales con números iguales o mayores a 0');const key='custom_'+Date.now(),unit=customFoodUnit==='ml'?'ml':'g';const unitWeight=Math.max(0,Number($('catalogUnitWeight').value)||0);const item={key,n,k,p,c,f,unit,unitWeight};foods[key]={n,k,p,c,f,unit,unitWeight};const list=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');list.push(item);localStorage.setItem(CUSTOM_FOODS_KEY,JSON.stringify(list));loadFoodCatalog();$('food').value=key;$('grams').value=100;preview();toggleFoodCatalog(false);['catalogName','catalogK','catalogP','catalogC','catalogF','catalogSearch','catalogUnitWeight'].forEach(id=>$(id).value='');$('catalogSearchResults').innerHTML='';alert('Alimento guardado en tu catálogo personal y seleccionado.');}
 
 loadCustomFoods();
 function loadFoodCatalog(){
@@ -603,34 +603,17 @@ function loadFoodCatalog(){
   });
 }
 loadFoodCatalog();
-function foodVals(){
-  const key=$('food').value;
-  const g=+$('grams').value||0;
-  const v=foods[key];
-
-  if(!v){
-    return {n:'',k:0,p:0,c:0,f:0,g};
-  }
-
-  return {
-    ...v,
-    k:v.k*g/100,
-    p:v.p*g/100,
-    c:v.c*g/100,
-    f:v.f*g/100,
-    g
-  };
-}
+function foodVals(){const key=$('food').value,qty=Number($('grams').value)||0,v=foods[key];if(!v)return {n:'',k:0,p:0,c:0,f:0,g:0,qty};const base=(nutritionUnit==='unit')?qty*(Number(v.unitWeight)||0):qty;return {...v,k:v.k*base/100,p:v.p*base/100,c:v.c*base/100,f:v.f*base/100,g:base,qty};}
 
 let nutritionUnit='g';
-function setNutritionUnit(unit){nutritionUnit=unit==='ml'?'ml':'g';const g=$('unitGrams'),ml=$('unitMl');g.classList.toggle('active',nutritionUnit==='g');ml.classList.toggle('active',nutritionUnit==='ml');g.setAttribute('aria-pressed',String(nutritionUnit==='g'));ml.setAttribute('aria-pressed',String(nutritionUnit==='ml'));$('quantityLabel').textContent=nutritionUnit==='g'?'GRAMOS':'MILILITROS';syncQuantityRange();preview();}
-function syncQuantityRange(){const input=$('grams'),range=$('quantityRange');if(!input||!range)return;let val=Number(input.value)||1;val=Math.min(1000,Math.max(1,val));range.value=String(val);const pct=((val-1)/999)*100;range.style.background=`linear-gradient(90deg,#a4ff28 0%,#a4ff28 ${pct}%,#26352a ${pct}%,#26352a 100%)`;}
-$('food').onchange=()=>{const selected=foods[$('food').value];if(selected&&selected.unit)setNutritionUnit(selected.unit);else preview();};
+function setNutritionUnit(unit){nutritionUnit=['ml','unit'].includes(unit)?unit:'g';const ids={g:'unitGrams',ml:'unitMl',unit:'unitPieces'};Object.entries(ids).forEach(([u,id])=>{const b=$(id);if(b){b.classList.toggle('active',nutritionUnit===u);b.setAttribute('aria-pressed',String(nutritionUnit===u));}});$('quantityLabel').textContent=nutritionUnit==='g'?'GRAMOS':nutritionUnit==='ml'?'MILILITROS':'UNIDADES';$('grams').max=nutritionUnit==='unit'?'30':'1000';$('quantityRange').max=$('grams').max;syncQuantityRange();preview();}
+function syncQuantityRange(){const input=$('grams'),range=$('quantityRange');if(!input||!range)return;const max=Number(input.max)||1000;let val=Number(input.value)||1;val=Math.min(max,Math.max(1,val));range.max=String(max);range.value=String(val);const pct=((val-1)/(max-1||1))*100;range.style.background=`linear-gradient(90deg,#a4ff28 0%,#a4ff28 ${pct}%,#26352a ${pct}%,#26352a 100%)`;}
+$('food').onchange=()=>{if(nutritionUnit==='unit'&&!Number(foods[$('food').value]?.unitWeight))setNutritionUnit('g');else preview();};
 $('grams').oninput=()=>{syncQuantityRange();preview();};
 $('quantityRange').oninput=()=>{const value=$('quantityRange').value;$('grams').value=value;syncQuantityRange();preview();};
 $('quantityRange').onchange=()=>{const value=$('quantityRange').value;$('grams').value=value;syncQuantityRange();preview();};
 $('grams').oninput=()=>{syncQuantityRange();preview();};
-function preview(){let x=foodVals();$('previewK').textContent=x.k.toFixed(0)+' kcal';$('previewP').textContent=x.p.toFixed(1)+' g';$('previewCF').textContent=x.c.toFixed(1)+' / '+x.f.toFixed(1)+' g'}
+function preview(){let x=foodVals();if(nutritionUnit==='unit'&&!Number(foods[$('food').value]?.unitWeight)){$('previewK').textContent='— kcal';$('previewP').textContent='— g';$('previewCF').textContent='Configura peso/unidad';return;}$('previewK').textContent=x.k.toFixed(0)+' kcal';$('previewP').textContent=x.p.toFixed(1)+' g';$('previewCF').textContent=x.c.toFixed(1)+' / '+x.f.toFixed(1)+' g'}
 setNutritionUnit(foods[$('food').value]?.unit||'g');
 
 
@@ -638,9 +621,9 @@ setNutritionUnit(foods[$('food').value]?.unit||'g');
 window.mealDraft = window.mealDraft || [];
 function addFoodToMeal(){
   const x=foodVals();
-  if(!x.g || x.g<=0) return alert('Ingresa una cantidad válida');
+  if(!x.g || x.g<=0) return alert('Ingresa una cantidad válida');if(nutritionUnit==='unit'&&!Number(foods[$('food').value]?.unitWeight))return alert('Este alimento no tiene peso por unidad. Completa Peso por unidad (g) en Crear alimento personalizado.');
   if(!x.n) return alert('Selecciona un alimento');
-  window.mealDraft.push({...x,unit:nutritionUnit,meal:$('meal').value,date:$('foodDate').value,draftId:Date.now()+Math.random()});
+  window.mealDraft.push({...x,unit:nutritionUnit==='unit'?'unidades':nutritionUnit,meal:$('meal').value,date:$('foodDate').value,draftId:Date.now()+Math.random()});
   renderMealDraft();
 }
 function renderMealDraft(){
@@ -1140,7 +1123,7 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
   <p class="muted">Busca productos comercializados en Chile o ingresa los datos de su etiqueta.</p>
   <label>Buscar producto / marca</label><div class="fp-custom-search"><input id="catalogSearch" placeholder="Ej. Pan integral Vivo" maxlength="90"><button type="button" onclick="searchChileFoods()">Buscar en Chile</button></div>
   <div id="catalogSearchStatus" class="fp-custom-status" aria-live="polite"></div><div id="catalogSearchResults" class="fp-custom-results"></div>
-  <label>Nombre del alimento</label><input id="catalogName" placeholder="Nombre / marca" maxlength="90">
+  <label>Nombre del alimento</label><input id="catalogName" placeholder="Nombre / marca" maxlength="90"><label style="display:block;margin-top:10px">Peso por unidad (g) · opcional</label><input id="catalogUnitWeight" type="number" min="1" step="1" placeholder="Ej. 30 g por torreja">
   <p class="fp-custom-status">Los nutrientes se guardan como referencia por 100 g o 100 ml. La cantidad consumida se define al registrar el alimento.</p>
   <div class="fp-custom-macros"><div class="fp-custom-macro"><label for="catalogK">Calorías (kcal/100)</label><input id="catalogK" type="number" min="0" step="0.1" placeholder="kcal"></div><div class="fp-custom-macro"><label for="catalogP">Proteínas (g/100)</label><input id="catalogP" type="number" min="0" step="0.1" placeholder="g"></div><div class="fp-custom-macro"><label for="catalogC">Carbohidratos (g/100)</label><input id="catalogC" type="number" min="0" step="0.1" placeholder="g"></div><div class="fp-custom-macro"><label for="catalogF">Grasas (g/100)</label><input id="catalogF" type="number" min="0" step="0.1" placeholder="g"></div></div>
   <div class="fp-modal-actions"><button type="button" onclick="toggleFoodCatalog(false)">Cancelar</button><button type="button" onclick="saveCatalogFood()">Guardar alimento</button></div>
