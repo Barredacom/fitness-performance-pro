@@ -350,7 +350,14 @@ document.addEventListener('DOMContentLoaded',function(){
 #nutricion{padding-top:0!important;margin-top:0!important}
 #nutricion .training-pro-shell{width:100%;max-width:100%;margin:0 auto!important;gap:0}
 #nutricion .nutrition-tp-hero{width:100%;margin:0 auto!important}
-</style></head><body>
+</style>
+<style id="nutrition-position-fix">
+/* Nutrición: acercar el banner a la navegación, como Entrenamiento */
+#nutricion{padding-top:0!important;margin-top:0!important}
+#nutricion>.training-pro-shell{margin-top:-72px!important}
+@media(min-width:601px){#nutricion>.training-pro-shell{margin-top:0!important}}
+</style>
+</head><body>
 
 
 <!-- SUPABASE AUTH INTEGRATION -->
