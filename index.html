@@ -233,11 +233,22 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 .training-adaptive-head{display:flex;flex-direction:column;gap:7px}.training-kicker{font-size:11px;letter-spacing:1.4px;color:#67f5a6;font-weight:800}.training-adaptive-head strong{font-size:22px;color:#f3fff7}.training-adaptive-head p{margin:0;line-height:1.45}.training-adaptive-stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.training-adaptive-stats span{border:1px solid #315b49;background:#142c22;color:#a5ffca;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:700}.training-recovery{margin:12px 0 0;color:#c6d6cc;font-size:13px;line-height:1.45}
 
 
-/* Modal alimento personalizado */
-.fp-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);z-index:99999;display:none;align-items:center;justify-content:center;padding:18px}
-.fp-modal-backdrop.open{display:flex}.fp-modal{width:min(440px,100%);max-height:82vh;overflow:auto;background:#101511;border:1px solid #A4FF28;border-radius:16px;padding:14px;box-shadow:0 0 28px rgba(164,255,40,.14)}.fp-modal h2{font-size:1.05rem}.fp-modal .muted{font-size:.78rem;line-height:1.35;margin:4px 0 10px}.fp-modal .formrow{gap:8px}.fp-modal label{font-size:.78rem}.fp-modal input,.fp-modal select{padding:9px;font-size:.9rem}.fp-modal-actions{margin-top:10px}.fp-modal-actions button{padding:10px 14px;border-radius:10px}@media(max-width:520px){.fp-modal-backdrop{padding:10px;align-items:center}.fp-modal{max-height:78vh;padding:12px;border-radius:14px}}
-.fp-modal h2{margin:0 0 8px;color:#53ff55}.fp-modal .muted{color:#91a397}.fp-modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
-
+/* Modal alimento personalizado compacto V3 */
+.fp-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(5px);z-index:99999;display:none;align-items:center;justify-content:center;padding:12px}
+.fp-modal-backdrop.open{display:flex}
+.fp-modal{width:min(390px,100%);max-height:70vh;overflow:auto;background:#101511;border:1px solid #A4FF28;border-radius:15px;padding:12px;box-shadow:0 0 24px rgba(164,255,40,.13)}
+.fp-modal h2{font-size:1rem;margin:0 0 6px;color:#A4FF28}
+.fp-modal .muted{color:#91a397;font-size:.72rem;line-height:1.25;margin:3px 0 7px}
+.fp-modal label{display:block;color:#91a397;font-size:.72rem;min-width:0}
+.fp-modal input,.fp-modal select{box-sizing:border-box;width:100%;min-width:0;margin-top:4px;padding:8px 9px;font-size:.85rem;border-radius:9px}
+.fp-searchline{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:end;margin:6px 0}
+.fp-searchline button{padding:8px 10px;font-size:.78rem;white-space:nowrap}
+.fp-modal .formrow.two{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:7px 0}
+.fp-nutrient-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px}
+.fp-modal-actions{display:flex;gap:7px;margin-top:9px}
+.fp-modal-actions button{flex:1;padding:9px 10px;font-size:.82rem;border-radius:9px}
+.catalog-result{font-size:.78rem!important;padding:7px!important;margin:4px 0!important}
+@media(max-width:520px){.fp-modal-backdrop{padding:9px}.fp-modal{width:min(370px,100%);max-height:68vh;padding:11px}.fp-modal .muted{font-size:.7rem}}
 /* TRAINING PRO visual reconstruction */
 .training-pro-shell{display:grid;gap:15px}
 .tp-hero{position:relative;overflow:hidden;min-height:245px;border-radius:22px;background:radial-gradient(circle at 75% 25%,#263b2a 0,#111714 38%,#050706 78%);border:1px solid #26352b;padding:24px;display:flex;align-items:flex-end;isolation:isolate}
@@ -1120,10 +1131,6 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
 </script>
 <div id="customFoodModal" class="fp-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="customFoodTitle" onclick="if(event.target===this)toggleFoodCatalog(false)">
  <div class="fp-modal"><h2 id="customFoodTitle">＋ Alimento personalizado</h2>
- <p class="muted">Busca el producto para importar sus nutrientes; si no aparece, completa los valores manualmente.</p>
- <label>Buscar alimento / marca<input id="catalogSearch" placeholder="Ej. Pan integral Vivo" maxlength="90"></label>
- <div style="display:flex;gap:7px;margin:7px 0"><button type="button" onclick="searchOpenFoodFacts()" style="flex:1">Buscar en catálogo online</button><button type="button" onclick="useManualFood()" style="flex:1">Ingreso manual</button></div>
- <div id="catalogSearchStatus" class="muted" aria-live="polite"></div><div id="catalogSearchResults"></div>
- <div class="formrow two"><label>Nombre<input id="catalogName" placeholder="Nombre del alimento" maxlength="70"></label><label>Unidad base<select id="catalogUnit" onchange="updateCatalogUnitLabels()"><option value="g">Gramos (g)</option><option value="ml">Mililitros (ml)</option></select></label></div>
- <div class="formrow two"><label>Kcal por 100 <span id="catalogUnitLabel">g</span><input id="catalogK" type="number" min="0" step="0.1" placeholder="kcal"></label><label>Proteína (g)<input id="catalogP" type="number" min="0" step="0.1" placeholder="g"></label><label>Carbohidratos (g)<input id="catalogC" type="number" min="0" step="0.1" placeholder="g"></label><label>Grasas (g)<input id="catalogF" type="number" min="0" step="0.1" placeholder="g"></label></div>
- <div class="fp-modal-actions"><button type="button" onclick="toggleFoodCatalog(false)">Cancelar</button><button type="button" onclick="saveCa
+ <p class="muted">Busca el producto y carga sus nutrientes. Si no aparece, ingrésalos manualmente.</p>
+ <label>Buscar alimento / marca</label><div class="fp-searchline"><input id="catalogSearch" placeholder="Ej. Pan integral Vivo" maxlength="90" aria-label="Buscar alimento o marca"><button type="button" onclick="searchOpenFoodFacts()">Buscar</button></div>
+ <div id="catalo
