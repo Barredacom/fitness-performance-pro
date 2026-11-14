@@ -551,31 +551,24 @@ function tab(id){document.querySelectorAll('.section').forEach(s=>s.classList.to
 
 // Catálogo personal persistente
 const CUSTOM_FOODS_KEY='fp_custom_foods_v1';
-function loadCustomFoods(){try{const arr=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');arr.forEach((f,i)=>{foods[f.key||('custom_'+i)]={n:f.n,k:+f.k,p:+f.p,c:+f.c,f:+f.f,unit:f.unit||'g'};});}catch(e){console.warn('No se pudo cargar catálogo personal',e)}}
-function toggleFoodCatalog(show){const modal=$('customFoodModal');if(!modal)return;const open=show===undefined?!modal.classList.contains('open'):!!show;modal.classList.toggle('open',open);if(open){$('catalogSearch').focus();}else{}}
 function searchChileFoods(){
  const q=$('catalogSearch').value.trim(),status=$('catalogSearchStatus'),box=$('catalogSearchResults');
  if(!q){status.textContent='Escribe alimento o marca chilena.';return;}
  status.textContent='Buscando productos registrados para Chile…';box.innerHTML='';
  fetch('https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(q)+'&countries_tags=chile&action=process&json=1&page_size=10&fields=code,product_name,brands,nutriments,quantity,countries_tags')
  .then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json()})
- .then(data=>{
-  const arr=(data.products||[]).filter(x=>x.product_name&&x.nutriments);
-  window.fpChileProducts=arr;
-  if(!arr.length){status.textContent='Sin coincidencias para Chile. Puedes completar desde la etiqueta.';return;}
-  status.textContent='Resultados de productos registrados en Chile. Verifica marca y variedad.';
-  box.innerHTML=arr.map((x,i)=>'<button type="button" class="catalog-result" onclick="chooseChileFood('+i+')" style="display:block;width:100%;text-align:left;margin:5px 0;padding:9px;border:1px solid #354438;border-radius:9px;background:#172119;color:#eaf2e7"><b>'+escapeHtml(x.product_name)+'</b><small style="display:block;color:#9ba69e">'+escapeHtml(x.brands||'Marca no informada')+' · '+escapeHtml(x.quantity||'')+'</small></button>').join('');
- }).catch(e=>{status.textContent='No se pudo consultar el catálogo chileno. Revisa conexión o ingresa manualmente.';console.warn(e)});
+ .then(data=>{const arr=(data.products||[]).filter(x=>x.product_name&&x.nutriments);window.fpChileProducts=arr;
+ if(!arr.length){status.textContent='Sin coincidencias para Chile. Puedes completar desde la etiqueta.';return;}
+ status.textContent='Resultados registrados en Chile. Verifica marca y variedad.';
+ box.innerHTML=arr.map((x,i)=>'<button type="button" class="catalog-result" onclick="chooseChileFood('+i+')"><b>'+escapeHtml(x.product_name)+'</b><small>'+escapeHtml(x.brands||'Marca no informada')+' · '+escapeHtml(x.quantity||'')+'</small></button>').join('');
+ }).catch(e=>{status.textContent='No se pudo consultar catálogo Chile. Revisa conexión o ingresa manualmente.';console.warn(e)});
 }
-function chooseChileFood(i){
- const x=window.fpChileProducts?.[i];if(!x)return;const n=x.nutriments||{};
- const num=(...keys)=>{for(const k of keys){if(n[k]!=null&&Number.isFinite(Number(n[k])))return Number(n[k]);}return 0};
- $('catalogName').value=[x.product_name,x.brands].filter(Boolean).join(' - ');
- $('catalogUnit').value='g';$('catalogUnitLabel').textContent='g';
+function chooseChileFood(i){const x=window.fpChileProducts?.[i];if(!x)return;const n=x.nutriments||{};const num=k=>Number(n[k]||0);
+ $('catalogName').value=[x.product_name,x.brands].filter(Boolean).join(' - ');$('catalogUnit').value='g';$('catalogUnitLabel').textContent='g';
  $('catalogK').value=num('energy-kcal_100g');$('catalogP').value=num('proteins_100g');$('catalogC').value=num('carbohydrates_100g');$('catalogF').value=num('fat_100g');
- $('catalogSearchStatus').textContent='Datos por 100 g importados. Confirma con la etiqueta del envase.';
- $('catalogSearchResults').innerHTML='';
-}
+ $('catalogSearchStatus').textContent='Valores por 100 g importados. Confirma con la etiqueta del envase.';$('catalogSearchResults').innerHTML='';}
+function loadCustomFoods(){try{const arr=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');arr.forEach((f,i)=>{foods[f.key||('custom_'+i)]={n:f.n,k:+f.k,p:+f.p,c:+f.c,f:+f.f,unit:f.unit||'g'};});}catch(e){console.warn('No se pudo cargar catálogo personal',e)}}
+function toggleFoodCatalog(show){const modal=$('customFoodModal');if(!modal)return;const open=show===undefined?!modal.classList.contains('open'):!!show;modal.classList.toggle('open',open);if(open){$('catalogName').focus();}else{}}
 function saveCatalogFood(){const n=$('catalogName').value.trim(),k=+$('catalogK').value,p=+$('catalogP').value,c=+$('catalogC').value,f=+$('catalogF').value;if(!n)return alert('Ingresa el nombre del alimento');if(['catalogK','catalogP','catalogC','catalogF'].some(id=>$(id).value===''||+$(id).value<0))return alert('Completa los valores nutricionales con números iguales o mayores a 0');const key='custom_'+Date.now();const unit=$('catalogUnit').value;const item={key,n,k,p,c,f,unit};foods[key]={n,k,p,c,f,unit};const list=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');list.push(item);localStorage.setItem(CUSTOM_FOODS_KEY,JSON.stringify(list));loadFoodCatalog();$('food').value=key;$('grams').value=100;preview();toggleFoodCatalog(false);['catalogName','catalogK','catalogP','catalogC','catalogF'].forEach(id=>$(id).value='');alert('Alimento guardado en tu catálogo personal y seleccionado.');}
 
 loadCustomFoods();
