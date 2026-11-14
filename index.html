@@ -421,7 +421,24 @@ document.addEventListener('DOMContentLoaded',function(){
 .nutrition-quantity-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:21px;height:21px;border-radius:50%;background:#a4ff28;border:3px solid #0d120f;box-shadow:0 0 0 2px #a4ff28,0 0 12px #a4ff2850}
 .nutrition-quantity-range::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#a4ff28;border:3px solid #0d120f;box-shadow:0 0 0 2px #a4ff28}
 .nutrition-range-labels{display:flex;justify-content:space-between;color:#718076;font-size:10px;font-weight:650}
-.nutrition-field input[type=date]{display:block;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;overflow:hidden!important}.nutrition-field-wide{min-width:0;max-width:100%;overflow:hidden}\n</style></head><body>
+.nutrition-field input[type=date]{display:block;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;overflow:hidden!important}.nutrition-field-wide{min-width:0;max-width:100%;overflow:hidden}\n
+/* FIX RESPONSIVE: etiqueta GRAMOS y selector g/ml/ud sin cortes */
+.nutrition-quantity-head{min-width:0;flex-wrap:nowrap}
+.nutrition-quantity-head>label{white-space:nowrap;flex:0 0 auto;word-break:keep-all;overflow-wrap:normal}
+.nutrition-unit-switch{flex:0 1 auto;min-width:0;max-width:100%;white-space:nowrap}
+.nutrition-unit-switch button{flex:1 1 0;min-width:0;padding:6px clamp(5px,1.2vw,10px);font-size:clamp(10px,2.5vw,12px);white-space:nowrap;line-height:1.1}
+@media(max-width:650px){
+ .nutrition-quantity-head{gap:clamp(5px,1.5vw,8px)}
+ .nutrition-quantity-head>label{font-size:clamp(8px,2.3vw,10px);letter-spacing:clamp(.5px,.25vw,1px)}
+ .nutrition-unit-switch{gap:2px;padding:2px}
+ .nutrition-unit-switch button{padding:6px 4px;font-size:clamp(10px,2.6vw,12px)}
+}
+@media(max-width:380px){
+ .nutrition-quantity-head>label{font-size:8px;letter-spacing:.4px}
+ .nutrition-unit-switch button{font-size:10px;padding:5px 3px}
+}
+
+</style></head><body>
 
 
 <!-- SUPABASE AUTH INTEGRATION -->
