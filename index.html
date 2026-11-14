@@ -449,20 +449,14 @@ document.addEventListener('DOMContentLoaded',function(){
     </div>
   </div>
 
-  <div class="card" style="margin-top:12px">
-    <h3>Comida en preparación</h3>
-    <p class="muted">Agrega varios alimentos y registra todo junto.</p>
-    <div id="mealDraftList" class="list"><p class="muted">Aún no agregas alimentos.</p></div>
-    <div class="item"><b>Total de la comida</b><b id="mealDraftTotals">0 kcal · P 0 · C 0 · G 0</b></div>
+  <div hidden aria-hidden="true">
+    <div id="mealDraftList"></div>
+    <span id="mealDraftTotals">0 kcal · P 0 · C 0 · G 0</span>
   </div>
 
-  <div class="card" style="margin-top:12px">
-    <h3>Registros del día</h3>
-    <div id="foodList" class="list"></div>
-    <div class="item">
-      <b>Total diario</b>
-      <b id="foodTotals">0 kcal · P 0 · C 0 · G 0</b>
-    </div>
+  <div hidden aria-hidden="true">
+    <div id="foodList"></div>
+    <span id="foodTotals">0 kcal · P 0 · C 0 · G 0</span>
   </div>
 
 
