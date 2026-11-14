@@ -346,6 +346,34 @@ document.addEventListener('DOMContentLoaded',function(){
 .brand-logo{display:block;width:min(100%,900px);max-height:165px;height:auto;object-fit:contain;object-position:left center}
 @media(max-width:900px){.brand-logo{width:100%;max-height:110px}}
 @media(max-width:420px){.brand-logo{max-height:92px}}
+</style><style>
+/* NUTRICIÓN INTELIGENTE · UI PRO inspirada en Entrenamiento (solo presentación) */
+.nutrition-intel-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:24px 0 16px}
+.nutrition-intel-title{display:flex;align-items:center;gap:13px}
+.nutrition-intel-icon{display:grid;place-items:center;width:46px;height:46px;border:1px solid #42652a;border-radius:14px;background:#101a10;color:#a4ff28;font-size:27px;box-shadow:0 0 18px #a4ff2812}
+.nutrition-intel-title h2{margin:0;font-size:clamp(19px,3vw,27px);font-weight:850;letter-spacing:.4px;color:#f4f7f3}
+.nutrition-intel-title p{margin:5px 0 0;color:#9ba69e;font-size:13px}
+.nutrition-intel-chip{border:1px solid #34452b;background:#111811;color:#a4ff28;border-radius:999px;padding:8px 12px;font-size:10px;font-weight:800;letter-spacing:.7px}
+.nutrition-intel-card{background:linear-gradient(145deg,#0d120f,#080b09);border:1px solid #29352c;border-radius:23px;padding:clamp(16px,3vw,25px);box-shadow:0 12px 30px #0002}
+.nutrition-card-kicker{font-size:14px;font-weight:850;letter-spacing:.6px;color:#f2f5f1;margin-bottom:19px;display:flex;align-items:center;gap:9px}
+.nutrition-card-kicker span{color:#a4ff28;font-size:23px}
+.nutrition-form-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:13px}
+.nutrition-field{display:flex;flex-direction:column;gap:8px;color:#a4ff28;font-size:10px;font-weight:850;letter-spacing:1px;min-width:0}
+.nutrition-field-wide{grid-column:span 1}
+.nutrition-field select,.nutrition-field input{width:100%;min-width:0;box-sizing:border-box;background:#151d17!important;color:#edf3ed!important;border:1px solid #2b3b2e!important;border-radius:12px!important;padding:13px 12px!important;min-height:47px;font-size:14px!important;outline:none}
+.nutrition-field select:focus,.nutrition-field input:focus{border-color:#a4ff28!important;box-shadow:0 0 0 3px #a4ff2815}
+.nutrition-preview-title{margin:22px 0 11px;color:#829087;font-size:10px;font-weight:850;letter-spacing:1.2px}
+.nutrition-macro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.nutrition-macro{background:#111813;border:1px solid #26342a;border-radius:14px;padding:13px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.nutrition-macro small{font-size:9px;letter-spacing:.8px;font-weight:850;color:#9aa69d}
+.nutrition-macro b{font-size:clamp(15px,2.5vw,21px);font-weight:850;overflow-wrap:anywhere}
+.nutrition-macro-k b{color:#ff8b38}.nutrition-macro-p b{color:#42aaff}.nutrition-macro-cf b{color:#ffd84d}
+.nutrition-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:17px}
+.nutrition-actions button{min-height:49px;border-radius:13px;font-weight:850;letter-spacing:.35px}
+.nutrition-primary-action{background:#a4ff28!important;color:#101510!important;border:0!important;box-shadow:0 5px 20px #a4ff2818}
+.nutrition-secondary-action{background:#172119!important;color:#a4ff28!important;border:1px solid #3a512e!important}
+.nutrition-catalog-action{grid-column:1/-1;background:transparent!important;color:#a6b1a8!important;border:1px dashed #354438!important;font-size:12px}
+@media(max-width:650px){.nutrition-form-grid{grid-template-columns:1fr 1fr}.nutrition-field-wide{grid-column:1/-1}.nutrition-macro-grid{grid-template-columns:1fr 1fr}.nutrition-macro-cf{grid-column:1/-1}.nutrition-actions{grid-template-columns:1fr}.nutrition-catalog-action{grid-column:auto}.nutrition-intel-chip{font-size:9px}}
 </style></head><body>
 
 
@@ -410,55 +438,42 @@ document.addEventListener('DOMContentLoaded',function(){
 <div class="tp-hero nutrition-tp-hero"><div class="tp-hero-copy"><h2>Nutrición</h2><div class="tp-shift-reco"><div class="tp-shift-kicker">RECOMENDACIÓN SEGÚN TURNO</div><div class="tp-shift-title">Alimentación equilibrada y sostenida</div><div class="tp-shift-desc">Organiza tus comidas según tu jornada y prioriza energía, saciedad y recuperación.</div><div class="tp-shift-tags"><span class="tp-shift-tag">Objetivo: 1.800–2.000 kcal</span><span class="tp-shift-tag">Proteína: 120–130 g/día</span></div><div class="tp-shift-note">Hidratación constante y comidas de buena calidad durante el día.</div></div></div>
 </div>
 
-  <div class="sectionHead">
-    <h2>Nutrición inteligente</h2>
-    <span class="pill">Alimento + gramos → macros y kcal</span>
+  <div class="nutrition-intel-head">
+    <div class="nutrition-intel-title"><span class="nutrition-intel-icon">✦</span><div><h2>NUTRICIÓN INTELIGENTE</h2><p>Registro y cálculo nutricional en tiempo real</p></div></div>
+    <span class="nutrition-intel-chip">ALIMENTO + GRAMOS → MACROS</span>
   </div>
 
-  <div class="card">
-    <div class="formrow">
-      <label>Alimento
+  <div class="nutrition-intel-card">
+    <div class="nutrition-card-kicker"><span>＋</span> REGISTRAR ALIMENTACIÓN</div>
+    <div class="nutrition-form-grid">
+      <label class="nutrition-field nutrition-field-wide">ALIMENTO
         <select id="food"></select>
       </label>
-      <label>Gramos
+      <label class="nutrition-field">GRAMOS
         <input id="grams" type="number" value="100" min="1">
       </label>
-      <label>Comida
-        <select id="meal">
-          <option>Desayuno</option>
-          <option>Almuerzo</option>
-          <option>Cena</option>
-          <option>Colación</option>
-        </select>
+      <label class="nutrition-field">COMIDA
+        <select id="meal"><option>Desayuno</option><option>Almuerzo</option><option>Cena</option><option>Colación</option></select>
       </label>
-      <label>Fecha
+      <label class="nutrition-field nutrition-field-wide">FECHA
         <input id="foodDate" type="date">
       </label>
     </div>
-
-    <div class="kpis">
-      <div>Calorías estimadas <b id="previewK">0 kcal</b></div>
-      <div>Proteína <b id="previewP">0 g</b></div>
-      <div>Carbohidratos / grasas <b id="previewCF">0 / 0 g</b></div>
+    <div class="nutrition-preview-title">VALORES NUTRICIONALES ESTIMADOS</div>
+    <div class="nutrition-macro-grid">
+      <div class="nutrition-macro nutrition-macro-k"><small>CALORÍAS</small><b id="previewK">0 kcal</b></div>
+      <div class="nutrition-macro nutrition-macro-p"><small>PROTEÍNA</small><b id="previewP">0 g</b></div>
+      <div class="nutrition-macro nutrition-macro-cf"><small>CARBOHIDRATOS / GRASAS</small><b id="previewCF">0 / 0 g</b></div>
     </div>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button type="button" onclick="addFoodToMeal()">＋ Agregar a la comida</button>
-      <button type="button" onclick="registerMeal()">✓ Registrar comida completa</button>
-      <button type="button" onclick="toggleFoodCatalog()">＋ Crear alimento personalizado</button>
+    <div class="nutrition-actions">
+      <button class="nutrition-primary-action" type="button" onclick="addFoodToMeal()">＋ AGREGAR ALIMENTO</button>
+      <button class="nutrition-secondary-action" type="button" onclick="registerMeal()">✓ REGISTRAR COMIDA</button>
+      <button class="nutrition-catalog-action" type="button" onclick="toggleFoodCatalog()">＋ Crear alimento personalizado</button>
     </div>
   </div>
 
-  <div hidden aria-hidden="true">
-    <div id="mealDraftList"></div>
-    <span id="mealDraftTotals">0 kcal · P 0 · C 0 · G 0</span>
-  </div>
-
-  <div hidden aria-hidden="true">
-    <div id="foodList"></div>
-    <span id="foodTotals">0 kcal · P 0 · C 0 · G 0</span>
-  </div>
-
+  <div hidden aria-hidden="true"><div id="mealDraftList"></div><span id="mealDraftTotals">0 kcal · P 0 · C 0 · G 0</span></div>
+  <div hidden aria-hidden="true"><div id="foodList"></div><span id="foodTotals">0 kcal · P 0 · C 0 · G 0</span></div>
 
 </section>
 
