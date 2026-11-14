@@ -347,6 +347,11 @@ document.addEventListener('DOMContentLoaded',function(){
 @media(max-width:900px){.brand-logo{width:100%;max-height:110px}}
 @media(max-width:420px){.brand-logo{max-height:92px}}
 </style><style id="nutrition-cleanup-hide">#nutritionLegacyControls[hidden]{display:none!important}</style>
+
+<style id="nutrition-gap-fix-v1">
+/* Reduce blank gap above Nutrition banner on mobile; shift whole section, not hero (prevents clipping). */
+@media(max-width:600px){body.view-mobile #nutricion.active{margin-top:-100px!important}}
+</style>
 </head><body>
 
 
