@@ -251,20 +251,6 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 .tp-exercises{display:grid;gap:10px}.tp-ex-card{display:grid;grid-template-columns:125px 1fr 48px;align-items:center;gap:14px;background:#0b100d;border:1px solid #29342c;border-radius:17px;padding:9px;min-height:108px}.tp-ex-img{height:88px;border-radius:12px;background:#18231a center/cover;box-shadow:inset 0 0 0 1px #344238}.tp-ex-info strong{display:block;font-size:16px;text-transform:uppercase;color:#f5f7f5}.tp-ex-meta{display:flex;gap:14px;flex-wrap:wrap;color:#c6d0c7;font-size:12px;margin-top:9px}.tp-ex-meta b{color:#8dff28;font-weight:700}.tp-play{width:42px;height:42px;border-radius:50%;border:3px solid #8dff28;background:#101711;color:#fff;font-size:17px;cursor:pointer}.tp-start{width:100%;border:0;border-radius:17px;padding:19px;background:linear-gradient(100deg,#8dff28,#b4ff42);color:#071006;font-weight:950;font-size:20px;letter-spacing:.5px;box-shadow:0 8px 28px #83ff2525;cursor:pointer}.tp-register{border:1px solid #2c382e;border-radius:16px;padding:14px;background:#0a0e0b}.tp-register summary{cursor:pointer;color:#a6ff52;font-weight:800}.tp-register .formrow{margin-top:12px}
 @media(max-width:600px){.tp-hero{min-height:205px;padding:18px}.tp-hero-copy{max-width:78%}.tp-stats{padding:12px 3px}.tp-stat{gap:6px;padding:0 3px;flex-direction:column;text-align:center}.tp-stat strong{font-size:14px}.tp-stat small{font-size:10px}.tp-ex-card{grid-template-columns:85px 1fr 38px;gap:9px;padding:7px;min-height:90px}.tp-ex-img{height:76px}.tp-ex-info strong{font-size:13px}.tp-ex-meta{gap:8px;font-size:10px}.tp-play{width:34px;height:34px;font-size:14px}.tp-start{font-size:16px;padding:16px}}
 
-
-/* Solicitud: retirar banners de secciones internas; conservar banner principal */
-#nutricion .tp-hero,
-#entrenamiento .tp-hero,
-#suplementos .tp-hero{
- background-image:none !important;
- background-color:#101412 !important;
-}
-#nutricion .tp-hero:before,
-#entrenamiento .tp-hero:before,
-#suplementos .tp-hero:before{
- content:none !important;display:none !important;background-image:none !important;
-}
-
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
@@ -499,8 +485,7 @@ document.addEventListener('DOMContentLoaded',function(){
  
 
 </div></section>
-<section id="suplementos" class="section"><div class="sectionHead"><h2>Suplementación</h2><span class="pill">Confirmar consumo</span></div>
-<div class="training-pro-shell"><div class="tp-hero"><div class="tp-hero-copy"><h2>Suplementación</h2><div class="tp-shift-reco"><div class="tp-shift-kicker">RECOMENDACIÓN SEGÚN TURNO</div><div class="tp-shift-title" id="supplementBannerTitle">Hábitos diarios</div><div class="tp-shift-desc" id="supplementBannerDesc">Recordatorios simples para acompañar tu nutrición y recuperación.</div><div class="tp-shift-tags"><span class="tp-shift-tag" id="suppWaterTag">Agua: mantener hidratación</span><span class="tp-shift-tag" id="suppCreatineTag">Creatina: consumo diario</span></div><div class="tp-shift-note" id="suppBannerNote">Omega 3 · Magnesio: según tu rutina de suplementación.</div></div></div></div><div class="card"><div class="formrow three"><label>Suplemento<input id="suppName" placeholder="Ej. Magnesio, Omega 3"></label><label>Dosis<input id="suppDose" placeholder="Ej. 1 cápsula / 5 g"></label><label>Horario<input id="suppTime" placeholder="Ej. desayuno"></label></div><button onclick="addSupp()">＋ Agregar suplemento</button></div><div class="card" style="margin-top:12px"><h3>Lista de suplementos</h3><div id="suppList" class="list"></div></div></section>
+<section id="suplementos" class="section"><div class="sectionHead"><h2>Suplementación</h2><span class="pill">Confirmar consumo</span></div><div class="card"><div class="formrow three"><label>Suplemento<input id="suppName" placeholder="Ej. Magnesio, Omega 3"></label><label>Dosis<input id="suppDose" placeholder="Ej. 1 cápsula / 5 g"></label><label>Horario<input id="suppTime" placeholder="Ej. desayuno"></label></div><button onclick="addSupp()">＋ Agregar suplemento</button></div><div class="card" style="margin-top:12px"><h3>Lista de suplementos</h3><div id="suppList" class="list"></div></div></section>
 
 <section id="peso" class="section">
 <div class="sectionHead"><h2>Peso y medidas</h2><span class="pill">BODY EVOLUTION PRO</span></div>
