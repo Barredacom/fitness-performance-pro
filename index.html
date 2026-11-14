@@ -392,6 +392,24 @@ document.addEventListener('DOMContentLoaded',function(){
 .nutrition-card-kicker{font-size:14px;font-weight:850;letter-spacing:.6px;color:#f2f5f1;margin-bottom:19px;display:flex;align-items:center;gap:9px}
 .nutrition-card-kicker span{color:#a4ff28;font-size:23px}
 .nutrition-form-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);gap:13px;min-width:0;overflow:hidden}
+/* Resumen compacto de las cuatro comidas: paleta original verde neón */
+.nutrition-date-field{grid-column:span 1;min-width:0;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden}
+.nutrition-date-field input[type="date"]{display:block;width:100%;max-width:100%;min-width:0;height:47px;min-height:47px;padding:10px 8px!important;font-size:clamp(11px,2.8vw,14px)!important;line-height:1.2;box-sizing:border-box;text-align:center;border-radius:12px!important;overflow:hidden}
+.nutrition-date-field input[type="date"]::-webkit-date-and-time-value{text-align:center;margin:0 auto}
+.nutrition-date-field input[type="date"]::-webkit-calendar-picker-indicator{margin:0;padding:0;max-width:14px}
+.nutrition-meal-mini{grid-column:span 2;min-width:0;background:#0b100c;border:1px solid #26352a;border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.nutrition-meal-mini-title{font-size:10px;font-weight:900;letter-spacing:1.6px;color:#a4ff28}
+.nutrition-meal-mini-body{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:stretch;min-height:104px}
+.nutrition-meal-stack{display:flex;flex-direction:column-reverse;overflow:hidden;border:1px solid #354638;border-radius:7px;background:#111812;min-height:104px}
+.meal-stack-seg{display:block;width:100%;background:#a4ff28;border-top:1px solid #0b100c;min-height:0;transition:flex .25s ease}
+.meal-stack-seg.breakfast{opacity:1}.meal-stack-seg.lunch{opacity:.78}.meal-stack-seg.snack{opacity:.56}.meal-stack-seg.dinner{opacity:.34}
+.nutrition-meal-mini-rows{display:flex;flex-direction:column;justify-content:space-between;gap:3px;min-width:0}
+.nutrition-meal-mini-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px;align-items:center;font-size:10px;line-height:1.2;min-width:0}
+.nutrition-meal-mini-row .meal-name{color:#dce8de;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nutrition-meal-mini-row .meal-values{color:#a4ff28;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.nutrition-meal-mini-row .meal-share{color:#819184;font-size:9px;margin-left:3px}
+@media(max-width:650px){.nutrition-date-field{grid-column:span 1;width:100%;min-width:0}.nutrition-date-field input[type="date"]{height:45px;min-height:45px;font-size:12px!important;padding:8px 5px!important}.nutrition-meal-mini{grid-column:span 1;padding:9px}.nutrition-meal-mini-body{grid-template-columns:16px minmax(0,1fr);gap:7px;min-height:100px}.nutrition-meal-stack{min-height:100px}.nutrition-meal-mini-row{font-size:9px;gap:3px}.nutrition-meal-mini-row .meal-share{font-size:8px}}
+
 .nutrition-field{display:flex;flex-direction:column;gap:8px;color:#a4ff28;font-size:10px;font-weight:850;letter-spacing:1px;min-width:0;max-width:100%;box-sizing:border-box}
 .nutrition-field-wide{grid-column:span 1}
 .nutrition-field select,.nutrition-field input{width:100%;max-width:100%;min-width:0;box-sizing:border-box;background:#151d17!important;color:#edf3ed!important;border:1px solid #2b3b2e!important;border-radius:12px!important;padding:13px 12px!important;min-height:47px;font-size:14px!important;outline:none}
@@ -522,9 +540,18 @@ document.addEventListener('DOMContentLoaded',function(){
       <label class="nutrition-field">COMIDA
         <select id="meal"><option>Desayuno</option><option>Almuerzo</option><option>Cena</option><option>Colación</option></select>
       </label>
-      <label class="nutrition-field nutrition-field-wide">FECHA
-        <input id="foodDate" type="date">
+      <label class="nutrition-field nutrition-date-field">FECHA
+        <input id="foodDate" type="date" onchange="renderMealMiniSummary()">
       </label>
+      <div class="nutrition-meal-mini" id="nutritionMealMini" aria-live="polite">
+        <div class="nutrition-meal-mini-title">RESUMEN COMIDAS</div>
+        <div class="nutrition-meal-mini-body">
+          <div class="nutrition-meal-stack" id="nutritionMealStack" aria-label="Distribución de kcal por comida">
+            <span class="meal-stack-seg breakfast"></span><span class="meal-stack-seg lunch"></span><span class="meal-stack-seg snack"></span><span class="meal-stack-seg dinner"></span>
+          </div>
+          <div class="nutrition-meal-mini-rows" id="nutritionMealMiniRows"></div>
+        </div>
+      </div>
     </div>
     <div class="nutrition-preview-title">VALORES NUTRICIONALES ESTIMADOS</div>
     <div class="nutrition-macro-grid">
@@ -594,10 +621,19 @@ document.addEventListener('DOMContentLoaded',function(){
 <script>
 const $=id=>document.getElementById(id), today=new Date().toISOString().slice(0,10);
 $('foodDate').value=$('workDate').value=$('measureDate').value=today;$('dateLabel').textContent=today;
+$('foodDate').addEventListener('change',renderMealMiniSummary);
 const DBKEY='fppro_v2';let db=JSON.parse(localStorage.getItem(DBKEY)||'{"foods":[],"workouts":[],"supplements":[],"measures":[{"date":"2026-10-25","weight":82.3,"waist":95}]}');
 const foods={arroz:{n:'Arroz blanco cocido',k:130,p:2.7,c:28.2,f:.3},pollo:{n:'Pechuga de pollo cocida',k:165,p:31,c:0,f:3.6},atun:{n:'Atún al agua drenado',k:116,p:25.5,c:0,f:1},avena:{n:'Avena',k:389,p:16.9,c:66.3,f:6.9},platano:{n:'Plátano',k:89,p:1.1,c:22.8,f:.3},huevo:{n:'Huevo entero',k:143,p:12.6,c:.7,f:9.5},salmon:{n:'Salmón',k:208,p:20.4,c:0,f:13.4},quinoa:{n:'Quinoa cocida',k:120,p:4.4,c:21.3,f:1.9}};
 function save(){localStorage.setItem(DBKEY,JSON.stringify(db));renderAll()}
 function macros(){return db.foods.filter(x=>x.date===today).reduce((a,x)=>({k:a.k+x.k,p:a.p+x.p,c:a.c+x.c,f:a.f+x.f}),{k:0,p:0,c:0,f:0})}
+function renderMealMiniSummary(){
+ const date=$('foodDate')?.value||today, names=['Desayuno','Almuerzo','Colación','Cena'], cls=['breakfast','lunch','snack','dinner'];
+ const totals=names.map(name=>db.foods.filter(x=>x.date===date&&String(x.meal||'').toLowerCase()===name.toLowerCase()).reduce((a,x)=>({k:a.k+(Number(x.k)||0),p:a.p+(Number(x.p)||0)}),{k:0,p:0}));
+ const allK=totals.reduce((a,x)=>a+x.k,0), allP=totals.reduce((a,x)=>a+x.p,0);const stack=$('nutritionMealStack'),rows=$('nutritionMealMiniRows');if(!stack||!rows)return;
+ stack.innerHTML=totals.map((x,i)=>`<span class="meal-stack-seg ${cls[i]}" style="flex:${allK>0?Math.max(x.k/allK*100,.5):25}" title="${names[i]}: ${x.k.toFixed(0)} kcal"></span>`).join('');
+ rows.innerHTML=totals.map((x,i)=>{const pct=allK>0?Math.round(x.k/allK*100):0;return `<div class="nutrition-meal-mini-row"><span class="meal-name">${names[i]}</span><span class="meal-values">${x.k.toFixed(0)} kcal · ${x.p.toFixed(1)} g P <span class="meal-share">${pct}%</span></span></div>`}).join('');
+}
+
 function tab(id){document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));}
 
 // Catálogo personal persistente
@@ -632,6 +668,7 @@ $('quantityRange').onchange=()=>{const value=$('quantityRange').value;$('grams')
 $('grams').oninput=()=>{syncQuantityRange();preview();};
 function preview(){let x=foodVals();if(nutritionUnit==='unit'&&!Number(foods[$('food').value]?.unitWeight)){$('previewK').textContent='— kcal';$('previewP').textContent='— g';$('previewCF').textContent='Configura peso/unidad';return;}$('previewK').textContent=x.k.toFixed(0)+' kcal';$('previewP').textContent=x.p.toFixed(1)+' g';$('previewCF').textContent=x.c.toFixed(1)+' / '+x.f.toFixed(1)+' g'}
 setNutritionUnit(foods[$('food').value]?.unit||'g');
+renderMealMiniSummary();
 
 
 // SMART MEAL: acumula varios alimentos antes de registrarlos juntos.
@@ -663,7 +700,7 @@ async function registerMeal(){
   const {error}=await supabase.from('registros_nutricion').insert(rows);
   if(error){console.error(error);return alert('Error al registrar comida: '+error.message);}
   arr.forEach(x=>db.foods.push({...x,meal:x.meal||$('meal').value,date:x.date||$('foodDate').value,id:Date.now()+Math.random()}));
-  save();window.mealDraft=[];renderMealDraft();alert('Comida completa registrada correctamente');
+  save();renderMealMiniSummary();window.mealDraft=[];renderMealDraft();alert('Comida completa registrada correctamente');
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
@@ -730,7 +767,7 @@ $('foodList').innerHTML=db.foods.filter(x=>x.date===$('foodDate').value).map(x=>
 
 $('suppList').innerHTML=db.supplements.map(x=>`<div class="item"><span>${x.name}<small>${x.dose||'Dosis no indicada'} · ${x.time||'Horario libre'} · ${x.date}</small></span><span><button onclick="toggleSupp(${x.id})">${x.done?'✓ Consumido':'Confirmar consumo'}</button> <button onclick="del('supplements',${x.id})">×</button></span></div>`).join('')||'<p class="muted">Agrega tus suplementos.</p>';
 $('measureList').innerHTML=[...db.measures].reverse().map(x=>`<div class="item"><span>${x.date}<small>${x.weight?x.weight+' kg':''} ${x.waist?'· '+x.waist+' cm':''}</small></span><button onclick="del('measures',${x.id})">Eliminar</button></div>`).join('');
-chart('weightChart');renderBodyEvolution();renderExercises();renderExerciseLibrary();renderCalendar();renderHistory()}
+chart('weightChart');renderBodyEvolution();renderExercises();renderExerciseLibrary();renderCalendar();renderHistory();renderMealMiniSummary()}
 function toggleSupp(id){let x=db.supplements.find(x=>x.id===id);x.done=!x.done;save()}
 function chart(id){let data=db.measures.filter(x=>x.weight).sort((a,b)=>a.date.localeCompare(b.date));if(!data.length){$(id).innerHTML='<p class="muted">Registra peso para visualizar evolución.</p>';return}let vals=data.map(x=>x.weight),min=Math.min(...vals)-1,max=Math.max(...vals)+1,points=vals.map((v,i)=>`${20+i*360/Math.max(1,vals.length-1)},${155-(v-min)/(max-min)*125}`).join(' ');$(id).innerHTML=`<svg viewBox="0 0 400 180" preserveAspectRatio="none"><path d="M20 155 H380 M20 90 H380 M20 25 H380" stroke="#263329" fill="none"/><polyline points="${points}" fill="none" stroke="#53ff55" stroke-width="3"/>${vals.map((v,i)=>`<circle cx="${20+i*360/Math.max(1,vals.length-1)}" cy="${155-(v-min)/(max-min)*125}" r="4" fill="#b7ff39"/>`).join('')}<text x="22" y="15" fill="#9bad9f" font-size="11">${max.toFixed(1)} kg</text><text x="22" y="175" fill="#9bad9f" font-size="11">${min.toFixed(1)} kg</text></svg>`}
 function renderBodyEvolution(){
