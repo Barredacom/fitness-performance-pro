@@ -329,6 +329,17 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 .nutrition-goal-card>small{color:#91a397!important}
 .nutrition-goal-remaining{color:#e8f0e9!important}
 
+
+/* V20 upgrade: dimensional 3D donut nutrition indicators, same data and labels */
+.nutrition-3d-ring{width:clamp(145px,34vw,220px)!important;aspect-ratio:100/108!important}
+.nutrition-3d-ring svg{overflow:visible}
+.nutrition-3d-ring .ring-side-green{fill:#65b814;stroke:#4d970d;stroke-width:.5}
+.nutrition-3d-ring .ring-side-gray{fill:#303632;stroke:#242a26;stroke-width:.5}
+.nutrition-3d-ring .ring-top-green{fill:var(--ring-color);stroke:#c5ff68;stroke-width:.65;filter:drop-shadow(0 0 1.5px #a4ff2860)}
+.nutrition-3d-ring .ring-top-gray{fill:#515652;stroke:#737a75;stroke-width:.6}
+.nutrition-3d-ring .ring-percent{font-size:12px;font-weight:850;text-anchor:middle;fill:#f1f5f2}
+.nutrition-3d-ring .ring-value{font-size:7px;font-weight:800;text-anchor:middle;fill:var(--ring-color)}
+
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
@@ -737,7 +748,7 @@ function renderMealMiniSummary(){
  const foodsForDay=(db.foods||[]).filter(x=>String(x.date||'')===String(date));
  const totalK=foodsForDay.reduce((a,x)=>a+(Number(x.k)||0),0),totalP=foodsForDay.reduce((a,x)=>a+(Number(x.p)||0),0);
  const kcalGoal=1900,proteinGoal=125;
- const circle=(label,value,goal,unit,color)=>{const pct=Math.min(value/goal,1),dash=2*Math.PI*42;const percent=Math.round(value/goal*100);return `<div class="nutrition-goal-card"><div class="nutrition-goal-ring" style="--ring-color:${color}"><svg viewBox="0 0 100 100" role="img" aria-label="${label}: ${percent}% del objetivo"><circle class="ring-bg" cx="50" cy="50" r="42"></circle><circle class="ring-progress" cx="50" cy="50" r="42" stroke-dasharray="${(pct*dash).toFixed(2)} ${dash.toFixed(2)}"></circle><text x="50" y="47" class="ring-percent">${percent}%</text><text x="50" y="62" class="ring-value">${unit==='kcal'?Math.round(value):value.toFixed(1)}</text></svg></div><strong>${label}</strong><small>${unit==='kcal'?Math.round(value)+' / '+goal+' kcal':value.toFixed(1)+' / '+goal+' g'}</small><span class="nutrition-goal-remaining">${value>goal?'+'+(value-goal).toFixed(unit==='kcal'?0:1)+' '+unit:'Restan '+(goal-value).toFixed(unit==='kcal'?0:1)+' '+unit}</span></div>`;};
+ const circle=(label,value,goal,unit,color)=>{const percent=Math.round(value/goal*100),shown=unit==='kcal'?Math.round(value):value.toFixed(1),ratio=Math.max(0,Math.min(value/goal,1)),greenEnd=180,arc=(a,b,ro=39,ri=23,dy=0)=>{const pt=(ang,r,y)=>[50+r*Math.cos(ang*Math.PI/180),50+r*Math.sin(ang*Math.PI/180)+y],p1=pt(a,ro,dy),p2=pt(b,ro,dy),p3=pt(b,ri,dy),p4=pt(a,ri,dy),large=Math.abs(b-a)>180?1:0;return `M${p1[0]} ${p1[1]} A${ro} ${ro} 0 ${large} 1 ${p2[0]} ${p2[1]} L${p3[0]} ${p3[1]} A${ri} ${ri} 0 ${large} 0 ${p4[0]} ${p4[1]} Z`;},greenPath=arc(-90,greenEnd),grayPath=arc(greenEnd,270),greenSide=arc(-90,greenEnd,39,23,7),graySide=arc(greenEnd,270,39,23,7);return `<div class="nutrition-goal-card"><div class="nutrition-goal-ring nutrition-3d-ring" style="--ring-color:${color}"><svg viewBox="0 0 100 108" role="img" aria-label="${label}: ${percent}% del objetivo"><path class="ring-side-green" d="${greenSide}"/><path class="ring-side-gray" d="${graySide}"/><path class="ring-top-green" d="${greenPath}"/><path class="ring-top-gray" d="${grayPath}"/><text x="50" y="48" class="ring-percent">${percent}%</text><text x="50" y="63" class="ring-value">${shown}</text></svg></div><strong>${label}</strong><small>${unit==='kcal'?Math.round(value)+' / '+goal+' kcal':value.toFixed(1)+' / '+goal+' g'}</small><span class="nutrition-goal-remaining">${value>goal?'+'+(value-goal).toFixed(unit==='kcal'?0:1)+' '+unit:'Restan '+(goal-value).toFixed(unit==='kcal'?0:1)+' '+unit}</span></div>`;}
  const circles=$('nutritionGoalCircles'),list=$('nutritionMealsList');if(!circles||!list)return;
  circles.innerHTML=circle('CALORÍAS',totalK,kcalGoal,'kcal','#A4FF28')+circle('PROTEÍNAS',totalP,proteinGoal,'g','#A4FF28');
  list.innerHTML=names.map((name,i)=>{const mealFoods=foodsForDay.filter(x=>String(x.meal||'').toLowerCase()===name.toLowerCase()),mk=mealFoods.reduce((a,x)=>a+(Number(x.k)||0),0),mp=mealFoods.reduce((a,x)=>a+(Number(x.p)||0),0);return `<section class="nutrition-meal-group"><header><span class="nutrition-meal-icon">${icons[i]}</span><strong>${name.toUpperCase()}</strong><span class="nutrition-meal-total">${mk.toFixed(0)} kcal · P ${mp.toFixed(1)} g</span></header>${mealFoods.length?`<ul>${mealFoods.map(x=>`<li><span class="nutrition-food-name">${escapeHtml(x.n||'Alimento')}</span><span class="nutrition-food-values">${(Number(x.k)||0).toFixed(0)} kcal · ${(Number(x.p)||0).toFixed(1)} g P</span></li>`).join('')}</ul>`:'<p class="nutrition-meal-empty">Sin alimentos registrados</p>'}</section>`}).join('');
