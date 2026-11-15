@@ -301,6 +301,28 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
  .nutrition-field #meal{font-size:clamp(15px,3.8vw,19px)!important;padding:8px!important}
 }
 
+
+/* Date input typography refinement for mobile */
+.nutrition-date-field input[type=date]{
+ font-size:clamp(19px,4.4vw,26px)!important;
+ font-weight:800!important;
+ line-height:1.25!important;
+ letter-spacing:.15px!important;
+ text-align:center!important;
+ color:#f0f5f1!important;
+ -webkit-text-size-adjust:100%!important;
+ padding:14px 10px!important;
+}
+.nutrition-date-field input[type=date]::-webkit-date-and-time-value{
+ text-align:center!important;
+ margin:0 auto!important;
+ width:100%!important;
+ font-size:inherit!important;
+}
+@media(max-width:600px){
+ .nutrition-date-field input[type=date]{font-size:clamp(18px,4.6vw,23px)!important;padding:12px 6px!important}
+}
+
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
