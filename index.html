@@ -457,6 +457,34 @@ document.addEventListener('DOMContentLoaded',function(){
  .nutrition-unit-switch button{font-size:10px;padding:5px 3px}
 }
 
+
+/* FIX V6: alineación estricta de cantidad/fecha y control de desbordamiento */
+.nutrition-form-grid,
+.nutrition-form-grid *{min-width:0;box-sizing:border-box}
+.nutrition-form-grid{width:100%;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.nutrition-quantity-field,
+.nutrition-date-field{width:100%;max-width:100%;min-width:0;justify-self:stretch;align-self:start}
+.nutrition-date-field{display:flex;flex-direction:column;overflow:hidden}
+.nutrition-date-field input#foodDate{
+  appearance:none;-webkit-appearance:none;
+  display:block;width:100%;max-width:100%;min-width:0;
+  height:58px;min-height:58px;margin:0;
+  padding:6px 4px!important;
+  font-size:12px!important;line-height:1.15;
+  text-align:center;white-space:nowrap;
+  overflow:hidden;border-radius:12px!important;
+}
+.nutrition-date-field input#foodDate::-webkit-date-and-time-value{
+  text-align:center;margin:0 auto;max-width:100%;overflow:hidden
+}
+.nutrition-date-field input#foodDate::-webkit-calendar-picker-indicator{
+  margin:0;padding:0;width:12px;max-width:12px
+}
+@media(max-width:650px){
+ .nutrition-form-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+ .nutrition-date-field input#foodDate{font-size:clamp(10px,2.4vw,12px)!important;padding:4px 2px!important}
+}
+
 </style></head><body>
 
 
