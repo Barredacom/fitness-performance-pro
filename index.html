@@ -287,12 +287,19 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 }
 
 
-/* V17 alignment refinement: quantity and meal control boxes */
-.nutrition-form-grid{align-items:stretch}
-.nutrition-quantity-field{align-self:stretch}
-.nutrition-field:has(#meal){align-self:stretch}
-.nutrition-field #meal{height:140px!important;min-height:140px!important;display:flex;align-items:center;box-sizing:border-box}
-.nutrition-quantity-field #grams{height:74px!important;min-height:74px!important}
+/* V17 refinement: aligned form controls + responsive date typography */
+.nutrition-form-grid{align-items:start!important}
+.nutrition-quantity-field{grid-column:1!important;grid-row:2/4!important;align-self:start!important}
+.nutrition-date-field{grid-column:2!important;grid-row:2!important;align-self:start!important;width:100%!important}
+.nutrition-field:has(#meal){grid-column:2!important;grid-row:3!important;align-self:start!important;width:100%!important}
+.nutrition-date-field input[type=date]{height:clamp(76px,10vw,100px)!important;min-height:76px!important;max-height:100px!important;width:100%!important;box-sizing:border-box!important;padding:10px 12px!important;font-size:clamp(15px,2.7vw,22px)!important;font-weight:750!important;text-align:center!important}
+.nutrition-field #meal{height:clamp(76px,10vw,100px)!important;min-height:76px!important;max-height:100px!important;width:100%!important;box-sizing:border-box!important;padding:10px 12px!important;font-size:clamp(17px,3vw,23px)!important}
+.nutrition-quantity-field #grams{height:76px!important;min-height:76px!important}
+@media(max-width:600px){
+ .nutrition-form-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:12px!important}
+ .nutrition-date-field input[type=date]{font-size:clamp(14px,3.6vw,18px)!important;padding:8px!important}
+ .nutrition-field #meal{font-size:clamp(15px,3.8vw,19px)!important;padding:8px!important}
+}
 
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
