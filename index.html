@@ -485,7 +485,19 @@ document.addEventListener('DOMContentLoaded',function(){
  .nutrition-date-field input#foodDate{font-size:clamp(10px,2.4vw,12px)!important;padding:4px 2px!important}
 }
 
-</style></head><body>
+</style>
+<style>
+/* PANEL DESPLEGABLE NUTRICIONAL V7: integrado al registro existente */
+.nutrition-control-panel{grid-column:1/-1;margin-top:12px;border:1px solid #304332;border-radius:16px;background:#0b100c;overflow:hidden;min-width:0}
+.nutrition-control-panel>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px;background:linear-gradient(110deg,#111a12,#0b100c);color:#b7ff39;font-size:11px;font-weight:900;letter-spacing:.7px}
+.nutrition-control-panel>summary::-webkit-details-marker{display:none}.nutrition-panel-chevron{font-size:19px;transition:transform .2s}.nutrition-control-panel[open] .nutrition-panel-chevron{transform:rotate(180deg)}
+.nutrition-control-content{padding:12px;display:flex;flex-direction:column;gap:13px}.nutrition-goal-circles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.nutrition-goal-card{background:#111713;border:1px solid #29372d;border-radius:14px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;min-width:0}
+.nutrition-goal-ring{width:112px;max-width:100%;aspect-ratio:1}.nutrition-goal-ring svg{width:100%;height:100%;overflow:visible}.ring-bg{fill:none;stroke:#2a342c;stroke-width:8}.ring-progress{fill:none;stroke:var(--ring-color);stroke-width:8;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;filter:drop-shadow(0 0 3px var(--ring-color))}.ring-percent{fill:#f3f8f3;font-size:17px;font-weight:900;text-anchor:middle}.ring-value{fill:var(--ring-color);font-size:10px;font-weight:800;text-anchor:middle}.nutrition-goal-card>strong{font-size:11px;letter-spacing:.5px;color:#e8f1e9}.nutrition-goal-card>small{font-size:10px;color:#9eafa2}.nutrition-goal-remaining{font-size:10px;color:var(--ring-color);font-weight:700}
+.nutrition-meals-list{display:flex;flex-direction:column;gap:9px}.nutrition-meal-group{border:1px solid #29372d;border-radius:12px;background:#101511;overflow:hidden}.nutrition-meal-group>header{display:flex;align-items:center;gap:8px;padding:10px;background:#151d17;min-width:0}.nutrition-meal-icon{color:#b7ff39;font-size:16px;width:20px;text-align:center}.nutrition-meal-group>header strong{font-size:11px;color:#eaf5eb;letter-spacing:.5px}.nutrition-meal-total{margin-left:auto;text-align:right;font-size:10px;color:#9feaff;white-space:nowrap}.nutrition-meal-group ul{list-style:none;margin:0;padding:5px 10px}.nutrition-meal-group li{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #202a22}.nutrition-meal-group li:last-child{border-bottom:0}.nutrition-food-name{font-size:11px;color:#dce8de;min-width:0;overflow-wrap:anywhere}.nutrition-food-values{font-size:10px;color:#ffbd66;text-align:right;white-space:nowrap}.nutrition-meal-empty{font-size:10px;color:#718176;margin:10px}.nutrition-meal-group li .nutrition-food-values{color:#a4dfff}
+@media(max-width:380px){.nutrition-goal-ring{width:94px}.nutrition-control-content{padding:8px}.nutrition-meal-total{font-size:9px}}
+</style>
+</head><body>
 
 
 <!-- SUPABASE AUTH INTEGRATION -->
@@ -572,15 +584,13 @@ document.addEventListener('DOMContentLoaded',function(){
       <label class="nutrition-field nutrition-date-field">FECHA
         <input id="foodDate" type="date" onchange="renderMealMiniSummary()">
       </label>
-      <div class="nutrition-meal-mini" id="nutritionMealMini" aria-live="polite">
-        <div class="nutrition-meal-mini-title">RESUMEN COMIDAS</div>
-        <div class="nutrition-meal-mini-body">
-          <div class="nutrition-meal-stack" id="nutritionMealStack" aria-label="Distribución de kcal por comida">
-            <span class="meal-stack-seg breakfast"></span><span class="meal-stack-seg lunch"></span><span class="meal-stack-seg snack"></span><span class="meal-stack-seg dinner"></span>
-          </div>
-          <div class="nutrition-meal-mini-rows" id="nutritionMealMiniRows"></div>
+      <details class="nutrition-control-panel" id="nutritionControlPanel">
+        <summary><span>⌁ CONTROL NUTRICIONAL · COMIDAS DEL DÍA</span><span class="nutrition-panel-chevron">⌄</span></summary>
+        <div class="nutrition-control-content" aria-live="polite">
+          <div class="nutrition-goal-circles" id="nutritionGoalCircles"></div>
+          <div class="nutrition-meals-list" id="nutritionMealsList"></div>
         </div>
-      </div>
+      </details>
     </div>
     <div class="nutrition-preview-title">VALORES NUTRICIONALES ESTIMADOS</div>
     <div class="nutrition-macro-grid">
@@ -656,11 +666,14 @@ const foods={arroz:{n:'Arroz blanco cocido',k:130,p:2.7,c:28.2,f:.3},pollo:{n:'P
 function save(){localStorage.setItem(DBKEY,JSON.stringify(db));renderAll()}
 function macros(){return db.foods.filter(x=>x.date===today).reduce((a,x)=>({k:a.k+x.k,p:a.p+x.p,c:a.c+x.c,f:a.f+x.f}),{k:0,p:0,c:0,f:0})}
 function renderMealMiniSummary(){
- const date=$('foodDate')?.value||today, names=['Desayuno','Almuerzo','Colación','Cena'], cls=['breakfast','lunch','snack','dinner'];
- const totals=names.map(name=>db.foods.filter(x=>x.date===date&&String(x.meal||'').toLowerCase()===name.toLowerCase()).reduce((a,x)=>({k:a.k+(Number(x.k)||0),p:a.p+(Number(x.p)||0)}),{k:0,p:0}));
- const allK=totals.reduce((a,x)=>a+x.k,0), allP=totals.reduce((a,x)=>a+x.p,0);const stack=$('nutritionMealStack'),rows=$('nutritionMealMiniRows');if(!stack||!rows)return;
- stack.innerHTML=totals.map((x,i)=>`<span class="meal-stack-seg ${cls[i]}" style="flex:${allK>0?Math.max(x.k/allK*100,.5):25}" title="${names[i]}: ${x.k.toFixed(0)} kcal"></span>`).join('');
- rows.innerHTML=totals.map((x,i)=>{const pct=allK>0?Math.round(x.k/allK*100):0;return `<div class="nutrition-meal-mini-row"><span class="meal-name" title="${names[i]}">${names[i]}</span><span class="meal-kcal">${x.k.toFixed(0)} kcal</span><span class="meal-protein">${x.p.toFixed(1)} g P</span><span class="meal-share">${pct}%</span></div>`}).join('');
+ const date=$('foodDate')?.value||today, names=['Desayuno','Almuerzo','Colación','Cena'], icons=['☀','☼','＋','☾'];
+ const foodsForDay=(db.foods||[]).filter(x=>String(x.date||'')===String(date));
+ const totalK=foodsForDay.reduce((a,x)=>a+(Number(x.k)||0),0),totalP=foodsForDay.reduce((a,x)=>a+(Number(x.p)||0),0);
+ const kcalGoal=1900,proteinGoal=125;
+ const circle=(label,value,goal,unit,color)=>{const pct=Math.min(value/goal,1),dash=2*Math.PI*42;const percent=Math.round(value/goal*100);return `<div class="nutrition-goal-card"><div class="nutrition-goal-ring" style="--ring-color:${color}"><svg viewBox="0 0 100 100" role="img" aria-label="${label}: ${percent}% del objetivo"><circle class="ring-bg" cx="50" cy="50" r="42"></circle><circle class="ring-progress" cx="50" cy="50" r="42" stroke-dasharray="${(pct*dash).toFixed(2)} ${dash.toFixed(2)}"></circle><text x="50" y="47" class="ring-percent">${percent}%</text><text x="50" y="62" class="ring-value">${unit==='kcal'?Math.round(value):value.toFixed(1)}</text></svg></div><strong>${label}</strong><small>${unit==='kcal'?Math.round(value)+' / '+goal+' kcal':value.toFixed(1)+' / '+goal+' g'}</small><span class="nutrition-goal-remaining">${value>goal?'+'+(value-goal).toFixed(unit==='kcal'?0:1)+' '+unit:'Restan '+(goal-value).toFixed(unit==='kcal'?0:1)+' '+unit}</span></div>`;};
+ const circles=$('nutritionGoalCircles'),list=$('nutritionMealsList');if(!circles||!list)return;
+ circles.innerHTML=circle('CALORÍAS',totalK,kcalGoal,'kcal','#ffad36')+circle('PROTEÍNAS',totalP,proteinGoal,'g','#25d9ff');
+ list.innerHTML=names.map((name,i)=>{const mealFoods=foodsForDay.filter(x=>String(x.meal||'').toLowerCase()===name.toLowerCase()),mk=mealFoods.reduce((a,x)=>a+(Number(x.k)||0),0),mp=mealFoods.reduce((a,x)=>a+(Number(x.p)||0),0);return `<section class="nutrition-meal-group"><header><span class="nutrition-meal-icon">${icons[i]}</span><strong>${name.toUpperCase()}</strong><span class="nutrition-meal-total">${mk.toFixed(0)} kcal · P ${mp.toFixed(1)} g</span></header>${mealFoods.length?`<ul>${mealFoods.map(x=>`<li><span class="nutrition-food-name">${escapeHtml(x.n||'Alimento')}</span><span class="nutrition-food-values">${(Number(x.k)||0).toFixed(0)} kcal · ${(Number(x.p)||0).toFixed(1)} g P</span></li>`).join('')}</ul>`:'<p class="nutrition-meal-empty">Sin alimentos registrados</p>'}</section>`}).join('');
 }
 
 function tab(id){document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));}
