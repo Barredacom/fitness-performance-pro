@@ -497,7 +497,20 @@ document.addEventListener('DOMContentLoaded',function(){
 .nutrition-meals-list{display:flex;flex-direction:column;gap:9px}.nutrition-meal-group{border:1px solid #29372d;border-radius:12px;background:#101511;overflow:hidden}.nutrition-meal-group>header{display:flex;align-items:center;gap:8px;padding:10px;background:#151d17;min-width:0}.nutrition-meal-icon{color:#b7ff39;font-size:16px;width:20px;text-align:center}.nutrition-meal-group>header strong{font-size:11px;color:#eaf5eb;letter-spacing:.5px}.nutrition-meal-total{margin-left:auto;text-align:right;font-size:10px;color:#9feaff;white-space:nowrap}.nutrition-meal-group ul{list-style:none;margin:0;padding:5px 10px}.nutrition-meal-group li{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #202a22}.nutrition-meal-group li:last-child{border-bottom:0}.nutrition-food-name{font-size:11px;color:#dce8de;min-width:0;overflow-wrap:anywhere}.nutrition-food-values{font-size:10px;color:#ffbd66;text-align:right;white-space:nowrap}.nutrition-meal-empty{font-size:10px;color:#718176;margin:10px}.nutrition-meal-group li .nutrition-food-values{color:#a4dfff}
 @media(max-width:380px){.nutrition-goal-ring{width:94px}.nutrition-control-content{padding:8px}.nutrition-meal-total{font-size:9px}}
 </style>
-</head><body>
+<style>
+/* V15 · Control nutricional como panel lateral vertical */
+#nutritionControlPanel{position:fixed!important;top:0!important;right:0!important;bottom:0!important;width:min(92vw,520px)!important;height:100dvh!important;max-height:100dvh!important;margin:0!important;border:1px solid rgba(130,255,80,.35)!important;border-radius:20px 0 0 20px!important;background:#07100b!important;z-index:10050!important;box-shadow:-24px 0 70px rgba(0,0,0,.68)!important;overflow:hidden!important;transform:translateX(105%);transition:transform .28s ease!important;display:block!important;padding:0!important}
+#nutritionControlPanel[open]{transform:translateX(0)}
+#nutritionControlPanel>summary{position:sticky!important;top:0!important;z-index:2!important;display:flex!important;align-items:center!important;justify-content:space-between!important;min-height:66px!important;padding:18px 20px!important;background:#0b1710!important;border-bottom:1px solid rgba(130,255,80,.16)!important;cursor:pointer!important;list-style:none!important}
+#nutritionControlPanel>summary::-webkit-details-marker{display:none}
+#nutritionControlPanel .nutrition-control-content{height:calc(100dvh - 66px)!important;overflow-y:auto!important;overscroll-behavior:contain!important;padding:18px!important;box-sizing:border-box!important}
+#nutritionControlPanel[open] .nutrition-panel-chevron{transform:rotate(180deg)}
+#nutritionDrawerBackdrop{position:fixed;inset:0;background:rgba(0,0,0,.58);backdrop-filter:blur(2px);z-index:10040;opacity:0;pointer-events:none;transition:opacity .28s}
+#nutritionDrawerBackdrop.active{opacity:1;pointer-events:auto}
+#nutritionDrawerButton{position:fixed;right:16px;bottom:24px;width:62px;height:62px;border-radius:50%;border:1px solid rgba(130,255,80,.55);background:#101b13;color:#a6ff54;font-size:26px;box-shadow:0 0 22px rgba(105,255,55,.18);z-index:10030;display:grid;place-items:center;cursor:pointer}
+@media(max-width:600px){#nutritionControlPanel{width:100vw!important;border-radius:0!important}#nutritionControlPanel .nutrition-control-content{padding:14px!important}#nutritionDrawerButton{right:14px;bottom:20px}}
+@media(prefers-reduced-motion:reduce){#nutritionControlPanel,#nutritionDrawerBackdrop{transition:none!important}}
+</style></head><body>
 
 
 <!-- SUPABASE AUTH INTEGRATION -->
@@ -680,7 +693,7 @@ function renderMealMiniSummary(){
 function tab(id){document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));}
 
 // Catálogo personal persistente
-const CUSTOM_FOODS_KEY='fp_custom_foods_v1';const FOOD_OVERRIDES_KEY='fp_food_overrides_v1';
+const CUSTOM_FOODS_KEY='fp_custom_foods_v1';
 let customFoodUnit='g';
 let editingCustomFoodKey=null;
 function setCustomFoodUnit(unit){customFoodUnit=unit==='ml'?'ml':'g';const label=$('catalogUnitWeight');if(label)label.placeholder=customFoodUnit==='ml'?'Ej. 591 ml por botella':'Ej. 30 g por unidad';}
@@ -688,8 +701,6 @@ function escCatalog(x){return String(x||'').replace(/[&<>"']/g,c=>({'&':'&amp;',
 async function searchChileFoods(){const q=$('catalogSearch').value.trim(),st=$('catalogSearchStatus'),box=$('catalogSearchResults');if(!q){st.textContent='Escribe nombre o marca.';return;}st.textContent='Buscando productos registrados en Chile…';box.innerHTML='';try{const url='https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(q)+'&search_simple=1&action=process&json=1&page_size=12&tagtype_0=countries&tag_contains_0=contains&tag_0=chile&fields=product_name,brands,quantity,nutriments,countries_tags';const res=await fetch(url,{headers:{Accept:'application/json'}});if(!res.ok)throw Error('HTTP '+res.status);const data=await res.json(),items=(data.products||[]).filter(x=>x.product_name&&x.nutriments);window.chileFoodResults=items;if(!items.length){st.textContent='Sin resultados registrados en Chile. Puedes ingresar los datos manualmente.';return;}st.textContent='Selecciona el producto correcto:';box.innerHTML=items.map((x,i)=>`<button type="button" class="fp-custom-result" onclick="selectChileFood(${i})"><b>${escCatalog(x.product_name)}</b><small>${escCatalog(x.brands||'Marca no indicada')} · ${escCatalog(x.quantity||'')}</small></button>`).join('');}catch(e){st.textContent='No se pudo consultar el catálogo. Revisa internet o ingresa manualmente.';console.warn('Catálogo Chile',e);}}
 function selectChileFood(i){const x=window.chileFoodResults?.[i];if(!x)return;const n=x.nutriments||{};$('catalogName').value=[x.product_name,x.brands].filter(Boolean).join(' · ');$('catalogK').value=Number(n['energy-kcal_100g']??n['energy-kcal_value']??0);$('catalogP').value=Number(n.proteins_100g||0);$('catalogC').value=Number(n.carbohydrates_100g||0);$('catalogF').value=Number(n.fat_100g||0);setCustomFoodUnit('g');$('catalogSearchStatus').textContent='Importado por 100 g. Confirma los datos con la etiqueta.';$('catalogSearchResults').innerHTML='';}
 function loadCustomFoods(){try{const arr=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');arr.forEach((f,i)=>{foods[f.key||('custom_'+i)]={n:f.n,k:+f.k,p:+f.p,c:+f.c,f:+f.f,unit:f.unit||'g',unitWeight:Number(f.unitWeight)||0};});}catch(e){console.warn('No se pudo cargar catálogo personal',e)}}
-function loadFoodOverrides(){try{const o=JSON.parse(localStorage.getItem(FOOD_OVERRIDES_KEY)||'{}');Object.entries(o).forEach(([key,v])=>{if(foods[key])foods[key]={...foods[key],...v};});}catch(e){console.warn('Overrides catálogo',e)}}
-function saveFoodOverride(key,v){const o=JSON.parse(localStorage.getItem(FOOD_OVERRIDES_KEY)||'{}');o[key]={n:v.n,k:v.k,p:v.p,c:v.c,f:v.f,unit:v.unit||'g',unitWeight:Number(v.unitWeight)||0};localStorage.setItem(FOOD_OVERRIDES_KEY,JSON.stringify(o));}
 function toggleFoodCatalog(show,mode='create'){
  const modal=$('customFoodModal');if(!modal)return;
  const open=show===undefined?!modal.classList.contains('open'):!!show;
@@ -711,7 +722,7 @@ function toggleFoodCatalog(show,mode='create'){
 }
 function openEditFoodCatalog(){
  // Incluye TODO el catálogo base (foods) y los personalizados persistidos.
- loadCustomFoods();loadFoodOverrides();
+ loadCustomFoods();
  let persisted=[];
  try{persisted=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');if(!Array.isArray(persisted))persisted=[];}catch(e){persisted=[];}
  const byKey=new Map();
@@ -732,10 +743,10 @@ function openEditFoodCatalog(){
  picker.value='';
 }
 function clearCatalogForm(){['catalogName','catalogK','catalogP','catalogC','catalogF','catalogUnitWeight'].forEach(id=>$(id).value='');$('catalogUnit').value='g';setCustomFoodUnit('g');}
-function loadCustomFoodForEdit(key){const list=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]'),custom=list.find(f=>f.key===key);loadFoodOverrides();const item=custom||foods[key];if(!item){editingCustomFoodKey=null;clearCatalogForm();return;}editingCustomFoodKey=key;$('catalogName').value=item.n||'';$('catalogK').value=Number(item.k)||0;$('catalogP').value=Number(item.p)||0;$('catalogC').value=Number(item.c)||0;$('catalogF').value=Number(item.f)||0;$('catalogUnit').value=item.unit||'g';$('catalogUnitWeight').value=Number(item.unitWeight)||'';setCustomFoodUnit(item.unit||'g');}
-function saveCatalogFood(){if($('customFoodModal').dataset.mode==='edit'&&!editingCustomFoodKey)return alert('Primero selecciona el alimento que deseas editar.');const n=$('catalogName').value.trim(),k=+$('catalogK').value,p=+$('catalogP').value,c=+$('catalogC').value,f=+$('catalogF').value;if(!n)return alert('Ingresa el nombre del alimento');if(['catalogK','catalogP','catalogC','catalogF'].some(id=>$(id).value===''||!Number.isFinite(+$(id).value)||+$(id).value<0))return alert('Completa los valores nutricionales con números iguales o mayores a 0');const key=editingCustomFoodKey||('custom_'+Date.now()),unit=customFoodUnit==='ml'?'ml':'g',unitWeight=Math.max(0,Number($('catalogUnitWeight').value)||0),item={key,n,k,p,c,f,unit,unitWeight};if(editingCustomFoodKey&&Object.prototype.hasOwnProperty.call(baseFoods,editingCustomFoodKey)){saveFoodOverride(key,item);foods[key]={...foods[key],n,k,p,c,f,unit,unitWeight};}else{const list=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]'),idx=list.findIndex(x=>x.key===key);if(idx>=0)list[idx]=item;else list.push(item);localStorage.setItem(CUSTOM_FOODS_KEY,JSON.stringify(list));foods[key]={n,k,p,c,f,unit,unitWeight};}loadFoodCatalog();$('food').value=key;$('grams').value=unitWeight||100;preview();const wasEditing=!!editingCustomFoodKey;toggleFoodCatalog(false);['catalogName','catalogK','catalogP','catalogC','catalogF','catalogSearch','catalogUnitWeight'].forEach(id=>$(id).value='');$('catalogUnit').value='g';setCustomFoodUnit('g');$('catalogSearchResults').innerHTML='';alert(wasEditing?'Alimento actualizado y guardado en este dispositivo.':'Alimento guardado en tu catálogo personal y seleccionado.');}
+function loadCustomFoodForEdit(key){const list=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]'),item=list.find(f=>f.key===key);if(!item){editingCustomFoodKey=null;clearCatalogForm();return;}editingCustomFoodKey=key;$('catalogName').value=item.n||'';$('catalogK').value=Number(item.k)||0;$('catalogP').value=Number(item.p)||0;$('catalogC').value=Number(item.c)||0;$('catalogF').value=Number(item.f)||0;$('catalogUnit').value=item.unit||'g';$('catalogUnitWeight').value=Number(item.unitWeight)||'';setCustomFoodUnit(item.unit||'g');}
+function saveCatalogFood(){if($('customFoodModal').dataset.mode==='edit'&&!editingCustomFoodKey)return alert('Primero selecciona el alimento que deseas editar.');const n=$('catalogName').value.trim(),k=+$('catalogK').value,p=+$('catalogP').value,c=+$('catalogC').value,f=+$('catalogF').value;if(!n)return alert('Ingresa el nombre del alimento');if(['catalogK','catalogP','catalogC','catalogF'].some(id=>$(id).value===''||!Number.isFinite(+$(id).value)||+$(id).value<0))return alert('Completa los valores nutricionales con números iguales o mayores a 0');const key=editingCustomFoodKey||('custom_'+Date.now()),unit=customFoodUnit==='ml'?'ml':'g';const unitWeight=Math.max(0,Number($('catalogUnitWeight').value)||0);const item={key,n,k,p,c,f,unit,unitWeight};const list=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');const idx=list.findIndex(x=>x.key===key);if(idx>=0)list[idx]=item;else list.push(item);localStorage.setItem(CUSTOM_FOODS_KEY,JSON.stringify(list));foods[key]={n,k,p,c,f,unit,unitWeight};loadFoodCatalog();$('food').value=key;$('grams').value=unitWeight||100;preview();const wasEditing=!!editingCustomFoodKey;toggleFoodCatalog(false);['catalogName','catalogK','catalogP','catalogC','catalogF','catalogSearch','catalogUnitWeight'].forEach(id=>$(id).value='');$('catalogUnit').value='g';setCustomFoodUnit('g');$('catalogSearchResults').innerHTML='';alert(wasEditing?'Alimento actualizado correctamente.':'Alimento guardado en tu catálogo personal y seleccionado.');}
 
-const baseFoods=JSON.parse(JSON.stringify(foods));loadCustomFoods();loadFoodOverrides();
+loadCustomFoods();
 function loadFoodCatalog(){
   const select = $('food');
   if(!select)return;
@@ -1273,4 +1284,21 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
   <div class="fp-custom-macros"><div class="fp-custom-macro"><label for="catalogK">Calorías (kcal/100)</label><input id="catalogK" type="number" min="0" step="0.01" placeholder="kcal"></div><div class="fp-custom-macro"><label for="catalogP">Proteínas (g/100)</label><input id="catalogP" type="number" min="0" step="0.1" placeholder="g"></div><div class="fp-custom-macro"><label for="catalogC">Carbohidratos (g/100)</label><input id="catalogC" type="number" min="0" step="0.1" placeholder="g"></div><div class="fp-custom-macro"><label for="catalogF">Grasas (g/100)</label><input id="catalogF" type="number" min="0" step="0.1" placeholder="g"></div></div>
   <div class="fp-modal-actions"><button type="button" onclick="toggleFoodCatalog(false)">Cancelar</button><button id="catalogSaveButton" type="button" onclick="saveCatalogFood()">Guardar alimento</button></div>
  </div></div>
+
+<script>
+(()=>{
+ const panel=document.getElementById('nutritionControlPanel');
+ if(!panel||document.getElementById('nutritionDrawerButton'))return;
+ document.body.appendChild(panel); /* sacar el panel del contenedor para evitar recortes por overflow */
+ const backdrop=document.createElement('div');backdrop.id='nutritionDrawerBackdrop';backdrop.setAttribute('aria-hidden','true');document.body.appendChild(backdrop);
+ const btn=document.createElement('button');btn.id='nutritionDrawerButton';btn.type='button';btn.title='Abrir control nutricional';btn.setAttribute('aria-label','Abrir control nutricional');btn.innerHTML='◉';document.body.appendChild(btn);
+ const summary=panel.querySelector('summary');
+ const open=()=>{panel.open=true;backdrop.classList.add('active');btn.setAttribute('aria-label','Cerrar control nutricional');btn.title='Cerrar control nutricional';btn.innerHTML='×';document.body.style.overflow='hidden';};
+ const close=()=>{panel.open=false;backdrop.classList.remove('active');btn.setAttribute('aria-label','Abrir control nutricional');btn.title='Abrir control nutricional';btn.innerHTML='◉';document.body.style.overflow='';};
+ btn.addEventListener('click',()=>panel.open?close():open());backdrop.addEventListener('click',close);
+ if(summary)summary.addEventListener('click',e=>{e.preventDefault();close();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panel.open)close();});
+ panel.open=false;
+})();
+</script>
 </body></html>
