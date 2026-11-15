@@ -313,6 +313,11 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 .date-display-card:focus-visible{outline:2px solid #a4ff28;outline-offset:3px}
 @media(max-width:600px){.date-display-card{height:clamp(76px,19vw,100px);padding:10px 9px;gap:8px;border-radius:18px}.date-display-icon{flex-basis:28px}.date-display-icon svg{max-height:28px}.date-display-text{font-size:clamp(16px,4.1vw,21px)}}
 
+
+/* Solid Neon UI: custom food edit action icon */
+.nutrition-catalog-action .solid-neon-edit-icon{width:clamp(22px,3vw,30px);height:clamp(22px,3vw,30px);display:inline-block;flex:0 0 auto;fill:#a4ff28;stroke:#a4ff28;stroke-width:.45;stroke-linejoin:round;filter:drop-shadow(0 0 4px #a4ff2830);vertical-align:middle}
+.nutrition-catalog-action:has(.solid-neon-edit-icon){display:flex;align-items:center;justify-content:center;gap:12px}
+
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
@@ -647,7 +652,7 @@ document.addEventListener('DOMContentLoaded',function(){
       <button class="nutrition-primary-action" type="button" onclick="addFoodToMeal()">＋ AGREGAR ALIMENTO</button>
       <button class="nutrition-secondary-action" type="button" onclick="registerMeal()">✓ REGISTRAR COMIDA</button>
       <button class="nutrition-catalog-action" type="button" onclick="toggleFoodCatalog()">＋ Crear alimento personalizado</button>
-      <button class="nutrition-catalog-action" type="button" onclick="openEditFoodCatalog()">✏️ Editar alimento</button>
+      <button class="nutrition-catalog-action" type="button" onclick="openEditFoodCatalog()"><svg class="solid-neon-edit-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L18.81 8.94l-3.75-3.75L3 17.25Z"/><path d="m17.06 3.69 1.25-1.25a1.77 1.77 0 0 1 2.5 0l.75.75a1.77 1.77 0 0 1 0 2.5l-1.25 1.25-3.25-3.25Z"/></svg><span>Editar alimento</span></button>
     </div>
   </div>
 
