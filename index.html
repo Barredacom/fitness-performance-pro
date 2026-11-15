@@ -393,8 +393,8 @@ document.addEventListener('DOMContentLoaded',function(){
 .nutrition-card-kicker span{color:#a4ff28;font-size:23px}
 .nutrition-form-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);gap:13px;min-width:0;overflow:hidden}
 /* Resumen compacto de las cuatro comidas: paleta original verde neón */
-.nutrition-date-field{grid-column:span 1;min-width:0;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden}
-.nutrition-date-field input[type="date"]{display:block;width:100%;max-width:100%;min-width:0;height:47px;min-height:47px;padding:10px 8px!important;font-size:clamp(11px,2.8vw,14px)!important;line-height:1.2;box-sizing:border-box;text-align:center;border-radius:12px!important;overflow:hidden}
+.nutrition-date-field{grid-column:span 1;min-width:0;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden;align-self:start}
+.nutrition-date-field input[type="date"]{display:block;width:100%;max-width:100%;min-width:0;height:42px;min-height:42px;padding:7px 5px!important;font-size:clamp(10px,2.5vw,13px)!important;line-height:1.1;box-sizing:border-box;text-align:center;border-radius:12px!important;overflow:hidden}
 .nutrition-date-field input[type="date"]::-webkit-date-and-time-value{text-align:center;margin:0 auto}
 .nutrition-date-field input[type="date"]::-webkit-calendar-picker-indicator{margin:0;padding:0;max-width:14px}
 .nutrition-meal-mini{grid-column:span 2;min-width:0;background:#0b100c;border:1px solid #26352a;border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
@@ -404,11 +404,11 @@ document.addEventListener('DOMContentLoaded',function(){
 .meal-stack-seg{display:block;width:100%;background:#a4ff28;border-top:1px solid #0b100c;min-height:0;transition:flex .25s ease}
 .meal-stack-seg.breakfast{opacity:1}.meal-stack-seg.lunch{opacity:.78}.meal-stack-seg.snack{opacity:.56}.meal-stack-seg.dinner{opacity:.34}
 .nutrition-meal-mini-rows{display:flex;flex-direction:column;justify-content:space-between;gap:3px;min-width:0}
-.nutrition-meal-mini-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px;align-items:center;font-size:10px;line-height:1.2;min-width:0}
+.nutrition-meal-mini-row{display:grid;grid-template-columns:minmax(54px,.85fr) minmax(48px,1fr) minmax(55px,1fr) 24px;gap:4px;align-items:center;font-size:9px;line-height:1.2;min-width:0}
 .nutrition-meal-mini-row .meal-name{color:#dce8de;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nutrition-meal-mini-row .meal-values{color:#a4ff28;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
-.nutrition-meal-mini-row .meal-share{color:#819184;font-size:9px;margin-left:3px}
-@media(max-width:650px){.nutrition-date-field{grid-column:span 1;width:100%;min-width:0}.nutrition-date-field input[type="date"]{height:45px;min-height:45px;font-size:12px!important;padding:8px 5px!important}.nutrition-meal-mini{grid-column:span 1;padding:9px}.nutrition-meal-mini-body{grid-template-columns:16px minmax(0,1fr);gap:7px;min-height:100px}.nutrition-meal-stack{min-height:100px}.nutrition-meal-mini-row{font-size:9px;gap:3px}.nutrition-meal-mini-row .meal-share{font-size:8px}}
+.nutrition-meal-mini-row .meal-kcal,.nutrition-meal-mini-row .meal-protein{color:#a4ff28;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.nutrition-meal-mini-row .meal-share{color:#819184;font-size:8px;text-align:right;white-space:nowrap;margin:0}
+@media(max-width:650px){.nutrition-date-field{grid-column:span 1;width:100%;min-width:0}.nutrition-date-field input[type="date"]{height:40px;min-height:40px;font-size:11px!important;padding:6px 3px!important}.nutrition-meal-mini{grid-column:span 1;padding:9px}.nutrition-meal-mini-body{grid-template-columns:16px minmax(0,1fr);gap:7px;min-height:100px}.nutrition-meal-stack{min-height:100px}.nutrition-meal-mini-row{font-size:8px;gap:3px;grid-template-columns:minmax(48px,.8fr) minmax(43px,1fr) minmax(48px,1fr) 22px}.nutrition-meal-mini-row .meal-share{font-size:8px}}
 
 .nutrition-field{display:flex;flex-direction:column;gap:8px;color:#a4ff28;font-size:10px;font-weight:850;letter-spacing:1px;min-width:0;max-width:100%;box-sizing:border-box}
 .nutrition-field-wide{grid-column:span 1}
@@ -619,7 +619,7 @@ document.addEventListener('DOMContentLoaded',function(){
 <div class="footer">FITNESS PERFORMANCE PRO · Prototipo local V1 · Tus registros se guardan en este navegador</div>
 </main></div>
 <script>
-const $=id=>document.getElementById(id), today=new Date().toISOString().slice(0,10);
+const $=id=>document.getElementById(id), today=localDateISO(new Date());
 $('foodDate').value=$('workDate').value=$('measureDate').value=today;$('dateLabel').textContent=today;
 $('foodDate').addEventListener('change',renderMealMiniSummary);
 const DBKEY='fppro_v2';let db=JSON.parse(localStorage.getItem(DBKEY)||'{"foods":[],"workouts":[],"supplements":[],"measures":[{"date":"2026-10-25","weight":82.3,"waist":95}]}');
@@ -631,7 +631,7 @@ function renderMealMiniSummary(){
  const totals=names.map(name=>db.foods.filter(x=>x.date===date&&String(x.meal||'').toLowerCase()===name.toLowerCase()).reduce((a,x)=>({k:a.k+(Number(x.k)||0),p:a.p+(Number(x.p)||0)}),{k:0,p:0}));
  const allK=totals.reduce((a,x)=>a+x.k,0), allP=totals.reduce((a,x)=>a+x.p,0);const stack=$('nutritionMealStack'),rows=$('nutritionMealMiniRows');if(!stack||!rows)return;
  stack.innerHTML=totals.map((x,i)=>`<span class="meal-stack-seg ${cls[i]}" style="flex:${allK>0?Math.max(x.k/allK*100,.5):25}" title="${names[i]}: ${x.k.toFixed(0)} kcal"></span>`).join('');
- rows.innerHTML=totals.map((x,i)=>{const pct=allK>0?Math.round(x.k/allK*100):0;return `<div class="nutrition-meal-mini-row"><span class="meal-name">${names[i]}</span><span class="meal-values">${x.k.toFixed(0)} kcal · ${x.p.toFixed(1)} g P <span class="meal-share">${pct}%</span></span></div>`}).join('');
+ rows.innerHTML=totals.map((x,i)=>{const pct=allK>0?Math.round(x.k/allK*100):0;return `<div class="nutrition-meal-mini-row"><span class="meal-name" title="${names[i]}">${names[i]}</span><span class="meal-kcal">${x.k.toFixed(0)} kcal</span><span class="meal-protein">${x.p.toFixed(1)} g P</span><span class="meal-share">${pct}%</span></div>`}).join('');
 }
 
 function tab(id){document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));}
