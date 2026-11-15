@@ -302,26 +302,16 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 }
 
 
-/* Date input typography refinement for mobile */
-.nutrition-date-field input[type=date]{
- font-size:clamp(19px,4.4vw,26px)!important;
- font-weight:800!important;
- line-height:1.25!important;
- letter-spacing:.15px!important;
- text-align:center!important;
- color:#f0f5f1!important;
- -webkit-text-size-adjust:100%!important;
- padding:14px 10px!important;
-}
-.nutrition-date-field input[type=date]::-webkit-date-and-time-value{
- text-align:center!important;
- margin:0 auto!important;
- width:100%!important;
- font-size:inherit!important;
-}
-@media(max-width:600px){
- .nutrition-date-field input[type=date]{font-size:clamp(18px,4.6vw,23px)!important;padding:12px 6px!important}
-}
+/* Custom date card: typography fully controlled, native picker remains active */
+.nutrition-date-field{min-width:0!important}
+.date-display-card{position:relative;display:flex;align-items:center;gap:clamp(9px,2vw,16px);width:100%;height:clamp(76px,10vw,100px);min-height:76px;box-sizing:border-box;padding:12px clamp(10px,2vw,18px);border:1px solid #29372b;border-radius:22px;background:#141c16;color:#f1f5f2;overflow:hidden;cursor:pointer;box-shadow:inset 0 0 0 1px #17251a}
+.date-display-icon{display:flex;align-items:center;justify-content:center;flex:0 0 clamp(30px,5vw,42px);color:#a4ff28}
+.date-display-icon svg{width:100%;height:auto;max-height:38px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.date-display-divider{width:1px;height:55%;background:#344638;flex:0 0 1px}
+.date-display-text{flex:1;min-width:0;text-align:center;font-size:clamp(18px,4.2vw,27px);font-weight:850;line-height:1.15;letter-spacing:.15px;white-space:nowrap;color:#f1f5f2}
+.date-display-card input[type=date]{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;opacity:0!important;cursor:pointer!important;z-index:2!important;display:block!important}
+.date-display-card:focus-visible{outline:2px solid #a4ff28;outline-offset:3px}
+@media(max-width:600px){.date-display-card{height:clamp(76px,19vw,100px);padding:10px 9px;gap:8px;border-radius:18px}.date-display-icon{flex-basis:28px}.date-display-icon svg{max-height:28px}.date-display-text{font-size:clamp(16px,4.1vw,21px)}}
 
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
@@ -632,7 +622,12 @@ document.addEventListener('DOMContentLoaded',function(){
         <select id="meal"><option>Desayuno</option><option>Almuerzo</option><option>Cena</option><option>Colación</option></select>
       </label>
       <label class="nutrition-field nutrition-date-field">FECHA
-        <input id="foodDate" type="date" onchange="renderMealMiniSummary()">
+        <div class="date-display-card" id="dateDisplayCard" role="button" tabindex="0" aria-label="Seleccionar fecha">
+          <span class="date-display-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 2v4M17 2v4M3 9h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Z"/><path d="M7 13h2M12 13h2M7 17h2M12 17h2"/></svg></span>
+          <span class="date-display-divider" aria-hidden="true"></span>
+          <span class="date-display-text" id="dateDisplayText">Nov 15, 2026</span>
+          <input id="foodDate" type="date" onchange="updateDateDisplay();renderMealMiniSummary()" aria-label="Seleccionar fecha">
+        </div>
       </label>
       <details class="nutrition-control-panel" id="nutritionControlPanel">
         <summary><span>⌁ CONTROL NUTRICIONAL · COMIDAS DEL DÍA</span><span class="nutrition-panel-chevron">⌄</span></summary>
@@ -710,8 +705,9 @@ document.addEventListener('DOMContentLoaded',function(){
 </main></div>
 <script>
 const $=id=>document.getElementById(id), today=localDateISO(new Date());
-$('foodDate').value=$('workDate').value=$('measureDate').value=today;$('dateLabel').textContent=today;
-$('foodDate').addEventListener('change',renderMealMiniSummary);
+function updateDateDisplay(){const el=$('foodDate'),out=$('dateDisplayText');if(!el||!out)return;const v=el.value||today;const d=new Date(v+'T12:00:00');out.textContent=d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+$('foodDate').value=$('workDate').value=$('measureDate').value=today;$('dateLabel').textContent=today;updateDateDisplay();
+$('foodDate').addEventListener('change',()=>{updateDateDisplay();renderMealMiniSummary()});$('dateDisplayCard')?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('foodDate').showPicker?.();}});
 const DBKEY='fppro_v2';let db=JSON.parse(localStorage.getItem(DBKEY)||'{"foods":[],"workouts":[],"supplements":[],"measures":[{"date":"2026-10-25","weight":82.3,"waist":95}]}');
 const foods={arroz:{n:'Arroz blanco cocido',k:130,p:2.7,c:28.2,f:.3},pollo:{n:'Pechuga de pollo cocida',k:165,p:31,c:0,f:3.6},atun:{n:'Atún al agua drenado',k:116,p:25.5,c:0,f:1},avena:{n:'Avena',k:389,p:16.9,c:66.3,f:6.9},platano:{n:'Plátano',k:89,p:1.1,c:22.8,f:.3},huevo:{n:'Huevo entero',k:143,p:12.6,c:.7,f:9.5},salmon:{n:'Salmón',k:208,p:20.4,c:0,f:13.4},quinoa:{n:'Quinoa cocida',k:120,p:4.4,c:21.3,f:1.9}};
 function save(){localStorage.setItem(DBKEY,JSON.stringify(db));renderAll()}
