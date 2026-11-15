@@ -507,8 +507,8 @@ document.addEventListener('DOMContentLoaded',function(){
 #nutritionControlPanel[open] .nutrition-panel-chevron{transform:rotate(180deg)}
 #nutritionDrawerBackdrop{position:fixed;inset:0;background:rgba(0,0,0,.58);backdrop-filter:blur(2px);z-index:10040;opacity:0;pointer-events:none;transition:opacity .28s}
 #nutritionDrawerBackdrop.active{opacity:1;pointer-events:auto}
-#nutritionDrawerButton{position:fixed;right:16px;bottom:24px;width:62px;height:62px;border-radius:50%;border:1px solid rgba(130,255,80,.55);background:#101b13;color:#a6ff54;font-size:26px;box-shadow:0 0 22px rgba(105,255,55,.18);z-index:10030;display:grid;place-items:center;cursor:pointer}
-@media(max-width:600px){#nutritionControlPanel{width:100vw!important;border-radius:0!important}#nutritionControlPanel .nutrition-control-content{padding:14px!important}#nutritionDrawerButton{right:14px;bottom:20px}}
+#nutritionDrawerButton{position:fixed;left:16px;right:auto;bottom:24px;width:62px;height:62px;border-radius:50%;border:1px solid rgba(130,255,80,.55);background:#101b13;color:#a6ff54;font-size:26px;box-shadow:0 0 22px rgba(105,255,55,.18);z-index:10030;display:grid;place-items:center;cursor:pointer}
+@media(max-width:600px){#nutritionControlPanel{width:100vw!important;border-radius:0!important}#nutritionControlPanel .nutrition-control-content{padding:14px!important}#nutritionDrawerButton{left:14px;right:auto;bottom:20px}}
 @media(prefers-reduced-motion:reduce){#nutritionControlPanel,#nutritionDrawerBackdrop{transition:none!important}}
 </style></head><body>
 
