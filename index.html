@@ -708,22 +708,25 @@ function toggleFoodCatalog(show,mode='create'){
  }
 }
 function openEditFoodCatalog(){
- // Reconstruye el catálogo desde el almacenamiento y desde el mapa activo de alimentos.
+ // Incluye TODO el catálogo base (foods) y los personalizados persistidos.
  loadCustomFoods();
- let list=[];
- try{list=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');if(!Array.isArray(list))list=[];}catch(e){list=[];}
- const seen=new Set(list.map(f=>String(f.key||'')));
- Object.entries(foods||{}).forEach(([key,v])=>{
-   if(String(key).startsWith('custom_')&&!seen.has(String(key))){
-     list.push({key,n:v.n,k:Number(v.k)||0,p:Number(v.p)||0,c:Number(v.c)||0,f:Number(v.f)||0,unit:v.unit||'g',unitWeight:Number(v.unitWeight)||0});seen.add(String(key));
-   }
- });
- if(!list.length)return alert('No se encontraron alimentos personalizados guardados en este navegador.');
- // Sincroniza el catálogo reconstruido para que edición y creación usen la misma fuente.
- try{localStorage.setItem(CUSTOM_FOODS_KEY,JSON.stringify(list));}catch(e){console.warn('No se pudo sincronizar catálogo',e)}
+ let persisted=[];
+ try{persisted=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');if(!Array.isArray(persisted))persisted=[];}catch(e){persisted=[];}
+ const byKey=new Map();
+ // Los alimentos de la base integrada aparecen siempre en el selector.
+ Object.entries(foods||{}).forEach(([key,v])=>byKey.set(String(key),{
+   key:String(key),n:v.n||v.name||key,k:Number(v.k)||0,p:Number(v.p)||0,c:Number(v.c)||0,f:Number(v.f)||0,
+   unit:v.unit||'g',unitWeight:Number(v.unitWeight)||0
+ }));
+ // Los personalizados persistidos reemplazan/añaden su versión actual.
+ persisted.forEach(f=>{if(f&&f.key)byKey.set(String(f.key),{
+   key:String(f.key),n:f.n||f.name||f.key,k:Number(f.k)||0,p:Number(f.p)||0,c:Number(f.c)||0,f:Number(f.f)||0,
+   unit:f.unit||'g',unitWeight:Number(f.unitWeight)||0
+ });});
+ const list=[...byKey.values()].sort((a,b)=>String(a.n).localeCompare(String(b.n),'es'));
  toggleFoodCatalog(true,'edit');editingCustomFoodKey=null;clearCatalogForm();
  const picker=$('catalogEditPicker');
- picker.innerHTML='<option value="">Selecciona un alimento…</option>'+list.map(f=>`<option value="${escCatalog(f.key)}">${escCatalog(f.n||f.name||f.key)}</option>`).join('');
+ picker.innerHTML='<option value="">Selecciona un alimento…</option>'+list.map(f=>`<option value="${escCatalog(f.key)}">${escCatalog(f.n)}</option>`).join('');
  picker.value='';
 }
 function clearCatalogForm(){['catalogName','catalogK','catalogP','catalogC','catalogF','catalogUnitWeight'].forEach(id=>$(id).value='');$('catalogUnit').value='g';setCustomFoodUnit('g');}
