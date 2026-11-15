@@ -507,8 +507,8 @@ document.addEventListener('DOMContentLoaded',function(){
 #nutritionControlPanel[open] .nutrition-panel-chevron{transform:rotate(180deg)}
 #nutritionDrawerBackdrop{position:fixed;inset:0;background:rgba(0,0,0,.58);backdrop-filter:blur(2px);z-index:10040;opacity:0;pointer-events:none;transition:opacity .28s}
 #nutritionDrawerBackdrop.active{opacity:1;pointer-events:auto}
-#nutritionDrawerButton{position:fixed;left:16px;right:auto;bottom:24px;width:62px;height:62px;border-radius:50%;border:1px solid rgba(130,255,80,.55);background:#101b13;color:#a6ff54;font-size:26px;box-shadow:0 0 22px rgba(105,255,55,.18);z-index:10030;display:grid;place-items:center;cursor:pointer}
-@media(max-width:600px){#nutritionControlPanel{width:100vw!important;border-radius:0!important}#nutritionControlPanel .nutrition-control-content{padding:14px!important}#nutritionDrawerButton{left:14px;right:auto;bottom:20px}}
+#nutritionDrawerButton{position:fixed;left:16px;right:auto;bottom:24px;width:48px;height:48px;border-radius:15px;border:1px solid rgba(130,255,80,.42);background:linear-gradient(145deg,#111b14,#09100b);color:#a6ff54;box-shadow:0 0 16px rgba(105,255,55,.14);z-index:10030;display:none;place-items:center;cursor:pointer;backdrop-filter:blur(8px);transition:transform .18s ease,box-shadow .18s ease}#nutritionDrawerButton.visible{display:grid}#nutritionDrawerButton:active{transform:scale(.94)}#nutritionDrawerButton svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:600px){#nutritionControlPanel{width:100vw!important;border-radius:0!important}#nutritionControlPanel .nutrition-control-content{padding:14px!important}#nutritionDrawerButton{left:14px;right:auto;bottom:20px;width:44px;height:44px}}
 @media(prefers-reduced-motion:reduce){#nutritionControlPanel,#nutritionDrawerBackdrop{transition:none!important}}
 </style></head><body>
 
@@ -690,7 +690,7 @@ function renderMealMiniSummary(){
  list.innerHTML=names.map((name,i)=>{const mealFoods=foodsForDay.filter(x=>String(x.meal||'').toLowerCase()===name.toLowerCase()),mk=mealFoods.reduce((a,x)=>a+(Number(x.k)||0),0),mp=mealFoods.reduce((a,x)=>a+(Number(x.p)||0),0);return `<section class="nutrition-meal-group"><header><span class="nutrition-meal-icon">${icons[i]}</span><strong>${name.toUpperCase()}</strong><span class="nutrition-meal-total">${mk.toFixed(0)} kcal · P ${mp.toFixed(1)} g</span></header>${mealFoods.length?`<ul>${mealFoods.map(x=>`<li><span class="nutrition-food-name">${escapeHtml(x.n||'Alimento')}</span><span class="nutrition-food-values">${(Number(x.k)||0).toFixed(0)} kcal · ${(Number(x.p)||0).toFixed(1)} g P</span></li>`).join('')}</ul>`:'<p class="nutrition-meal-empty">Sin alimentos registrados</p>'}</section>`}).join('');
 }
 
-function tab(id){document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));}
+function tab(id){document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));const nutritionBtn=document.getElementById('nutritionDrawerButton');if(nutritionBtn)nutritionBtn.classList.toggle('visible',id==='nutricion');if(id!=='nutricion'&&document.getElementById('nutritionControlPanel')?.open)window.fpCloseNutritionDrawer?.();}
 
 // Catálogo personal persistente
 const CUSTOM_FOODS_KEY='fp_custom_foods_v1';
@@ -1291,14 +1291,15 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
  if(!panel||document.getElementById('nutritionDrawerButton'))return;
  document.body.appendChild(panel); /* sacar el panel del contenedor para evitar recortes por overflow */
  const backdrop=document.createElement('div');backdrop.id='nutritionDrawerBackdrop';backdrop.setAttribute('aria-hidden','true');document.body.appendChild(backdrop);
- const btn=document.createElement('button');btn.id='nutritionDrawerButton';btn.type='button';btn.title='Abrir control nutricional';btn.setAttribute('aria-label','Abrir control nutricional');btn.innerHTML='◉';document.body.appendChild(btn);
+ const btn=document.createElement('button');btn.id='nutritionDrawerButton';btn.type='button';btn.title='Abrir control nutricional';btn.setAttribute('aria-label','Abrir control nutricional');btn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16l-1.2 9a2 2 0 0 1-2 1.7H7.2a2 2 0 0 1-2-1.7L4 8Z"/><path d="M8 8V5.5a4 4 0 0 1 8 0V8"/><path d="M9 12h6"/></svg>';document.body.appendChild(btn);
  const summary=panel.querySelector('summary');
- const open=()=>{panel.open=true;backdrop.classList.add('active');btn.setAttribute('aria-label','Cerrar control nutricional');btn.title='Cerrar control nutricional';btn.innerHTML='×';document.body.style.overflow='hidden';};
- const close=()=>{panel.open=false;backdrop.classList.remove('active');btn.setAttribute('aria-label','Abrir control nutricional');btn.title='Abrir control nutricional';btn.innerHTML='◉';document.body.style.overflow='';};
+ const open=()=>{panel.open=true;backdrop.classList.add('active');btn.setAttribute('aria-label','Cerrar control nutricional');btn.title='Cerrar control nutricional';btn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>';document.body.style.overflow='hidden';};
+ const close=()=>{panel.open=false;backdrop.classList.remove('active');btn.setAttribute('aria-label','Abrir control nutricional');btn.title='Abrir control nutricional';btn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16l-1.2 9a2 2 0 0 1-2 1.7H7.2a2 2 0 0 1-2-1.7L4 8Z"/><path d="M8 8V5.5a4 4 0 0 1 8 0V8"/><path d="M9 12h6"/></svg>';document.body.style.overflow='';};window.fpCloseNutritionDrawer=close;
  btn.addEventListener('click',()=>panel.open?close():open());backdrop.addEventListener('click',close);
  if(summary)summary.addEventListener('click',e=>{e.preventDefault();close();});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panel.open)close();});
  panel.open=false;
+ const active=document.querySelector('.section.active');btn.classList.toggle('visible',active?.id==='nutricion');
 })();
 </script>
 </body></html>
