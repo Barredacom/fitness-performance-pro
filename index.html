@@ -286,6 +286,14 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
   border:3px solid #101410;box-shadow:0 0 0 2px #A4FF28;
 }
 
+
+/* V17 alignment refinement: quantity and meal control boxes */
+.nutrition-form-grid{align-items:stretch}
+.nutrition-quantity-field{align-self:stretch}
+.nutrition-field:has(#meal){align-self:stretch}
+.nutrition-field #meal{height:140px!important;min-height:140px!important;display:flex;align-items:center;box-sizing:border-box}
+.nutrition-quantity-field #grams{height:74px!important;min-height:74px!important}
+
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
