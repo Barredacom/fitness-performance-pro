@@ -318,6 +318,17 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 .nutrition-catalog-action .solid-neon-edit-icon{width:clamp(22px,3vw,30px);height:clamp(22px,3vw,30px);display:inline-block;flex:0 0 auto;fill:#a4ff28;stroke:#a4ff28;stroke-width:.45;stroke-linejoin:round;filter:drop-shadow(0 0 4px #a4ff2830);vertical-align:middle}
 .nutrition-catalog-action:has(.solid-neon-edit-icon){display:flex;align-items:center;justify-content:center;gap:12px}
 
+
+/* Neon category colors for nutrition goal rings */
+.nutrition-goal-ring{--ring-color:#A4FF28}
+.nutrition-goal-ring .ring-progress{stroke:var(--ring-color)!important;filter:drop-shadow(0 0 3px color-mix(in srgb,var(--ring-color),transparent 48%))}
+.nutrition-goal-ring .ring-bg{stroke:#253329!important}
+.nutrition-goal-ring .ring-percent{fill:#f1f5f2!important}
+.nutrition-goal-ring .ring-value{fill:var(--ring-color)!important}
+.nutrition-goal-card>strong{color:#dce8df!important}
+.nutrition-goal-card>small{color:#91a397!important}
+.nutrition-goal-remaining{color:#e8f0e9!important}
+
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
@@ -728,7 +739,7 @@ function renderMealMiniSummary(){
  const kcalGoal=1900,proteinGoal=125;
  const circle=(label,value,goal,unit,color)=>{const pct=Math.min(value/goal,1),dash=2*Math.PI*42;const percent=Math.round(value/goal*100);return `<div class="nutrition-goal-card"><div class="nutrition-goal-ring" style="--ring-color:${color}"><svg viewBox="0 0 100 100" role="img" aria-label="${label}: ${percent}% del objetivo"><circle class="ring-bg" cx="50" cy="50" r="42"></circle><circle class="ring-progress" cx="50" cy="50" r="42" stroke-dasharray="${(pct*dash).toFixed(2)} ${dash.toFixed(2)}"></circle><text x="50" y="47" class="ring-percent">${percent}%</text><text x="50" y="62" class="ring-value">${unit==='kcal'?Math.round(value):value.toFixed(1)}</text></svg></div><strong>${label}</strong><small>${unit==='kcal'?Math.round(value)+' / '+goal+' kcal':value.toFixed(1)+' / '+goal+' g'}</small><span class="nutrition-goal-remaining">${value>goal?'+'+(value-goal).toFixed(unit==='kcal'?0:1)+' '+unit:'Restan '+(goal-value).toFixed(unit==='kcal'?0:1)+' '+unit}</span></div>`;};
  const circles=$('nutritionGoalCircles'),list=$('nutritionMealsList');if(!circles||!list)return;
- circles.innerHTML=circle('CALORÍAS',totalK,kcalGoal,'kcal','#ffad36')+circle('PROTEÍNAS',totalP,proteinGoal,'g','#25d9ff');
+ circles.innerHTML=circle('CALORÍAS',totalK,kcalGoal,'kcal','#A4FF28')+circle('PROTEÍNAS',totalP,proteinGoal,'g','#A4FF28');
  list.innerHTML=names.map((name,i)=>{const mealFoods=foodsForDay.filter(x=>String(x.meal||'').toLowerCase()===name.toLowerCase()),mk=mealFoods.reduce((a,x)=>a+(Number(x.k)||0),0),mp=mealFoods.reduce((a,x)=>a+(Number(x.p)||0),0);return `<section class="nutrition-meal-group"><header><span class="nutrition-meal-icon">${icons[i]}</span><strong>${name.toUpperCase()}</strong><span class="nutrition-meal-total">${mk.toFixed(0)} kcal · P ${mp.toFixed(1)} g</span></header>${mealFoods.length?`<ul>${mealFoods.map(x=>`<li><span class="nutrition-food-name">${escapeHtml(x.n||'Alimento')}</span><span class="nutrition-food-values">${(Number(x.k)||0).toFixed(0)} kcal · ${(Number(x.p)||0).toFixed(1)} g P</span></li>`).join('')}</ul>`:'<p class="nutrition-meal-empty">Sin alimentos registrados</p>'}</section>`}).join('');
 }
 
