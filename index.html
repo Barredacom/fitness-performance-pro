@@ -393,7 +393,7 @@ document.addEventListener('DOMContentLoaded',function(){
 .nutrition-card-kicker span{color:#a4ff28;font-size:23px}
 .nutrition-form-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);gap:13px;min-width:0;overflow:hidden}
 /* Resumen compacto de las cuatro comidas: paleta original verde neón */
-.nutrition-date-field{grid-column:span 1;min-width:0;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden;align-self:start}
+.nutrition-date-field{grid-column:3;grid-row:2;min-width:0;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden;align-self:end}
 .nutrition-date-field input[type="date"]{display:block;width:100%;max-width:100%;min-width:0;height:42px;min-height:42px;padding:7px 5px!important;font-size:clamp(10px,2.5vw,13px)!important;line-height:1.1;box-sizing:border-box;text-align:center;border-radius:12px!important;overflow:hidden}
 .nutrition-date-field input[type="date"]::-webkit-date-and-time-value{text-align:center;margin:0 auto}
 .nutrition-date-field input[type="date"]::-webkit-calendar-picker-indicator{margin:0;padding:0;max-width:14px}
@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded',function(){
 .nutrition-meal-mini-row .meal-name{color:#dce8de;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nutrition-meal-mini-row .meal-kcal,.nutrition-meal-mini-row .meal-protein{color:#a4ff28;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 .nutrition-meal-mini-row .meal-share{color:#819184;font-size:8px;text-align:right;white-space:nowrap;margin:0}
-@media(max-width:650px){.nutrition-date-field{grid-column:span 1;width:100%;min-width:0}.nutrition-date-field input[type="date"]{height:40px;min-height:40px;font-size:11px!important;padding:6px 3px!important}.nutrition-meal-mini{grid-column:span 1;padding:9px}.nutrition-meal-mini-body{grid-template-columns:16px minmax(0,1fr);gap:7px;min-height:100px}.nutrition-meal-stack{min-height:100px}.nutrition-meal-mini-row{font-size:8px;gap:3px;grid-template-columns:minmax(48px,.8fr) minmax(43px,1fr) minmax(48px,1fr) 22px}.nutrition-meal-mini-row .meal-share{font-size:8px}}
+@media(max-width:650px){.nutrition-date-field{grid-column:3;grid-row:2;width:100%;min-width:0}.nutrition-date-field input[type="date"]{height:40px;min-height:40px;font-size:11px!important;padding:6px 3px!important}.nutrition-meal-mini{grid-column:span 1;padding:9px}.nutrition-meal-mini-body{grid-template-columns:16px minmax(0,1fr);gap:7px;min-height:100px}.nutrition-meal-stack{min-height:100px}.nutrition-meal-mini-row{font-size:8px;gap:3px;grid-template-columns:minmax(48px,.8fr) minmax(43px,1fr) minmax(48px,1fr) 22px}.nutrition-meal-mini-row .meal-share{font-size:8px}}
 
 .nutrition-field{display:flex;flex-direction:column;gap:8px;color:#a4ff28;font-size:10px;font-weight:850;letter-spacing:1px;min-width:0;max-width:100%;box-sizing:border-box}
 .nutrition-field-wide{grid-column:span 1}
