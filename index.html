@@ -1630,4 +1630,19 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
 })();
 </script>
 
+
+<script id="calendar-turn-recovery-v2125">
+(function(){
+  function restoreCalendarAndShift(){
+    try{
+      if(typeof renderCalendar==='function') renderCalendar();
+      if(typeof updateGlobalShiftClock==='function') updateGlobalShiftClock();
+    }catch(err){console.warn('Calendar/shift recovery:',err);}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',restoreCalendarAndShift);
+  else restoreCalendarAndShift();
+  window.setInterval(restoreCalendarAndShift,60000);
+})();
+</script>
+
 </body></html>
