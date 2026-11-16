@@ -388,6 +388,30 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 .supp-day-history h3{font-size:15px!important;margin-bottom:8px!important}
 .supp-history-row{padding:7px 0!important}
 @media(max-width:520px){.supp-item{min-height:82px!important;padding:12px!important;gap:10px!important}.supp-icon{width:34px!important;flex-basis:34px!important}.supp-icon svg{width:29px;height:29px}.supp-copy strong{font-size:15px!important}.supp-copy small{font-size:11px!important}.supp-toggle{width:88px!important;height:50px!important;flex-basis:88px!important}.supp-toggle .warm-slider:before{width:36px!important;height:36px!important;left:7px!important;top:7px!important}.supp-toggle input:checked+.warm-slider:before{transform:translateX(38px)!important}}
+
+/* V21.9.7 · SUPPLEMENT CARDS EXTRA COMPACT */
+.supp-item{min-height:88px!important;padding:12px 15px!important;gap:12px!important;border-radius:18px!important}
+.supp-icon{width:30px!important;font-size:22px!important}
+.supp-copy{gap:4px!important}
+.supp-copy strong{font-size:14px!important;letter-spacing:.15px!important}
+.supp-copy small{font-size:11px!important;line-height:1.2!important}
+.supp-toggle{width:82px!important;height:46px!important;flex-basis:82px!important}
+.supp-toggle .warm-slider:before{width:34px!important;height:34px!important;left:6px!important;top:6px!important}
+.supp-toggle input:checked+.warm-slider:before{transform:translateX(36px)!important}
+.supp-day-history{margin-top:10px!important;padding:12px 14px!important}
+.supp-day-history h3{font-size:14px!important;margin-bottom:8px!important}
+.supp-history-row{padding:7px 0!important}
+.supp-history-row strong{font-size:12px!important}
+.supp-history-row small{font-size:10px!important}
+@media(max-width:520px){
+ .supp-item{min-height:78px!important;padding:10px 12px!important;gap:9px!important}
+ .supp-icon{width:26px!important;font-size:19px!important}
+ .supp-copy strong{font-size:13px!important}
+ .supp-copy small{font-size:10px!important}
+ .supp-toggle{width:72px!important;height:40px!important;flex-basis:72px!important}
+ .supp-toggle .warm-slider:before{width:30px!important;height:30px!important;left:5px!important;top:5px!important}
+ .supp-toggle input:checked+.warm-slider:before{transform:translateX(32px)!important}
+}
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
@@ -1489,6 +1513,41 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
  document.querySelectorAll('.section').forEach(s=>sectionObserver.observe(s,{attributes:true,attributeFilter:['class']}));
  const navObserver=new MutationObserver(syncButton);const nav=document.getElementById('nav');if(nav)navObserver.observe(nav,{subtree:true,attributes:true,attributeFilter:['class']});
  window.addEventListener('pageshow',syncButton);document.addEventListener('visibilitychange',syncButton);
+})();
+</script>
+
+<script id="supplementHistorySync">
+(()=>{
+ const supplements=[
+  {id:'suppCreatine',name:'Creatina',dose:'5 g'},
+  {id:'suppMagnesium',name:'Magnesio',dose:'Dosis habitual'},
+  {id:'suppOmega',name:'Omega 3',dose:'1 cápsula'},
+  {id:'suppWhey',name:'1 scoop proteína whey',dose:'34 g · 130 kcal · 24 g proteína'}
+ ];
+ const STORE='fitness_performance_supplements_daily_v1';
+ const dateKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+ const timeNow=()=>new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit',hour12:false});
+ const load=()=>{try{return JSON.parse(localStorage.getItem(STORE)||'{}')}catch(_){return {}}};
+ const save=data=>localStorage.setItem(STORE,JSON.stringify(data));
+ function render(){
+   const all=load(),day=all[dateKey()]||{},container=document.getElementById('suppDayHistory');
+   supplements.forEach(s=>{const el=document.getElementById(s.id);if(el)el.checked=!!day[s.id]});
+   if(!container)return;
+   const done=supplements.filter(s=>day[s.id]);
+   container.innerHTML=done.length?done.map(s=>`<div class="supp-history-row"><strong>${s.name}</strong><small>${day[s.id].time||'—'} · ${s.dose}</small></div>`).join(''):'<p class="muted">Todavía no hay suplementos confirmados hoy.</p>';
+ }
+ supplements.forEach(s=>{
+   const el=document.getElementById(s.id);if(!el)return;
+   el.addEventListener('change',()=>{
+     const all=load(),key=dateKey();all[key]=all[key]||{};
+     if(el.checked)all[key][s.id]={time:timeNow(),dose:s.dose};
+     else delete all[key][s.id];
+     save(all);render();
+   });
+ });
+ render();
+ window.addEventListener('pageshow',render);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
 })();
 </script>
 </body></html>
