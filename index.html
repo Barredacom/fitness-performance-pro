@@ -999,6 +999,7 @@ function renderTrainingPlan(){
  const d=$('duration');if(d)d.value=isMonday?0:(parseInt(plan.duration)||45);
 }
 function renderExercises(){renderTrainingPlan()}
+ document.addEventListener('DOMContentLoaded',()=>{renderTrainingPlan()});
 $('routine').addEventListener('change',()=>{$('routine').dataset.userChanged='1'});
 const SHIFT_CYCLE=[{name:'Descanso',cls:'shift-rest'},{name:'Noche',cls:'shift-night'},{name:'Descanso',cls:'shift-rest'},{name:'Día',cls:'shift-day'}];
 let calendarView=new Date(new Date().getFullYear(),new Date().getMonth(),1,12),calendarSelectedDate=localDateISO(new Date());
@@ -1363,7 +1364,7 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
 <script>renderMealDraft();</script>
 <script>document.addEventListener("DOMContentLoaded",()=>{const u=document.getElementById("catalogUnit");if(u)u.addEventListener("change",()=>{document.getElementById("catalogUnitLabel").textContent=u.value;document.querySelectorAll(".unitLabel").forEach(x=>x.textContent="g");});});
 // Training Pro interactions
-(function(){const sw=document.getElementById('tpWarmSwitch');if(sw)sw.addEventListener('click',()=>{const on=sw.classList.toggle('on');sw.setAttribute('aria-pressed',String(on));sw.setAttribute('aria-label',on?'Calentamiento activo':'Calentamiento desactivado');const cards=document.getElementById('tpExerciseCards'),head=document.querySelector('.tp-list-head');if(typeof renderTrainingPlan==='function')renderTrainingPlan();});const st=document.getElementById('tpStartWorkout');if(st)st.addEventListener('click',()=>{const d=document.getElementById('duration');if(d&&!d.value)d.value=45;const date=document.getElementById('workDate');if(date&&!date.value)date.value=new Date().toISOString().slice(0,10);if(typeof addWorkout==='function'){addWorkout();st.textContent='✓ SESIÓN REGISTRADA';st.classList.add('completed');st.disabled=true;}});})();
+(function(){const sw=document.getElementById('tpWarmSwitch');if(sw)sw.addEventListener('click',()=>{const on=sw.classList.toggle('on');sw.setAttribute('aria-pressed',String(on));sw.setAttribute('aria-label',on?'Calentamiento activo':'Calentamiento desactivado');if(typeof renderTrainingPlan==='function')renderTrainingPlan();const cards=document.getElementById('tpExerciseCards'),head=document.querySelector('.tp-list-head');if(cards)cards.style.display=on?'grid':'none';if(head)head.style.display=on?'flex':'none';});const st=document.getElementById('tpStartWorkout');if(st)st.addEventListener('click',()=>{const d=document.getElementById('duration');if(d&&!d.value)d.value=45;const date=document.getElementById('workDate');if(date&&!date.value)date.value=new Date().toISOString().slice(0,10);if(typeof addWorkout==='function'){addWorkout();st.textContent='✓ SESIÓN REGISTRADA';st.classList.add('completed');st.disabled=true;}});})();
 </script>
 <div id="customFoodModal" class="fp-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="customFoodTitle" onclick="if(event.target===this)toggleFoodCatalog(false)">
  <div class="fp-modal">
