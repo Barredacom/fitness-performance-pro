@@ -787,7 +787,17 @@ document.addEventListener('DOMContentLoaded',function(){
 <div class="card supp-day-history"><h3>Historial de suplementos consumidos del día</h3><div id="suppDayHistory"><p class="muted">Todavía no hay suplementos confirmados hoy.</p></div></div>
 </section>
 
-<section id="peso" class="section">
+<section id="peso" class="section"><style>
+.body-evolution-hero{width:100%;border:1px solid #263b2d;border-radius:28px;overflow:hidden;background:#080b09;margin:0 0 18px;position:relative;min-height:205px;display:grid;grid-template-columns:1.1fr .9fr;align-items:center;padding:24px 28px;box-sizing:border-box}
+.body-evolution-hero:after{content:"";position:absolute;right:-8%;top:-25%;width:48%;height:150%;background:linear-gradient(135deg,transparent 20%,#b8ff3215 50%,transparent 78%);transform:skewX(-18deg);pointer-events:none}
+.body-evolution-copy{position:relative;z-index:1}.body-evolution-kicker{font-size:11px;letter-spacing:2px;color:#b8ff32;font-weight:800}.body-evolution-title{font-size:clamp(26px,4vw,42px);line-height:1.05;font-weight:900;color:#f4f7f2;margin:10px 0}.body-evolution-sub{color:#a6b0a5;font-size:14px;line-height:1.5;max-width:380px}.body-evolution-visual{height:155px;position:relative;display:flex;align-items:center;justify-content:center;color:#b8ff32}
+.body-evolution-visual svg{height:100%;max-width:100%;filter:drop-shadow(0 0 12px #b8ff3240)}
+@media(max-width:600px){.body-evolution-hero{grid-template-columns:1fr .65fr;padding:18px 16px;min-height:170px;border-radius:22px}.body-evolution-visual{height:125px}.body-evolution-title{font-size:25px}.body-evolution-sub{font-size:12px}}
+</style>
+<div class="body-evolution-hero" aria-label="Banner Peso y Medidas">
+<div class="body-evolution-copy"><div class="body-evolution-kicker">FITNESS PERFORMANCE PRO · BODY TRACKING</div><div class="body-evolution-title">PESO Y<br>MEDIDAS</div><div class="body-evolution-sub">Evolución corporal · Seguimiento de peso y perímetros · Metas personales</div></div>
+<div class="body-evolution-visual"><svg viewBox="0 0 180 220" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.5" opacity=".65"><circle cx="90" cy="30" r="20"/><path d="M66 58 Q90 48 114 58 L130 105 L115 116 L108 84 L112 132 L103 205 L88 205 L82 137 L76 205 L61 205 L68 132 L72 84 L65 116 L50 105 Z" stroke-linejoin="round"/><path d="M50 105L34 148 M130 105L146 148 M61 205L50 218 M103 205L112 218"/></g><g stroke="#b8ff32" stroke-width="2" opacity=".95"><circle cx="90" cy="30" r="26" stroke-dasharray="3 5"/><circle cx="90" cy="112" r="55" stroke-dasharray="5 7"/><path d="M24 112H156M90 60V180"/></g><g fill="#b8ff32"><circle cx="90" cy="112" r="4"/><circle cx="72" cy="84" r="3"/><circle cx="108" cy="84" r="3"/><circle cx="76" cy="205" r="3"/><circle cx="103" cy="205" r="3"/></g></svg></div></div>
+
 <div class="sectionHead"><h2>Peso y medidas</h2><span class="pill">BODY EVOLUTION PRO</span></div>
 <div class="body-kpis">
  <div class="body-kpi"><small>PESO ACTUAL</small><strong id="bodyCurrentWeight">—</strong><em id="bodyWeightDelta">Sin variación</em></div>
