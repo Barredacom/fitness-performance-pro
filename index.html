@@ -355,6 +355,23 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 .supp-switch input:checked+.supp-slider{background:#b8ff32!important;box-shadow:0 0 16px #b8ff3240!important}
 .supp-switch input:checked+.supp-slider:before{transform:translateX(78px)!important;background:#fff!important}
 @media(max-width:520px){.supp-card{min-height:100px!important;padding:13px!important}.supp-switch{width:120px!important;height:66px!important;flex-basis:120px!important}.supp-slider:before{width:48px!important;height:48px!important;left:9px!important;top:9px!important}.supp-switch input:checked+.supp-slider:before{transform:translateX(54px)!important}.supp-info strong{font-size:17px!important}.supp-info small{font-size:13px!important}}
+
+/* SUPLEMENTACIÓN: switch estilo exacto calentamiento */
+.supplement-switches{display:flex;flex-direction:column;gap:12px}
+.supp-item{display:flex;align-items:center;gap:18px;background:var(--card, #101713);border:1px solid #303b34;border-radius:26px;padding:22px 24px;min-height:130px}
+.supp-icon{font-size:34px;width:62px;text-align:center;flex-shrink:0}
+.supp-copy{display:flex;flex-direction:column;gap:8px;flex:1;min-width:0}
+.supp-copy strong{font-size:22px;font-weight:800;letter-spacing:.3px;color:var(--text,#f2f5f2)}
+.supp-copy small{font-size:16px;color:var(--muted,#9aa59e);line-height:1.35}
+.supp-toggle{position:relative;display:block;width:174px;height:96px;flex:0 0 174px;margin:0}
+.supp-toggle input{opacity:0;width:0;height:0;position:absolute}
+.supp-toggle .warm-slider{position:absolute;inset:0;background:#29332d;border-radius:999px;transition:.22s;cursor:pointer}
+.supp-toggle .warm-slider:before{content:"";position:absolute;width:70px;height:70px;left:12px;top:13px;background:#f8f8f8;border-radius:50%;transition:.22s}
+.supp-toggle input:checked+.warm-slider{background:#b8ff32;box-shadow:0 0 18px #b8ff3235}
+.supp-toggle input:checked+.warm-slider:before{transform:translateX(78px)}
+.supp-day-history{margin-top:14px;padding:18px 20px}.supp-day-history h3{font-size:18px;margin:0 0 12px}
+.supp-history-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #26312b;gap:12px}.supp-history-row:last-child{border-bottom:0}.supp-history-row strong{font-size:14px}.supp-history-row small{color:var(--muted);font-size:12px}
+@media(max-width:520px){.supp-item{padding:16px 14px;gap:10px;min-height:104px;border-radius:20px}.supp-icon{font-size:25px;width:35px}.supp-copy strong{font-size:15px}.supp-copy small{font-size:12px}.supp-toggle{width:104px;height:58px;flex-basis:104px}.supp-toggle .warm-slider:before{width:42px;height:42px;left:8px;top:8px}.supp-toggle input:checked+.warm-slider:before{transform:translateX(46px)}.supp-day-history{padding:14px}.supp-day-history h3{font-size:15px}}
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
@@ -710,7 +727,16 @@ document.addEventListener('DOMContentLoaded',function(){
  
 
 </div></section>
-<section id="suplementos" class="section"><div class="sectionHead"><h2>Suplementación</h2><span class="pill">SUPPLEMENT CONTROL</span></div><div id="supplement-redesign-placeholder" style="display:none"><span id="suppDoneCount">0/4</span><span id="suppLastTime">—</span><span id="suppPercent">0% cumplimiento</span><i id="suppProgress"></i><div id="suppList"></div><div id="suppHistory"></div></div></section>
+<section id="suplementos" class="section">
+<div class="sectionHead"><h2>Suplementación</h2><span class="pill">SUPPLEMENT CONTROL</span></div>
+<div class="supplement-switches">
+<div class="supp-item"><div class="supp-icon">💊</div><div class="supp-copy"><strong>CREATINA</strong><small>5 g · Consumo diario</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppCreatine"><span class="warm-slider"></span></label></div>
+<div class="supp-item"><div class="supp-icon">💊</div><div class="supp-copy"><strong>MAGNESIO</strong><small>Dosis habitual</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppMagnesium"><span class="warm-slider"></span></label></div>
+<div class="supp-item"><div class="supp-icon">🐟</div><div class="supp-copy"><strong>OMEGA 3</strong><small>1 cápsula</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppOmega"><span class="warm-slider"></span></label></div>
+<div class="supp-item"><div class="supp-icon">🥤</div><div class="supp-copy"><strong>1 COOP PROTEÍNA WHEY</strong><small>34 g · 130 kcal · 24 g proteína</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppWhey"><span class="warm-slider"></span></label></div>
+</div>
+<div class="card supp-day-history"><h3>Historial de suplementos consumidos del día</h3><div id="suppDayHistory"><p class="muted">Todavía no hay suplementos confirmados hoy.</p></div></div>
+</section>
 
 <section id="peso" class="section">
 <div class="sectionHead"><h2>Peso y medidas</h2><span class="pill">BODY EVOLUTION PRO</span></div>
@@ -1448,5 +1474,8 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
  const navObserver=new MutationObserver(syncButton);const nav=document.getElementById('nav');if(nav)navObserver.observe(nav,{subtree:true,attributes:true,attributeFilter:['class']});
  window.addEventListener('pageshow',syncButton);document.addEventListener('visibilitychange',syncButton);
 })();
+
+// SUPPLEMENT CONTROL daily switch history
+(()=>{const key='fitness_supp_day_history_v1';const ids=[['suppCreatine','Creatina','5 g'],['suppMagnesium','Magnesio','Dosis habitual'],['suppOmega','Omega 3','1 cápsula'],['suppWhey','COP proteína whey','34 g · 130 kcal · 24 g proteína']];const today=()=>new Date().toLocaleDateString('en-CA');const read=()=>{try{return JSON.parse(localStorage.getItem(key)||'{}')}catch(e){return {}}};const save=x=>localStorage.setItem(key,JSON.stringify(x));function render(){const db=read(),d=db[today()]||{},box=document.getElementById('suppDayHistory');if(!box)return;const active=ids.filter(x=>d[x[0]]);box.innerHTML=active.length?active.map(x=>`<div class="supp-history-row"><strong>${x[1]}</strong><small>${d[x[0]].time} · ${x[2]}</small></div>`).join(''):'<p class="muted">Todavía no hay suplementos confirmados hoy.</p>';ids.forEach(x=>{const el=document.getElementById(x[0]);if(el)el.checked=!!d[x[0]]})}ids.forEach(x=>{const el=document.getElementById(x[0]);if(el)el.addEventListener('change',()=>{const db=read(),day=db[today()]||(db[today()]={});if(el.checked)day[x[0]]={time:new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'})};else delete day[x[0]];save(db);render();if(x[0]==='suppWhey'&&el.checked){try{if(typeof addFood==='function')addFood('Whey protein',34,130,24)}catch(e){}}});});render();})();
 </script>
 </body></html>
