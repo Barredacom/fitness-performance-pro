@@ -1610,4 +1610,24 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
 })();
 </script>
+
+<script id="clock-recovery-v2124">
+(function(){
+  function refreshClock(){
+    var now=new Date();
+    var clock=document.getElementById('liveClock');
+    var date=document.getElementById('liveDate');
+    try{
+      if(clock) clock.textContent=new Intl.DateTimeFormat('es-CL',{timeZone:'America/Santiago',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);
+      if(date) date.textContent=new Intl.DateTimeFormat('es-CL',{timeZone:'America/Santiago',weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(now);
+    }catch(e){
+      if(clock) clock.textContent=now.toLocaleTimeString('es-CL');
+      if(date) date.textContent=now.toLocaleDateString('es-CL');
+    }
+  }
+  refreshClock();
+  window.setInterval(refreshClock,1000);
+})();
+</script>
+
 </body></html>
