@@ -647,6 +647,32 @@ document.addEventListener('DOMContentLoaded',function(){
 @media(max-width:600px){.body-start-hero{border-radius:14px}.body-section-intro h1{font-size:25px}}
 </style>
 
+
+<style>
+/* Peso y medidas · gráficos conectados a registros */
+.body-gauges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}
+.body-gauge-card{background:#0d1511;border:1px solid #263b2d;border-radius:16px;padding:16px;text-align:center;min-width:0}
+.body-gauge-card h3{font-size:15px;margin:0 0 12px;color:#dce9df}
+.body-gauge-card p{font-size:12px;color:#9bad9f;margin:10px 0 0;line-height:1.45}
+.body-radial-gauge{width:155px;height:155px;position:relative;margin:0 auto}
+.body-radial-gauge svg{width:100%;height:100%;overflow:visible}
+.gauge-track,.gauge-progress{fill:none;stroke-width:13}
+.gauge-track{stroke:#263329}
+.gauge-progress{stroke:#53ff9a;stroke-linecap:round;stroke-dasharray:389.56;stroke-dashoffset:389.56;transition:stroke-dashoffset .4s}
+.body-gauge-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.body-gauge-center strong{font-size:29px;color:#53ff9a}
+.body-gauge-center small,.body-semi-gauge small{font-size:11px;color:#9bad9f}
+.body-semi-gauge{max-width:230px;margin:0 auto;position:relative}
+.body-semi-gauge svg{width:100%;display:block}
+.semi-track,.semi-progress{fill:none;stroke-width:13;stroke-linecap:round}
+.semi-track{stroke:#263329}
+.semi-progress{stroke:#53ff9a;stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset .4s}
+#bodySemiNeedle{stroke:#b7ff39;stroke-width:4;stroke-linecap:round;transform-origin:110px 105px;transform:rotate(-90deg)}
+.needle-hub{fill:#b7ff39}
+.body-semi-gauge strong{display:block;color:#53ff9a;font-size:25px;margin-top:-4px}
+@media(max-width:600px){.body-gauges{grid-template-columns:1fr 1fr;gap:8px}.body-gauge-card{padding:11px 7px}.body-gauge-card h3{font-size:12px}.body-radial-gauge{width:125px;height:125px}.body-gauge-center strong{font-size:24px}.body-gauge-card p{font-size:10px}.body-semi-gauge strong{font-size:20px}}
+</style>
+
 </head><body>
 
 
@@ -814,6 +840,18 @@ document.addEventListener('DOMContentLoaded',function(){
  <div class="body-kpi"><small>CINTURA ACTUAL</small><strong id="bodyCurrentWaist">—</strong><em id="bodyWaistDelta">Sin variación</em></div>
  <div class="body-kpi"><small>PROMEDIO 7 DÍAS</small><strong id="bodyWeeklyAvg">—</strong><em>Registros de peso</em></div>
  <div class="body-kpi"><small>HASTA META 80 KG</small><strong id="bodyTo80">—</strong><em id="bodyTo75">Meta final: —</em></div>
+</div>
+<div class="body-gauges">
+ <div class="body-gauge-card">
+  <h3>Progreso hacia 80 kg</h3>
+  <div id="bodyRadialGauge" class="body-radial-gauge"><svg viewBox="0 0 160 160" aria-label="Progreso radial"><circle class="gauge-track" cx="80" cy="80" r="62"/><circle id="bodyRadialArc" class="gauge-progress" cx="80" cy="80" r="62" transform="rotate(-90 80 80)"/></svg><div class="body-gauge-center"><strong id="bodyProgressPct">—</strong><small>progreso</small></div></div>
+  <p id="bodyProgressCaption">Registra tu peso para calcular el avance.</p>
+ </div>
+ <div class="body-gauge-card">
+  <h3>Indicador de peso</h3>
+  <div class="body-semi-gauge"><svg viewBox="0 0 220 130" aria-label="Indicador semicircular de peso"><path class="semi-track" d="M25 105 A85 85 0 0 1 195 105"/><path id="bodySemiArc" class="semi-progress" d="M25 105 A85 85 0 0 1 195 105" pathLength="100"/><line id="bodySemiNeedle" x1="110" y1="105" x2="110" y2="35"/><circle cx="110" cy="105" r="6" class="needle-hub"/></svg><strong id="bodySemiValue">— kg</strong><small>peso actual</small></div>
+  <p id="bodySemiCaption">Escala visual de peso corporal.</p>
+ </div>
 </div>
 <div class="card" style="margin-top:12px"><h3>＋ Registrar medición</h3><div class="formrow three"><label>Peso (kg)<input id="weight" type="number" step=".1" min="1" placeholder="82.3"></label><label>Cintura (cm)<input id="waist" type="number" step=".1" min="1" placeholder="95"></label><label>Fecha<input id="measureDate" type="date"></label></div><button onclick="addMeasure()">＋ Guardar medición</button></div>
 <div class="card" style="margin-top:12px"><div class="sectionHead"><h3>Historial de mediciones</h3><span class="pill" id="measureCount">0 registros</span></div><div id="measureList" class="list"></div></div>
@@ -1086,6 +1124,18 @@ function renderBodyEvolution(){
  $('bodyWeeklyAvg').textContent=last7.length?(last7.reduce((s,x)=>s+Number(x.weight),0)/last7.length).toFixed(1)+' kg':'—';
  $('bodyTo80').textContent=w?Math.max(0,Number(w.weight)-80).toFixed(1)+' kg':'—';
  $('bodyTo75').textContent=w?'Restan '+Math.max(0,Number(w.weight)-75).toFixed(1)+' kg':'Meta final: —';
+ // Gráficos conectados a las mediciones actuales. Progreso: desde 89.8 kg iniciales hasta meta 80 kg.
+ const current=w?Number(w.weight):null, startWeight=89.8, goalWeight=80;
+ const pct=current===null?0:Math.max(0,Math.min(100,(startWeight-current)/(startWeight-goalWeight)*100));
+ const radial=$('bodyRadialArc');if(radial)radial.style.strokeDashoffset=(389.56*(1-pct/100)).toFixed(2);
+ const pctEl=$('bodyProgressPct');if(pctEl)pctEl.textContent=current===null?'—':Math.round(pct)+'%';
+ const progressCaption=$('bodyProgressCaption');if(progressCaption)progressCaption.textContent=current===null?'Registra tu peso para calcular el avance.':(current<=goalWeight?'Meta de 80 kg alcanzada.':(current-goalWeight).toFixed(1)+' kg para llegar a 80 kg.');
+ // Semicírculo representa escala 70–100 kg, con aguja posicionada según peso actual.
+ const semiArc=$('bodySemiArc');if(semiArc)semiArc.style.strokeDashoffset=(100-(current===null?0:Math.max(0,Math.min(100,(current-70)/30*100)))).toFixed(2);
+ const needle=$('bodySemiNeedle');if(needle)needle.style.transform='rotate('+ (current===null?-90:Math.max(-90,Math.min(90,(current-70)/30*180-90))) +'deg)';
+ const semiValue=$('bodySemiValue');if(semiValue)semiValue.textContent=current===null?'— kg':current.toFixed(1)+' kg';
+ const semiCaption=$('bodySemiCaption');if(semiCaption)semiCaption.textContent=current===null?'Escala visual de peso corporal.':'Escala 70–100 kg · '+(current-70).toFixed(1)+' kg sobre mínimo.';
+
  $('measureCount').textContent=rows.length+' registros';
 }
 const EXERCISE_LIBRARY={
