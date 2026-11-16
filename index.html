@@ -1579,4 +1579,18 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
 })();
 </script>
+
+<script id="calendar-only-init-v2127">
+(function(){
+ function initCalendarOnly(){
+   try{
+     if(typeof renderCalendar==='function') renderCalendar();
+     else console.error('No se encontró renderCalendar');
+   }catch(e){console.error('Error renderizando calendario 7x7:',e);}
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initCalendarOnly);
+ else initCalendarOnly();
+ window.addEventListener('pageshow',initCalendarOnly);
+})();
+</script>
 </body></html>
