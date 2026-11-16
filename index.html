@@ -372,6 +372,22 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 .supp-day-history{margin-top:14px;padding:18px 20px}.supp-day-history h3{font-size:18px;margin:0 0 12px}
 .supp-history-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #26312b;gap:12px}.supp-history-row:last-child{border-bottom:0}.supp-history-row strong{font-size:14px}.supp-history-row small{color:var(--muted);font-size:12px}
 @media(max-width:520px){.supp-item{padding:16px 14px;gap:10px;min-height:104px;border-radius:20px}.supp-icon{font-size:25px;width:35px}.supp-copy strong{font-size:15px}.supp-copy small{font-size:12px}.supp-toggle{width:104px;height:58px;flex-basis:104px}.supp-toggle .warm-slider:before{width:42px;height:42px;left:8px;top:8px}.supp-toggle input:checked+.warm-slider:before{transform:translateX(46px)}.supp-day-history{padding:14px}.supp-day-history h3{font-size:15px}}
+
+/* V21.9.4 visual refinement: compact cards + Solid Neon UI icons */
+.supplement-switches{gap:9px!important}
+.supp-item{min-height:92px!important;padding:14px 17px!important;gap:14px!important;border-radius:20px!important}
+.supp-icon{width:44px!important;flex:0 0 44px!important;font-size:0!important;display:flex;align-items:center;justify-content:center}
+.supp-icon svg{width:34px;height:34px;display:block;fill:#B8FF32;filter:drop-shadow(0 0 5px #B8FF3260)}
+.supp-copy{gap:4px!important}
+.supp-copy strong{font-size:17px!important;line-height:1.2!important}
+.supp-copy small{font-size:13px!important;line-height:1.25!important}
+.supp-toggle{width:116px!important;height:64px!important;flex-basis:116px!important}
+.supp-toggle .warm-slider:before{width:46px!important;height:46px!important;left:9px!important;top:9px!important}
+.supp-toggle input:checked+.warm-slider:before{transform:translateX(52px)!important}
+.supp-day-history{margin-top:10px!important;padding:14px 16px!important}
+.supp-day-history h3{font-size:15px!important;margin-bottom:8px!important}
+.supp-history-row{padding:7px 0!important}
+@media(max-width:520px){.supp-item{min-height:82px!important;padding:12px!important;gap:10px!important}.supp-icon{width:34px!important;flex-basis:34px!important}.supp-icon svg{width:29px;height:29px}.supp-copy strong{font-size:15px!important}.supp-copy small{font-size:11px!important}.supp-toggle{width:88px!important;height:50px!important;flex-basis:88px!important}.supp-toggle .warm-slider:before{width:36px!important;height:36px!important;left:7px!important;top:7px!important}.supp-toggle input:checked+.warm-slider:before{transform:translateX(38px)!important}}
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
@@ -730,10 +746,10 @@ document.addEventListener('DOMContentLoaded',function(){
 <section id="suplementos" class="section">
 <div class="sectionHead"><h2>Suplementación</h2><span class="pill">SUPPLEMENT CONTROL</span></div>
 <div class="supplement-switches">
-<div class="supp-item"><div class="supp-icon">💊</div><div class="supp-copy"><strong>CREATINA</strong><small>5 g · Consumo diario</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppCreatine"><span class="warm-slider"></span></label></div>
-<div class="supp-item"><div class="supp-icon">💊</div><div class="supp-copy"><strong>MAGNESIO</strong><small>Dosis habitual</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppMagnesium"><span class="warm-slider"></span></label></div>
-<div class="supp-item"><div class="supp-icon">🐟</div><div class="supp-copy"><strong>OMEGA 3</strong><small>1 cápsula</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppOmega"><span class="warm-slider"></span></label></div>
-<div class="supp-item"><div class="supp-icon">🥤</div><div class="supp-copy"><strong>1 COOP PROTEÍNA WHEY</strong><small>34 g · 130 kcal · 24 g proteína</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppWhey"><span class="warm-slider"></span></label></div>
+<div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="#B8FF32"><rect x="8" y="16" width="32" height="16" rx="8" transform="rotate(-42 24 24)"/><path d="M14 11l11 11-6 6-11-11z" opacity=".55"/></g><path d="M24 12l12 12" stroke="#101713" stroke-width="2.5" stroke-linecap="round"/></svg></div><div class="supp-copy"><strong>CREATINA</strong><small>5 g · Consumo diario</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppCreatine"><span class="warm-slider"></span></label></div>
+<div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="#B8FF32"><rect x="8" y="16" width="32" height="16" rx="8" transform="rotate(-42 24 24)"/><path d="M14 11l11 11-6 6-11-11z" opacity=".55"/></g><path d="M24 12l12 12" stroke="#101713" stroke-width="2.5" stroke-linecap="round"/></svg></div><div class="supp-copy"><strong>MAGNESIO</strong><small>Dosis habitual</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppMagnesium"><span class="warm-slider"></span></label></div>
+<div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#B8FF32" d="M5 24c7-10 20-13 29-5l9-7v24l-9-7C25 37 12 34 5 24z"/><circle cx="29" cy="20" r="2.4" fill="#101713"/><path d="M18 17l5 7-5 7" fill="none" stroke="#101713" stroke-width="2"/></svg></div><div class="supp-copy"><strong>OMEGA 3</strong><small>1 cápsula</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppOmega"><span class="warm-slider"></span></label></div>
+<div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#B8FF32" d="M14 13h23l-3 29H17z"/><path fill="#B8FF32" d="M25 3h5v13h-5z" transform="rotate(18 27 9)"/><rect x="16" y="20" width="18" height="4" fill="#101713"/><path d="M18 30h14" stroke="#101713" stroke-width="2"/></svg></div><div class="supp-copy"><strong>1 COOP PROTEÍNA WHEY</strong><small>34 g · 130 kcal · 24 g proteína</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppWhey"><span class="warm-slider"></span></label></div>
 </div>
 <div class="card supp-day-history"><h3>Historial de suplementos consumidos del día</h3><div id="suppDayHistory"><p class="muted">Todavía no hay suplementos confirmados hoy.</p></div></div>
 </section>
@@ -1474,8 +1490,5 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
  const navObserver=new MutationObserver(syncButton);const nav=document.getElementById('nav');if(nav)navObserver.observe(nav,{subtree:true,attributes:true,attributeFilter:['class']});
  window.addEventListener('pageshow',syncButton);document.addEventListener('visibilitychange',syncButton);
 })();
-
-// SUPPLEMENT CONTROL daily switch history
-(()=>{const key='fitness_supp_day_history_v1';const ids=[['suppCreatine','Creatina','5 g'],['suppMagnesium','Magnesio','Dosis habitual'],['suppOmega','Omega 3','1 cápsula'],['suppWhey','COP proteína whey','34 g · 130 kcal · 24 g proteína']];const today=()=>new Date().toLocaleDateString('en-CA');const read=()=>{try{return JSON.parse(localStorage.getItem(key)||'{}')}catch(e){return {}}};const save=x=>localStorage.setItem(key,JSON.stringify(x));function render(){const db=read(),d=db[today()]||{},box=document.getElementById('suppDayHistory');if(!box)return;const active=ids.filter(x=>d[x[0]]);box.innerHTML=active.length?active.map(x=>`<div class="supp-history-row"><strong>${x[1]}</strong><small>${d[x[0]].time} · ${x[2]}</small></div>`).join(''):'<p class="muted">Todavía no hay suplementos confirmados hoy.</p>';ids.forEach(x=>{const el=document.getElementById(x[0]);if(el)el.checked=!!d[x[0]]})}ids.forEach(x=>{const el=document.getElementById(x[0]);if(el)el.addEventListener('change',()=>{const db=read(),day=db[today()]||(db[today()]={});if(el.checked)day[x[0]]={time:new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'})};else delete day[x[0]];save(db);render();if(x[0]==='suppWhey'&&el.checked){try{if(typeof addFood==='function')addFood('Whey protein',34,130,24)}catch(e){}}});});render();})();
 </script>
 </body></html>
