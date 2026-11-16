@@ -647,6 +647,28 @@ document.addEventListener('DOMContentLoaded',function(){
 @media(max-width:600px){.body-start-hero{border-radius:14px}.body-section-intro h1{font-size:25px}}
 </style>
 
+
+<style id="body-measure-swipe-v2128">
+/* Peso y Medidas · acceso deslizante tipo desbloqueo */
+.body-measure-launch{padding:18px!important;background:linear-gradient(145deg,#101a13,#0b110d)!important;border:1px solid #2c4032!important;border-radius:18px!important}
+.body-swipe-wrap{display:flex;flex-direction:column;gap:13px}
+.body-swipe-copy{display:flex;flex-direction:column;gap:5px}
+.body-swipe-copy strong{font-size:13px;letter-spacing:1.15px;color:#e9f5ec}
+.body-swipe-copy span{font-size:13px;color:#98a99d}
+.body-swipe-track{height:58px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:999px;border:1px solid #35533d;background:linear-gradient(90deg,#15251a,#101a13);box-shadow:inset 0 0 16px #0008}
+.body-swipe-track-label{font-size:11px;font-weight:850;letter-spacing:1.2px;color:#a4ffb8;pointer-events:none;z-index:1;padding-left:44px;text-align:center}
+.body-swipe-track input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize;z-index:3;touch-action:pan-y}
+.body-swipe-knob{position:absolute;left:5px;top:5px;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#a4ffb8,#42d879);color:#07130b;font-size:25px;font-weight:900;box-shadow:0 0 18px #57ef8a55;pointer-events:none;z-index:2;transition:left .08s linear}
+.body-swipe-track:after{content:"";position:absolute;inset:0 auto 0 0;width:var(--swipe-progress,0%);max-width:100%;background:linear-gradient(90deg,#35d87922,#a4ffb822);pointer-events:none;z-index:0}
+.body-measure-actions{padding-top:14px}
+.body-measure-actions[hidden],.body-measure-form[hidden]{display:none!important}
+.body-measure-action{width:100%;min-height:50px;border-radius:13px!important;border:1px solid #3d8955!important;background:linear-gradient(110deg,#173d27,#10251a)!important;color:#dfffe8!important;font-weight:800!important;text-align:left;padding:13px 16px!important;box-shadow:0 0 16px #42d87918}
+.body-measure-form{border:1px solid #314b38!important;background:linear-gradient(145deg,#101a13,#0b110d)!important}
+.body-form-close{min-width:36px!important;width:36px;height:36px;padding:0!important;border-radius:50%!important;font-size:22px!important}
+@media(max-width:600px){.body-measure-launch{padding:16px!important}.body-swipe-track{height:56px}.body-swipe-knob{width:44px;height:44px}.body-swipe-track-label{font-size:10px;letter-spacing:.8px}}
+@media(prefers-reduced-motion:reduce){.body-swipe-knob{transition:none!important}}
+</style>
+
 </head><body>
 
 
@@ -815,7 +837,24 @@ document.addEventListener('DOMContentLoaded',function(){
  <div class="body-kpi"><small>PROMEDIO 7 DÍAS</small><strong id="bodyWeeklyAvg">—</strong><em>Registros de peso</em></div>
  <div class="body-kpi"><small>HASTA META 80 KG</small><strong id="bodyTo80">—</strong><em id="bodyTo75">Meta final: —</em></div>
 </div>
-<div class="card" style="margin-top:12px"><h3>＋ Registrar medición</h3><div class="formrow three"><label>Peso (kg)<input id="weight" type="number" step=".1" min="1" placeholder="82.3"></label><label>Cintura (cm)<input id="waist" type="number" step=".1" min="1" placeholder="95"></label><label>Fecha<input id="measureDate" type="date"></label></div><button onclick="addMeasure()">＋ Guardar medición</button></div>
+<div class="body-measure-launch card" id="bodyMeasureLaunch" style="margin-top:12px">
+ <div class="body-swipe-wrap" id="bodySwipeWrap">
+  <div class="body-swipe-copy"><strong>REGISTRO DE MEDICIONES</strong><span>Desliza para abrir las opciones</span></div>
+  <div class="body-swipe-track" id="bodySwipeTrack">
+   <span class="body-swipe-track-label">DESLIZAR PARA REGISTRAR</span>
+   <input id="bodyMeasureSwipe" type="range" min="0" max="100" value="0" step="1" aria-label="Desliza para mostrar las opciones de registro">
+   <span class="body-swipe-knob" aria-hidden="true">››</span>
+  </div>
+ </div>
+ <div class="body-measure-actions" id="bodyMeasureActions" hidden>
+  <button type="button" class="body-measure-action" id="bodyOpenMeasureForm">＋ Registrar mediciones</button>
+ </div>
+</div>
+<div class="card body-measure-form" id="bodyMeasureForm" style="margin-top:12px" hidden>
+ <div class="sectionHead"><h3>＋ Registrar medición</h3><button type="button" class="body-form-close" id="bodyCloseMeasureForm" aria-label="Cerrar formulario">×</button></div>
+ <div class="formrow three"><label>Peso (kg)<input id="weight" type="number" step=".1" min="1" placeholder="82.3"></label><label>Cintura (cm)<input id="waist" type="number" step=".1" min="1" placeholder="95"></label><label>Fecha<input id="measureDate" type="date"></label></div>
+ <button type="button" onclick="addMeasure()">＋ Guardar medición</button>
+</div>
 <div class="card" style="margin-top:12px"><div class="sectionHead"><h3>Historial de mediciones</h3><span class="pill" id="measureCount">0 registros</span></div><div id="measureList" class="list"></div></div>
 </section>
 
@@ -1032,7 +1071,7 @@ async function addFood(){
 
 function addWorkout(){db.workouts.push({routine:$('routine').value,minutes:+$('duration').value||0,date:$('workDate').value,id:Date.now()});save()}
 function addSupp(){let n=$('suppName').value.trim();if(!n)return alert('Escribe el suplemento');db.supplements.push({name:n,dose:$('suppDose').value,time:$('suppTime').value,done:false,date:today,id:Date.now()});$('suppName').value=$('suppDose').value=$('suppTime').value='';save()}
-function addMeasure(){let w=+$('weight').value,wa=+$('waist').value,date=$('measureDate').value;if(!w&&!wa)return alert('Ingresa peso o cintura');if((w&&w<=0)||(wa&&wa<=0))return alert('Peso y cintura deben ser valores positivos');if(!date)return alert('Selecciona una fecha');db.measures.push({date,weight:w||null,waist:wa||null,id:Date.now()});$('weight').value=$('waist').value='';save()}
+function addMeasure(){let w=+$('weight').value,wa=+$('waist').value,date=$('measureDate').value;if(!w&&!wa)return alert('Ingresa peso o cintura');if((w&&w<=0)||(wa&&wa<=0))return alert('Peso y cintura deben ser valores positivos');if(!date)return alert('Selecciona una fecha');db.measures.push({date,weight:w||null,waist:wa||null,id:Date.now()});$('weight').value=$('waist').value='';save();const form=document.getElementById('bodyMeasureForm'),actions=document.getElementById('bodyMeasureActions'),swipe=document.getElementById('bodyMeasureSwipe');if(form)form.hidden=true;if(actions)actions.hidden=true;if(swipe)swipe.value=0;}
 function del(arr,id){db[arr]=db[arr].filter(x=>x.id!==id);save()}
 function renderAll(){let m=macros();$('kCal').textContent=Math.round(m.k)+' kcal';renderSupplements();
 let last=[...db.measures].reverse().find(x=>x.weight);if(last)$('kWeight').textContent=last.weight+' kg';let lw=[...db.measures].reverse().find(x=>x.waist);if(lw)$('kWaist').textContent=lw.waist+' cm';
@@ -1593,4 +1632,48 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
  window.addEventListener('pageshow',initCalendarOnly);
 })();
 </script>
+
+<script id="body-measure-swipe-init-v2128">
+(function(){
+ function initBodyMeasureSwipe(){
+  const slider=document.getElementById('bodyMeasureSwipe');
+  const track=document.getElementById('bodySwipeTrack');
+  const knob=document.querySelector('.body-swipe-knob');
+  const actions=document.getElementById('bodyMeasureActions');
+  const form=document.getElementById('bodyMeasureForm');
+  const open=document.getElementById('bodyOpenMeasureForm');
+  const close=document.getElementById('bodyCloseMeasureForm');
+  if(!slider||!track||!knob||!actions||!form||slider.dataset.ready==='1')return;
+  slider.dataset.ready='1';
+  function paint(){
+   const pct=Math.max(0,Math.min(100,Number(slider.value)||0));
+   const max=Math.max(0,track.clientWidth-56);
+   knob.style.left=(5+max*pct/100)+'px';
+   track.style.setProperty('--swipe-progress',pct+'%');
+  }
+  slider.addEventListener('input',function(){
+   paint();
+   if(Number(slider.value)>=96){
+    actions.hidden=false;
+    track.classList.add('is-unlocked');
+    slider.value=0;
+    paint();
+   }
+  });
+  open.addEventListener('click',function(){
+   form.hidden=false;
+   const d=document.getElementById('measureDate');
+   if(d&&!d.value){const now=new Date();d.value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');}
+   form.scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+  close.addEventListener('click',function(){form.hidden=true;});
+  window.addEventListener('resize',paint,{passive:true});
+  paint();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initBodyMeasureSwipe);
+ else initBodyMeasureSwipe();
+ window.addEventListener('pageshow',initBodyMeasureSwipe);
+})();
+</script>
+
 </body></html>
