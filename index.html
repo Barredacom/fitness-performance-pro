@@ -344,6 +344,17 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
  .tp-image-unavailable .tp-ex-img{visibility:hidden;background:linear-gradient(135deg,#111820,#080b09)}
 .supp-control-list{display:grid;gap:10px}.supp-card{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;border:1px solid rgba(180,255,50,.18);border-radius:14px;background:rgba(18,26,20,.72)}.supp-info strong{display:block}.supp-info small{display:block;color:var(--muted,#9aa);margin-top:5px;line-height:1.4}.supp-switch{position:relative;display:inline-block;width:54px;height:30px;flex:0 0 54px}.supp-switch input{opacity:0;width:0;height:0}.supp-slider{position:absolute;inset:0;cursor:pointer;background:#39413b;border:1px solid #59645a;border-radius:30px;transition:.2s}.supp-slider:before{position:absolute;content:"";height:22px;width:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}.supp-switch input:checked+.supp-slider{background:#b8ff32;border-color:#b8ff32;box-shadow:0 0 12px #b8ff3240}.supp-switch input:checked+.supp-slider:before{transform:translateX(24px);background:#101510}
 .supp-summary{padding:12px 15px!important;margin:0 0 10px!important}.supp-summary-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.supp-summary-top small{display:block;color:var(--muted);font-size:12px}.supp-summary-top strong{display:block;font-size:22px;line-height:1.25;margin-top:2px}.supp-last{text-align:right;min-width:95px}.supp-summary .bar{height:5px;margin:8px 0 4px}.supp-summary #suppPercent{font-size:11px}.supp-record{padding:14px!important;margin:0 0 10px!important}.supp-record h3,.supp-history h3{margin:0 0 5px;font-size:16px}.supp-record>p{margin:0 0 10px;font-size:12px}.supp-control-list{gap:7px}.supp-card{padding:10px 12px;border-radius:11px;min-height:58px}.supp-info strong{font-size:14px}.supp-info small{font-size:11px;margin-top:2px}.supp-switch{width:46px;height:26px;flex-basis:46px}.supp-slider:before{height:18px;width:18px;left:3px;bottom:3px}.supp-switch input:checked+.supp-slider:before{transform:translateX(20px)}.supp-history{padding:13px!important;margin:0!important}.supp-history .item{padding:7px 0;font-size:12px}.supp-history .item small{font-size:10px}
+
+/* SUPPLEMENT CONTROL: switch grande estilo CALENTAMIENTO */
+.supp-card{padding:16px 18px!important;min-height:112px!important;gap:16px!important;border-radius:18px!important}
+.supp-info strong{font-size:20px!important;font-weight:750!important;letter-spacing:.1px}
+.supp-info small{font-size:15px!important;margin-top:6px!important;line-height:1.35!important}
+.supp-switch{width:174px!important;height:96px!important;flex:0 0 174px!important}
+.supp-slider{background:#26302b!important;border:0!important;border-radius:999px!important;box-shadow:none!important}
+.supp-slider:before{width:70px!important;height:70px!important;left:12px!important;top:13px!important;background:#f7f7f7!important}
+.supp-switch input:checked+.supp-slider{background:#b8ff32!important;box-shadow:0 0 16px #b8ff3240!important}
+.supp-switch input:checked+.supp-slider:before{transform:translateX(78px)!important;background:#fff!important}
+@media(max-width:520px){.supp-card{min-height:100px!important;padding:13px!important}.supp-switch{width:120px!important;height:66px!important;flex-basis:120px!important}.supp-slider:before{width:48px!important;height:48px!important;left:9px!important;top:9px!important}.supp-switch input:checked+.supp-slider:before{transform:translateX(54px)!important}.supp-info strong{font-size:17px!important}.supp-info small{font-size:13px!important}}
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
@@ -958,7 +969,7 @@ function toggleSupp(id,checked){
 function updateSupp(id,field,value){let x=db.supplements.find(z=>String(z.id)===String(id));if(!x)return;x[field]=value;save();}
 function renderSupplements(){
  const list=$('suppList');if(!list)return;
- list.innerHTML=db.supplements.map(x=>`<div class="supp-card"><div class="supp-info"><strong>${x.name}</strong><small>${x.dose||'Dosis no indicada'} · ${x.done?'Consumido '+(x.consumedTime||''):'Pendiente'}${x.time?' · Habitual: '+x.time:''}</small></div><label class="supp-switch"><input type="checkbox" aria-label="Consumo ${x.name}" ${x.done?'checked':''} onchange="toggleSupp(${JSON.stringify(x.id)},this.checked)"><span class="supp-slider"></span></label></div>`).join('');
+ list.innerHTML=db.supplements.map(x=>`<div class="supp-card"><div class="supp-info"><strong>${x.name}</strong><small>${x.dose||'Dosis no indicada'} · ${x.done?'Consumido '+(x.consumedTime||''):'Pendiente'}</small></div><label class="supp-switch"><input type="checkbox" aria-label="Consumo ${x.name}" ${x.done?'checked':''} onchange="toggleSupp(${JSON.stringify(x.id)},this.checked)"><span class="supp-slider"></span></label></div>`).join('');
 
  let todayRows=db.supplements.filter(x=>x.done&&x.date===today),n=todayRows.length,total=4;
  $('suppDoneCount').textContent=n+'/'+total;$('suppProgress').style.width=(n/total*100)+'%';$('suppPercent').textContent=Math.round(n/total*100)+'% cumplimiento';
