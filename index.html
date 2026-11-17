@@ -436,6 +436,17 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 #measureHistoryModal .body-form-close.solid-neon-close{display:flex;align-items:center;justify-content:center;background:#142316!important;border:1px solid #A4FF2875!important;color:#A4FF28!important;box-shadow:0 0 13px #A4FF2825!important;padding:0!important}
 #measureHistoryModal .body-form-close.solid-neon-close svg{width:19px;height:19px;fill:#A4FF28;filter:drop-shadow(0 0 4px #A4FF2870)}
 #measureHistoryModal .body-form-close.solid-neon-close:active{background:#20391c!important;transform:scale(.96)}
+
+/* V21.43 — Solid Neon UI: remove blue from waist KPI */
+.body-kpis-live>.body-kpi:nth-child(2){
+  border-color:#35ff91!important;
+  box-shadow:0 0 0 1px #35ff9155,0 0 18px #35ff9133,inset 0 0 18px #35ff910d!important;
+}
+.body-kpis-live>.body-kpi:nth-child(2) strong{
+  color:#35ff91!important;
+  text-shadow:0 0 12px #35ff9166!important;
+}
+.body-kpis-live>.body-kpi:nth-child(2) small{color:#a5f5c8!important}
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
@@ -1307,7 +1318,7 @@ function renderBodyHistoryLineChart(weights,waists){
  const host=$('bodyHistoryLineChart');if(!host)return;
  const series=[
   {name:'Peso',unit:'kg',field:'weight',data:Array.isArray(weights)?weights:[],color:'#A4FF28'},
-  {name:'Cintura',unit:'cm',field:'waist',data:Array.isArray(waists)?waists:[],color:'#35D9FF'}
+  {name:'Cintura',unit:'cm',field:'waist',data:Array.isArray(waists)?waists:[],color:'#C58BFF'}
  ].filter(s=>s.data.length);
  if(!series.length){host.innerHTML='<div class="muted" style="padding:18px 4px">Aún no hay datos válidos para graficar. Revisa el historial de mediciones.</div>';return;}
  const dates=[...new Set(series.flatMap(s=>s.data.map(x=>String(x.date||''))))].filter(Boolean).sort();
