@@ -1197,6 +1197,29 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
 }
 </style>
 
+
+<style id="history-swipe-to-unlock">
+.history-swipe-shell{display:flex;flex-direction:column;gap:12px}
+.history-swipe-track{position:relative;display:flex;align-items:center;min-height:76px;padding:7px;border:1px solid #40513f;border-radius:17px;background:linear-gradient(145deg,#111914,#090e0b);overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 8px 24px rgba(0,0,0,.18)}
+.history-swipe-progress{position:absolute;inset:5px auto 5px 5px;width:0;border-radius:12px;background:linear-gradient(90deg,rgba(166,255,0,.08),rgba(166,255,0,.18));pointer-events:none}
+.history-swipe-copy{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0 62px;text-align:center;pointer-events:none}
+.history-swipe-title{font-size:10px;letter-spacing:1.5px;font-weight:950;color:#a6ff00}
+.history-swipe-subtitle{font-size:10px;color:#89978a}
+.history-swipe-thumb{position:absolute;left:7px;top:7px;bottom:7px;width:58px;border:1px solid #a6ff00;border-radius:12px;background:#172116;color:#a6ff00;font-size:21px;font-weight:900;box-shadow:0 0 15px rgba(166,255,0,.12);display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none;z-index:2}
+.history-swipe-thumb:active{cursor:grabbing}
+.history-swipe-track.is-unlocked{border-color:#a6ff00;box-shadow:0 0 0 1px rgba(166,255,0,.13),0 0 22px rgba(166,255,0,.08)}
+.history-swipe-track.is-unlocked .history-swipe-thumb{background:#a6ff00;color:#10160c}
+.history-swipe-track.is-unlocked .history-swipe-title{color:#d1ff83}
+.history-calendar-panel{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;padding:14px;border:1px solid #344638;border-radius:16px;background:#101612;animation:historyCalendarReveal .22s ease-out}
+.history-calendar-panel[hidden]{display:none}
+.history-calendar-panel .history-date-label{color:#a6ff00;text-align:left}
+.history-calendar-panel .history-date-label input{width:100%;box-sizing:border-box;min-height:49px;border:1px solid #40513f;border-radius:12px;background:#090e0b;color:#f0f5ef;color-scheme:dark;text-align:center;font-size:18px;font-weight:800;padding:8px 12px;accent-color:#a6ff00}
+.history-calendar-panel .history-date-label input:focus{outline:none;border-color:#a6ff00;box-shadow:0 0 0 2px rgba(166,255,0,.12)}
+.history-calendar-panel .history-monthbar{margin-top:0}
+@keyframes historyCalendarReveal{from{opacity:0;transform:translateY(-7px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:520px){.history-swipe-track{min-height:72px}.history-swipe-copy{padding:0 58px}.history-swipe-title{font-size:9px;letter-spacing:1.1px}.history-calendar-panel{padding:12px}}
+</style>
+
 </head><body>
 
 
@@ -1491,12 +1514,17 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
 <section id="historial" class="section">
  <div class="sectionHead"><h2>Historial 360°</h2><span class="pill">Bitácora diaria</span></div>
  <div class="history-shell">
-  <div class="history-datebar">
-   <button type="button" class="history-nav" onclick="historyMoveDay(-1)" aria-label="Día anterior">‹</button>
-   <label class="history-date-label">FECHA CONSULTADA<input id="historyDate" type="date" onchange="renderHistory()"></label>
-   <button type="button" class="history-nav" onclick="historyMoveDay(1)" aria-label="Día siguiente">›</button>
+  <div class="history-swipe-shell">
+   <div class="history-swipe-track" id="historySwipeTrack">
+    <div class="history-swipe-progress" id="historySwipeProgress"></div>
+    <div class="history-swipe-copy"><span class="history-swipe-title">DESLIZA PARA VER EL CALENDARIO</span><span class="history-swipe-subtitle">Desbloquea la selección de fecha</span></div>
+    <button type="button" class="history-swipe-thumb" id="historySwipeThumb" aria-label="Deslizar para abrir calendario" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span>››</span></button>
+   </div>
+   <div class="history-calendar-panel" id="historyCalendarPanel" hidden>
+    <label class="history-date-label">FECHA CONSULTADA<input id="historyDate" type="date" onchange="renderHistory()"></label>
+    <div class="history-monthbar"><label>IR A UN MES<input id="historyMonth" type="month" onchange="historySelectMonth()"></label><span id="historyDayShift" class="history-shift-label">—</span></div>
+   </div>
   </div>
-  <div class="history-monthbar"><label>Ir a un mes<input id="historyMonth" type="month" onchange="historySelectMonth()"></label><span id="historyDayShift" class="history-shift-label">—</span></div>
   <div class="history-kpis" id="historyKpis"></div>
   <div class="history-timeline-wrap">
    <div class="history-timeline-heading"><div><span class="history-eyebrow">REGISTRO CRONOLÓGICO</span><h3 id="historyTitle">Actividad del día</h3></div><span id="historyCount" class="history-count">0 registros</span></div>
@@ -2462,5 +2490,31 @@ window.addEventListener('pageshow',()=>{try{renderBodyEvolution()}catch(e){conso
 
 
 
+
+
+<script id="history-swipe-controller">
+(function(){
+ let dragging=false,startX=0,currentX=0,maxTravel=0,pointerId=null;
+ const track=()=>document.getElementById('historySwipeTrack');
+ const thumb=()=>document.getElementById('historySwipeThumb');
+ const panel=()=>document.getElementById('historyCalendarPanel');
+ function travelLimit(){const t=track(),b=thumb();return Math.max(0,t.clientWidth-b.offsetWidth-14)}
+ function setPosition(x){const b=thumb(),p=document.getElementById('historySwipeProgress'),limit=travelLimit();currentX=Math.max(0,Math.min(limit,x));b.style.transform=`translateX(${currentX}px)`;p.style.width=`${currentX+58}px`;b.setAttribute('aria-valuenow',String(Math.round(limit?currentX/limit*100:0)))}
+ function unlock(){
+  const t=track(),b=thumb(),p=panel();t.classList.add('is-unlocked');b.innerHTML='<span>✓</span>';b.setAttribute('aria-label','Calendario desbloqueado');p.hidden=false;
+  const input=document.getElementById('historyDate');
+  if(input){setTimeout(()=>{try{if(typeof input.showPicker==='function')input.showPicker();else{input.focus();input.click()}}catch(e){input.focus()}},180)}
+ }
+ function down(e){if(!track()||panel().hidden===false)return;dragging=true;pointerId=e.pointerId;startX=e.clientX;currentX=0;maxTravel=travelLimit();thumb().setPointerCapture?.(pointerId);e.preventDefault()}
+ function move(e){if(!dragging||e.pointerId!==pointerId)return;setPosition(e.clientX-startX)}
+ function up(e){if(!dragging||e.pointerId!==pointerId)return;dragging=false;const limit=travelLimit();if(currentX>=limit*.78){setPosition(limit);unlock()}else{setPosition(0)}}
+ function key(e){if(e.key==='Enter'||e.key===' '||e.key==='ArrowRight'){e.preventDefault();setPosition(travelLimit());unlock()}}
+ document.addEventListener('DOMContentLoaded',function(){
+  const b=thumb();if(!b)return;
+  b.addEventListener('pointerdown',down);b.addEventListener('pointermove',move);b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('keydown',key);
+  window.addEventListener('resize',()=>{if(panel().hidden)setPosition(0);else setPosition(travelLimit())});
+ });
+})();
+</script>
 
 </body></html>
