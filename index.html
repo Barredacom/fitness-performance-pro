@@ -1260,18 +1260,19 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
 </style>
 
 
-<style id="history-data-close-electric-lime">
+
+\n<style id="history-data-close-solid-neon-ui">
 .history-data-close{
-  color:#A6FF00 !important;
-  border-color:#526b35 !important;
-  text-shadow:0 0 10px rgba(166,255,0,.18);
+ display:flex !important;align-items:center !important;justify-content:center !important;
+ color:#A6FF00 !important;border:1px solid #40513f !important;
+ background:#111812 !important;box-shadow:0 0 14px rgba(166,255,0,.14) !important;
 }
-.history-data-close:active{
-  background:rgba(166,255,0,.10) !important;
-  border-color:#A6FF00 !important;
-}
+.history-data-close-icon{display:block !important;width:22px !important;height:22px !important;overflow:visible}
+.history-data-close-icon path{fill:#A6FF00 !important;stroke:none !important;filter:drop-shadow(0 0 3px rgba(166,255,0,.35))}
+.history-data-close:active{background:rgba(166,255,0,.13) !important;border-color:#A6FF00 !important;box-shadow:0 0 18px rgba(166,255,0,.25) !important}
 </style>
-\n</head><body>
+
+</head><body>
 
 
 <!-- SUPABASE AUTH INTEGRATION -->
@@ -1588,7 +1589,7 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
    <div class="history-data-backdrop" onclick="closeHistoryDataModal()"></div>
    <section class="history-data-sheet" role="dialog" aria-modal="true" aria-labelledby="historyDataTitle">
     <div class="history-data-handle"></div>
-    <div class="history-data-heading"><div><span class="history-eyebrow">FITNESS PERFORMANCE PRO</span><h3 id="historyDataTitle">Gestión de datos</h3><p>Respalda y administra tus registros.</p></div><button type="button" class="history-data-close" onclick="closeHistoryDataModal()" aria-label="Cerrar">×</button></div>
+    <div class="history-data-heading"><div><span class="history-eyebrow">FITNESS PERFORMANCE PRO</span><h3 id="historyDataTitle">Gestión de datos</h3><p>Respalda y administra tus registros.</p></div><button type="button" class="history-data-close" onclick="closeHistoryDataModal()" aria-label="Cerrar"><svg class="history-data-close-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.1 4.7 12 10.6l5.9-5.9 1.4 1.4-5.9 5.9 5.9 5.9-1.4 1.4-5.9-5.9-5.9 5.9-1.4-1.4 5.9-5.9-5.9-5.9z"/></svg></button></div>
     <button type="button" class="history-data-action" onclick="exportData()"><span class="history-data-action-icon">↓</span><span><strong>Crear respaldo</strong><small>Descargar tus registros en un archivo JSON.</small></span><span class="history-data-action-arrow">›</span></button>
     <label class="history-data-action history-data-import"><span class="history-data-action-icon">↑</span><span><strong>Restaurar respaldo</strong><small>Seleccionar un archivo JSON guardado anteriormente.</small><input type="file" accept=".json" onchange="importData(event)"></span><span class="history-data-action-arrow">›</span></label>
     <div class="history-data-warning"><span class="history-data-warning-icon">!</span><span><strong>Administración avanzada</strong><small>Esta acción elimina los registros guardados en la aplicación.</small><button type="button" onclick="clearAll()">Borrar todos los datos</button></span></div>
