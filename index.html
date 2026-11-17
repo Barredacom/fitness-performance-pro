@@ -568,6 +568,66 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
   filter:drop-shadow(0 0 4px #A6FF00) drop-shadow(0 0 11px #A6FF0090);
 }
 
+
+/* V21.49 — Navegación Solid Neon UI unificada + pulso en sección activa */
+:root{--nav-neon:#A6FF00}
+.nav button{
+  position:relative;
+  transition:color .22s ease,background .22s ease,box-shadow .22s ease,border-color .22s ease;
+}
+.nav button .nav-icon{
+  color:inherit;
+  filter:drop-shadow(0 0 3px #A6FF00) drop-shadow(0 0 7px #A6FF0060);
+  transition:filter .22s ease,transform .22s ease;
+}
+/* Icono de peso sin marco/cuadrado exterior */
+.nav button[data-tab="peso"] .nav-icon-body{
+  width:23px;height:23px;flex:0 0 23px;fill:currentColor;
+}
+/* Todas las secciones comparten el mismo tratamiento cuando están seleccionadas */
+.nav button.active{
+  color:var(--nav-neon)!important;
+  background:linear-gradient(100deg,#102416 0%,#17351c 100%)!important;
+  border:1px solid #A6FF00!important;
+  box-shadow:0 0 0 1px #A6FF0040,0 0 15px #A6FF0038,inset 0 0 14px #A6FF0015!important;
+  animation:navNeonPulse 2.2s ease-in-out infinite;
+}
+.nav button.active .nav-icon{
+  color:var(--nav-neon)!important;
+  filter:drop-shadow(0 0 4px #A6FF00) drop-shadow(0 0 10px #A6FF00b0)!important;
+  animation:navIconPulse 2.2s ease-in-out infinite;
+}
+@keyframes navNeonPulse{
+  0%,100%{text-shadow:0 0 5px #A6FF0060;box-shadow:0 0 0 1px #A6FF0035,0 0 12px #A6FF0028,inset 0 0 10px #A6FF0010}
+  50%{text-shadow:0 0 9px #A6FF00,0 0 16px #A6FF0080;box-shadow:0 0 0 1px #A6FF0080,0 0 23px #A6FF0060,inset 0 0 18px #A6FF0020}
+}
+@keyframes navIconPulse{
+  0%,100%{transform:scale(1);filter:drop-shadow(0 0 3px #A6FF00) drop-shadow(0 0 6px #A6FF0060)}
+  50%{transform:scale(1.09);filter:drop-shadow(0 0 5px #A6FF00) drop-shadow(0 0 13px #A6FF00)}
+}
+@media(prefers-reduced-motion:reduce){
+  .nav button.active,.nav button.active .nav-icon{animation:none!important}
+}
+
+
+/* V21.50 — Quitar marco exterior al seleccionar cualquier sección */
+.nav button.active{
+  border-color:transparent!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:linear-gradient(100deg,#102416 0%,#17351c 100%)!important;
+  animation:navTextPulse 2.2s ease-in-out infinite;
+}
+.nav button.active .nav-icon{
+  color:#A6FF00!important;
+  filter:drop-shadow(0 0 4px #A6FF00) drop-shadow(0 0 10px #A6FF00b0)!important;
+  animation:navIconPulse 2.2s ease-in-out infinite;
+}
+@keyframes navTextPulse{
+  0%,100%{text-shadow:0 0 5px #A6FF0060}
+  50%{text-shadow:0 0 9px #A6FF00,0 0 16px #A6FF0080}
+}
+
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
@@ -1002,7 +1062,7 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
   <button type="button" data-tab="nutricion"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v7a3 3 0 0 0 6 0V3h-2v5H10V3H8v5H6V3zM6 13h2v8H6zM18 3a2 2 0 0 0-2 2v16h2V3z"/></svg> Nutrición</button>
   <button type="button" data-tab="entrenamiento"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9h2V6h3v3h10V6h3v3h2v6h-2v3h-3v-3H7v3H4v-3H2z"/></svg> Entrenamiento</button>
   <button type="button" data-tab="suplementos"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3a5 5 0 0 0-7 7l10 10a5 5 0 0 0 7-7z" transform="translate(3 0) rotate(0 12 12)"/><path d="m8 8 8 8" stroke="#101510" stroke-width="1.5"/></svg> Suplementos</button>
-  <button type="button" data-tab="peso"><svg class="nav-icon nav-icon-body" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2.75h12A2.25 2.25 0 0 1 20.25 5v14A2.25 2.25 0 0 1 18 21.25H6A2.25 2.25 0 0 1 3.75 19V5A2.25 2.25 0 0 1 6 2.75Zm0 2a.25.25 0 0 0-.25.25v14c0 .14.11.25.25.25h12a.25.25 0 0 0 .25-.25V5a.25.25 0 0 0-.25-.25H6Zm6 2a4.25 4.25 0 0 1 4.1 3.15.9.9 0 0 1-.87 1.15H8.77a.9.9 0 0 1-.87-1.15A4.25 4.25 0 0 1 12 6.75Zm0 1.9a2.3 2.3 0 0 0-1.8.85h3.6a2.3 2.3 0 0 0-1.8-.85ZM7.25 14h2v2h-2v-2Zm3.75 0h2v2h-2v-2Zm3.75 0h2v2h-2v-2Z"/></svg> Peso y medidas</button>
+  <button type="button" data-tab="peso"><svg class="nav-icon nav-icon-body" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5.5A2.5 2.5 0 0 1 7.5 3h9A2.5 2.5 0 0 1 19 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 5 18.5v-13Zm2.2 0v5.1h9.6V5.5a.3.3 0 0 0-.3-.3h-9a.3.3 0 0 0-.3.3Zm4.8 1.1a2.6 2.6 0 0 1 2.4 1.6h-4.8A2.6 2.6 0 0 1 12 6.6ZM7.2 13v5.5a.3.3 0 0 0 .3.3h9a.3.3 0 0 0 .3-.3V13H7.2Zm1.2 1.2h2v2h-2v-2Zm5.2 0h2v2h-2v-2Z"/></svg> Peso y medidas</button>
 <button type="button" data-tab="turnos"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2h2v3h10V2h2v3h2v17H3V5h2zm0 7v11h14V9z"/><path d="M7 11h3v3H7zm5 0h3v3h-3zm-5 5h3v2H7zm5 0h3v2h-3z"/></svg> Turnos 7×7</button></nav></aside>
 <main><div class="top"><div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><div class="live-clock"><span>CHILE CONTINENTAL · EN VIVO</span><strong id="liveClock">--:--:--</strong><span id="liveDate">Cargando fecha…</span></div><div class="pill shift-pill shift-rest" id="todayShift">● Descanso</div></div>
 
