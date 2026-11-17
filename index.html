@@ -412,6 +412,11 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
  .supp-toggle .warm-slider:before{width:30px!important;height:30px!important;left:5px!important;top:5px!important}
  .supp-toggle input:checked+.warm-slider:before{transform:translateX(32px)!important}
 }
+
+/* V21.37 · Solid Neon UI para el botón de cierre del historial */
+#measureHistoryModal .body-form-close.solid-neon-close{display:flex;align-items:center;justify-content:center;background:#142316!important;border:1px solid #A4FF2875!important;color:#A4FF28!important;box-shadow:0 0 13px #A4FF2825!important;padding:0!important}
+#measureHistoryModal .body-form-close.solid-neon-close svg{width:19px;height:19px;fill:#A4FF28;filter:drop-shadow(0 0 4px #A4FF2870)}
+#measureHistoryModal .body-form-close.solid-neon-close:active{background:#20391c!important;transform:scale(.96)}
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
@@ -754,6 +759,30 @@ body.measure-modal-open{overflow:hidden}
 @media(prefers-reduced-motion:reduce){.body-measure-modal:not([hidden]) .body-measure-backdrop,.body-measure-modal:not([hidden]) .body-measure-dialog,.fp-modal-backdrop.open,.fp-modal-backdrop.open .fp-modal,.body-measure-modal.is-closing .body-measure-backdrop,.body-measure-modal.is-closing .body-measure-dialog,.fp-modal-backdrop.is-closing,.fp-modal-backdrop.is-closing .fp-modal{animation:none!important;transition:none!important}}
 </style>
 
+
+<style id="fpp-solid-neon-icons-v2138">
+/* FITNESS PERFORMANCE PRO · Solid Neon UI icon system */
+:root{--fpp-icon-neon:#A4FF28;--fpp-icon-glow:rgba(164,255,40,.34)}
+/* Icon color and luminous treatment, excluding data visualizations and brand artwork */
+svg.nav-icon, .supp-icon svg, .date-display-icon svg,
+button svg:not([data-chart]):not(.chart-svg), .body-form-close svg,
+.solid-neon-edit-icon, .solid-neon-modal-icon, .solid-neon-save-icon,
+.body-swipe-arrow-icon, .nutrition-catalog-action svg,
+.fp-settings-toggle svg, .nutrition-control-toggle svg {
+  color:var(--fpp-icon-neon)!important;
+  filter:drop-shadow(0 0 3px var(--fpp-icon-glow));
+}
+svg.nav-icon{fill:currentColor!important;stroke:none!important}
+.supp-icon svg{fill:var(--fpp-icon-neon)}
+.date-display-icon svg{fill:var(--fpp-icon-neon)!important;stroke:var(--fpp-icon-neon)!important;stroke-width:2.3}
+.body-form-close svg, button svg:not([data-chart]):not(.chart-svg){overflow:visible}
+.body-form-close svg path, button svg:not([data-chart]):not(.chart-svg) path{stroke:currentColor}
+/* Solid treatment for compact functional glyphs */
+.solid-neon-edit-icon,.solid-neon-modal-icon,.solid-neon-save-icon,.body-swipe-arrow-icon{fill:var(--fpp-icon-neon)!important;stroke:var(--fpp-icon-neon)!important}
+/* Do not recolor charts, progress rings, or the application logo */
+svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:none!important}
+</style>
+
 </head><body>
 
 
@@ -940,7 +969,7 @@ body.measure-modal-open{overflow:hidden}
  </div>
 </div>
 <button type="button" class="measure-history-launch" id="measureHistoryLaunch" onclick="openMeasureHistoryModal()" aria-haspopup="dialog" aria-controls="measureHistoryModal"><span class="measure-history-title">HISTORIAL DE MEDICIONES</span><span class="measure-history-count" id="measureCount">0 registros</span></button>
-<div class="body-measure-modal" id="measureHistoryModal" hidden><div class="body-measure-backdrop" data-close-measure-history></div><div class="body-measure-dialog measure-history-dialog card" role="dialog" aria-modal="true" aria-labelledby="measureHistoryTitle"><div class="sectionHead"><h3 id="measureHistoryTitle">Historial de mediciones</h3><button type="button" class="body-form-close" id="closeMeasureHistory" aria-label="Cerrar historial">×</button></div><div id="measureList" class="list"></div></div></div>
+<div class="body-measure-modal" id="measureHistoryModal" hidden><div class="body-measure-backdrop" data-close-measure-history></div><div class="body-measure-dialog measure-history-dialog card" role="dialog" aria-modal="true" aria-labelledby="measureHistoryTitle"><div class="sectionHead"><h3 id="measureHistoryTitle">Historial de mediciones</h3><button type="button" class="body-form-close solid-neon-close" id="closeMeasureHistory" aria-label="Cerrar historial"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.2 2.4 12 9.2l6.8-6.8 3.6 3.6-6.8 6.8 6.8 6.8-3.6 3.6-6.8-6.8-6.8 6.8-3.6-3.6 6.8-6.8-6.8-6.8z"/></svg></button></div><div id="measureList" class="list"></div></div></div>
 </section>
 
 <style id="measure-history-modal-v2134">
