@@ -1293,7 +1293,64 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
  </div>
 </section>
 
-<section id="historial" class="section"><div class="sectionHead"><h2>Historial consultable</h2><span class="pill">Día / mes</span></div><div class="card"><div class="formrow two"><label>Consultar fecha<input id="historyDate" type="date" onchange="renderHistory()"></label><label>Consultar mes<input id="historyMonth" type="month" onchange="renderHistory()"></label></div><div id="historyResult" class="list"></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button onclick="exportData()">Exportar respaldo JSON</button><label style="max-width:230px">Importar respaldo<input type="file" accept=".json" onchange="importData(event)"></label><button onclick="clearAll()">Borrar todos los datos</button></div></div></section>
+
+<style id="history-360-solid-neon">
+.history-shell{display:flex;flex-direction:column;gap:14px}
+.history-datebar{display:grid;grid-template-columns:42px 1fr 42px;align-items:center;gap:10px;background:#101612;border:1px solid #2b3b2d;border-radius:16px;padding:12px}
+.history-nav{height:40px;border:1px solid #344536;border-radius:11px;background:#151d17;color:#a6ff00;font-size:27px;line-height:1;cursor:pointer}
+.history-date-label,.history-monthbar label{display:flex;flex-direction:column;gap:6px;color:#96a296;font-size:9px;font-weight:900;letter-spacing:1.4px}
+.history-date-label input,.history-monthbar input{width:100%;min-width:0;background:#0b100d;color:#edf4ed;border:1px solid #344536;border-radius:9px;padding:9px;font:inherit;font-size:13px;letter-spacing:0}
+.history-monthbar{display:flex;align-items:end;justify-content:space-between;gap:12px;padding:0 2px}
+.history-monthbar label{max-width:190px}
+.history-shift-label{font-size:11px;font-weight:800;color:#a6ff00;text-align:right}
+.history-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.history-kpi{background:#111813;border:1px solid #29382c;border-radius:13px;padding:12px;min-width:0}
+.history-kpi span{display:block;color:#8f9b90;font-size:9px;font-weight:900;letter-spacing:1px}
+.history-kpi strong{display:block;color:#f0f5ef;font-size:21px;line-height:1.2;margin-top:6px;overflow-wrap:anywhere}
+.history-kpi small{display:block;color:#98a398;font-size:10px;margin-top:3px}
+.history-timeline-wrap{background:#101612;border:1px solid #29382c;border-radius:16px;padding:15px}
+.history-timeline-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px}
+.history-eyebrow{font-size:9px;letter-spacing:1.5px;color:#a6ff00;font-weight:900}
+.history-timeline-heading h3{font-size:17px;margin:4px 0 0;color:#eef4ed}
+.history-count{font-size:10px;color:#9ba79c;white-space:nowrap}
+.history-timeline{display:flex;flex-direction:column;gap:0}
+.history-event{display:grid;grid-template-columns:54px 17px minmax(0,1fr);gap:9px;position:relative;padding:0 0 17px}
+.history-event:last-child{padding-bottom:0}
+.history-time{font-size:10px;color:#a6b1a6;font-variant-numeric:tabular-nums;padding-top:12px;text-align:right}
+.history-track{position:relative;display:flex;justify-content:center}
+.history-track:after{content:"";position:absolute;top:21px;bottom:-2px;width:1px;background:#354238}
+.history-event:last-child .history-track:after{display:none}
+.history-dot{width:9px;height:9px;border-radius:50%;background:#a6ff00;border:2px solid #273526;margin-top:14px;z-index:1;box-shadow:0 0 0 3px #a6ff0018}
+.history-event-card{background:#151d17;border:1px solid #2a392d;border-radius:12px;padding:11px 12px;min-width:0}
+.history-event-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.history-event-top strong{font-size:12px;color:#edf4ed}
+.history-event-tag{font-size:8px;color:#a6ff00;font-weight:900;letter-spacing:.8px;text-transform:uppercase}
+.history-event-card p{font-size:11px;color:#bac5ba;line-height:1.5;margin:7px 0 0;overflow-wrap:anywhere}
+.history-event-meta{font-size:10px;color:#879487;margin-top:6px}
+.history-empty{padding:24px 10px;text-align:center;color:#9aa69b;font-size:12px;line-height:1.6;border:1px dashed #344536;border-radius:12px}
+.history-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.history-tools button,.history-tools label{font:inherit;font-size:11px;border:1px solid #344536;border-radius:9px;background:#141c16;color:#dce6dc;padding:10px 12px;cursor:pointer}
+.history-tools label input{display:block;max-width:190px;margin-top:6px;font-size:10px}
+.history-tools .history-danger{color:#c6a0a0}
+@media(max-width:520px){.history-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.history-timeline-wrap{padding:12px}.history-event{grid-template-columns:43px 14px minmax(0,1fr);gap:7px}.history-event-card{padding:10px}.history-datebar{padding:9px}}
+</style>
+<section id="historial" class="section">
+ <div class="sectionHead"><h2>Historial 360°</h2><span class="pill">Bitácora diaria</span></div>
+ <div class="history-shell">
+  <div class="history-datebar">
+   <button type="button" class="history-nav" onclick="historyMoveDay(-1)" aria-label="Día anterior">‹</button>
+   <label class="history-date-label">FECHA CONSULTADA<input id="historyDate" type="date" onchange="renderHistory()"></label>
+   <button type="button" class="history-nav" onclick="historyMoveDay(1)" aria-label="Día siguiente">›</button>
+  </div>
+  <div class="history-monthbar"><label>Ir a un mes<input id="historyMonth" type="month" onchange="historySelectMonth()"></label><span id="historyDayShift" class="history-shift-label">—</span></div>
+  <div class="history-kpis" id="historyKpis"></div>
+  <div class="history-timeline-wrap">
+   <div class="history-timeline-heading"><div><span class="history-eyebrow">REGISTRO CRONOLÓGICO</span><h3 id="historyTitle">Actividad del día</h3></div><span id="historyCount" class="history-count">0 registros</span></div>
+   <div id="historyResult" class="history-timeline"></div>
+  </div>
+  <div class="history-tools"><button onclick="exportData()">Exportar respaldo JSON</button><label>Importar respaldo<input type="file" accept=".json" onchange="importData(event)"></label><button class="history-danger" onclick="clearAll()">Borrar todos los datos</button></div>
+ </div>
+</section>
 <div class="footer">FITNESS PERFORMANCE PRO · Prototipo local V1 · Tus registros se guardan en este navegador</div>
 </main></div>
 <script>
@@ -1727,7 +1784,50 @@ function updateShiftLivePanel(){
  const days=Math.floor(remaining/86400000),hours=Math.floor((remaining%86400000)/3600000),mins=Math.floor((remaining%3600000)/60000),secs=Math.floor((remaining%60000)/1000);
  $('shiftCountdown').textContent=`${days}d ${String(hours).padStart(2,'0')}h ${String(mins).padStart(2,'0')}m ${String(secs).padStart(2,'0')}s`;
 }
-function renderHistory(){let date=$('historyDate').value,month=$('historyMonth').value;let all=[...db.foods.map(x=>({...x,type:'Alimento'})),...db.workouts.map(x=>({...x,type:'Entrenamiento'})),...db.supplements.map(x=>({...x,type:'Suplemento'})),...db.measures.map(x=>({...x,type:'Medición'}))];let filtered=all.filter(x=>date?x.date===date:month?x.date?.startsWith(month):true).sort((a,b)=>b.date.localeCompare(a.date));$('historyResult').innerHTML=filtered.map(x=>`<div class="item"><span>${x.type}: ${x.n||x.routine||x.name||((x.weight||'')+' kg / '+(x.waist||'')+' cm')}<small>${x.date}</small></span><b>${x.k?Math.round(x.k)+' kcal':x.minutes?x.minutes+' min':x.done?'Consumido':''}</b></div>`).join('')||'<p class="muted">No hay registros para ese filtro.</p>'}
+function historyMoveDay(delta){
+ const input=$('historyDate');const baseDate=input.value||today;const d=new Date(baseDate+'T12:00:00');d.setDate(d.getDate()+delta);input.value=localDateISO(d);$('historyMonth').value=input.value.slice(0,7);renderHistory();
+}
+function historySelectMonth(){
+ const month=$('historyMonth').value;if(!month)return;
+ const current=$('historyDate').value||today;
+ const day=Math.min(Number(current.slice(8,10))||1,new Date(Number(month.slice(0,4)),Number(month.slice(5,7)),0).getDate());
+ $('historyDate').value=month+'-'+String(day).padStart(2,'0');renderHistory();
+}
+function renderHistory(){
+ const date=$('historyDate')?.value||today;
+ if($('historyDate')&&!$('historyDate').value)$('historyDate').value=date;
+ if($('historyMonth')&&!$('historyMonth').value)$('historyMonth').value=date.slice(0,7);
+ const shift=shiftForDate(date);
+ const dayFoods=(db.foods||[]).filter(x=>String(x.date||'')===date);
+ const dayWorkouts=(db.workouts||[]).filter(x=>String(x.date||'')===date);
+ const dayMeasures=(db.measures||[]).filter(x=>String(x.date||'')===date);
+ const daySuppLogs=(db.supplements||[]).flatMap(s=>(s.log||[]).filter(l=>String(l.date||'')===date&&String(l.status||'').startsWith('ON')).map(l=>({...l,name:s.name})));
+ const daySuppCurrent=(db.supplements||[]).filter(s=>s.done&&String(s.date||'')===date&&!daySuppLogs.some(l=>l.name===s.name));
+ const events=[];
+ const addEvent=(time,rank,title,tag,body,meta='')=>events.push({time:time||'',rank,title,tag,body,meta});
+ const totals=dayFoods.reduce((a,x)=>({k:a.k+(Number(x.k)||0),p:a.p+(Number(x.p)||0),c:a.c+(Number(x.c)||0),f:a.f+(Number(x.f)||0)}),{k:0,p:0,c:0,f:0});
+ const mealOrder={'Desayuno':1,'Almuerzo':2,'Colación':3,'Cena':4,'Suplemento':5};
+ dayFoods.forEach(x=>addEvent(x.time||'',mealOrder[x.meal]||2,x.meal||'Alimento','Nutrición',`${x.n||'Alimento'} · ${x.g||x.qty||'—'} g`,`${Math.round(Number(x.k)||0)} kcal · P ${Number(x.p||0).toFixed(1)} g · C ${Number(x.c||0).toFixed(1)} g · G ${Number(x.f||0).toFixed(1)} g`));
+ dayWorkouts.forEach(x=>addEvent(x.time||'',6,x.routine||'Entrenamiento','Actividad física',`${Number(x.minutes)||0} minutos registrados`,x.notes||'Sesión guardada en Entrenamiento'));
+ daySuppLogs.forEach(x=>addEvent(x.time||'',7,x.name||'Suplemento','Suplemento',`Consumo confirmado${x.dose?' · '+x.dose:''}`,x.status||'Confirmado'));
+ daySuppCurrent.forEach(x=>addEvent(x.consumedTime||x.time||'',7,x.name||'Suplemento','Suplemento',`Consumo confirmado${x.dose?' · '+x.dose:''}`,'Registro de suplemento'));
+ dayMeasures.forEach(x=>addEvent(x.time||'',8,'Control corporal','Peso y medidas',[x.weight?`${x.weight} kg`:null,x.waist?`${x.waist} cm de cintura`:null].filter(Boolean).join(' · '),'Medición registrada'));
+ addEvent('00:00',0,'Turno laboral', 'Turno',shift.label||shift.name,shift.hours||'');
+ events.sort((a,b)=>(a.time||'').localeCompare(b.time||'')||a.rank-b.rank);
+ const d=new Date(date+'T12:00:00');
+ $('historyTitle').textContent=d.toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ $('historyDayShift').textContent=(shift.label||shift.name)+' · '+(shift.hours||'');
+ $('historyKpis').innerHTML=[
+  ['CALORÍAS',Math.round(totals.k)+' kcal','Consumidas'],
+  ['PROTEÍNA',totals.p.toFixed(1)+' g','Consumida'],
+  ['ENTRENAMIENTO',dayWorkouts.reduce((a,x)=>a+(Number(x.minutes)||0),0)+' min','Registrados'],
+  ['SUPLEMENTOS',daySuppLogs.length+daySuppCurrent.length,'Confirmados'],
+  ['PESO',dayMeasures.filter(x=>x.weight).map(x=>x.weight+' kg').join(', ')||'—','Registro del día'],
+  ['CINTURA',dayMeasures.filter(x=>x.waist).map(x=>x.waist+' cm').join(', ')||'—','Registro del día']
+ ].map(x=>`<div class="history-kpi"><span>${x[0]}</span><strong>${x[1]}</strong><small>${x[2]}</small></div>`).join('');
+ const count=events.length;$('historyCount').textContent=count+' '+(count===1?'evento':'eventos');
+ $('historyResult').innerHTML=events.map(x=>`<div class="history-event"><div class="history-time">${x.time||'—'}</div><div class="history-track"><i class="history-dot"></i></div><article class="history-event-card"><div class="history-event-top"><strong>${escapeHtml(x.title)}</strong><span class="history-event-tag">${escapeHtml(x.tag)}</span></div><p>${escapeHtml(x.body)}</p>${x.meta?`<div class="history-event-meta">${escapeHtml(x.meta)}</div>`:''}</article></div>`).join('');
+}
 function exportData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='fitness-performance-respaldo.json';a.click();URL.revokeObjectURL(a.href)}
 function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{db=JSON.parse(r.result);save();alert('Respaldo importado')}catch{alert('Archivo no válido')}};r.readAsText(f)}
 function clearAll(){if(confirm('¿Borrar todos los registros?')){db={foods:[],workouts:[],supplements:[],measures:[]};save()}}
@@ -1735,7 +1835,7 @@ function clearAll(){if(confirm('¿Borrar todos los registros?')){db={foods:[],wo
 function chileNowParts(){const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const get=t=>parts.find(p=>p.type===t)?.value;return `${get('year')}-${get('month')}-${get('day')}`}
 function updateGlobalShiftClock(){const now=new Date();const timeEl=document.getElementById('liveClock'),dateEl=document.getElementById('liveDate'),shiftEl=document.getElementById('todayShift');if(timeEl)timeEl.textContent=new Intl.DateTimeFormat('es-CL',{timeZone:'America/Santiago',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);if(dateEl)dateEl.textContent=new Intl.DateTimeFormat('es-CL',{timeZone:'America/Santiago',weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(now);if(shiftEl){const sh=shiftForDate(chileNowParts());shiftEl.className='pill shift-pill '+sh.cls;shiftEl.textContent='● '+sh.name;}}
 updateGlobalShiftClock();setInterval(()=>{updateGlobalShiftClock();updateShiftLivePanel()},1000);
-renderCalendar();updateShiftLivePanel();
+renderCalendar();updateShiftLivePanel();if($('historyDate'))$('historyDate').value=today;if($('historyMonth'))$('historyMonth').value=today.slice(0,7);
 try{renderBodyEvolution();}catch(e){console.error('Error al cargar el panel corporal:',e)}renderAll();try{renderBodyEvolution();}catch(e){console.error('Error al actualizar el panel corporal:',e)}preview();
 </script>
 
