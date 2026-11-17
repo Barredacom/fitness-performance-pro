@@ -1220,7 +1220,14 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
 @media(max-width:520px){.history-swipe-track{min-height:72px}.history-swipe-copy{padding:0 58px}.history-swipe-title{font-size:9px;letter-spacing:1.1px}.history-calendar-panel{padding:12px}}
 </style>
 
-</head><body>
+<style id="history-swipe-reversible-polish">
+.history-swipe-thumb{transition:transform .16s ease,background .18s ease,color .18s ease,box-shadow .18s ease}
+.history-swipe-copy{transition:opacity .18s ease}
+.history-swipe-track.is-unlocked .history-swipe-copy{opacity:.72}
+.history-swipe-track.is-unlocked .history-swipe-subtitle{color:#b7c5b5}
+.history-calendar-panel{transition:opacity .18s ease,transform .18s ease}
+</style>
+\n</head><body>
 
 
 <!-- SUPABASE AUTH INTEGRATION -->
@@ -1517,7 +1524,7 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
   <div class="history-swipe-shell">
    <div class="history-swipe-track" id="historySwipeTrack">
     <div class="history-swipe-progress" id="historySwipeProgress"></div>
-    <div class="history-swipe-copy"><span class="history-swipe-title">DESLIZA PARA VER EL CALENDARIO</span><span class="history-swipe-subtitle">Desbloquea la selección de fecha</span></div>
+    <div class="history-swipe-copy"><span class="history-swipe-title">DESLIZA PARA VER EL CALENDARIO</span><span class="history-swipe-subtitle">Desliza a la derecha para abrir · a la izquierda para cerrar</span></div>
     <button type="button" class="history-swipe-thumb" id="historySwipeThumb" aria-label="Deslizar para abrir calendario" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span>››</span></button>
    </div>
    <div class="history-calendar-panel" id="historyCalendarPanel" hidden>
@@ -2494,21 +2501,40 @@ window.addEventListener('pageshow',()=>{try{renderBodyEvolution()}catch(e){conso
 
 <script id="history-swipe-controller">
 (function(){
- let dragging=false,startX=0,currentX=0,maxTravel=0,pointerId=null;
+ let dragging=false,startX=0,startPosition=0,currentX=0,pointerId=null;
  const track=()=>document.getElementById('historySwipeTrack');
  const thumb=()=>document.getElementById('historySwipeThumb');
  const panel=()=>document.getElementById('historyCalendarPanel');
  function travelLimit(){const t=track(),b=thumb();return Math.max(0,t.clientWidth-b.offsetWidth-14)}
  function setPosition(x){const b=thumb(),p=document.getElementById('historySwipeProgress'),limit=travelLimit();currentX=Math.max(0,Math.min(limit,x));b.style.transform=`translateX(${currentX}px)`;p.style.width=`${currentX+58}px`;b.setAttribute('aria-valuenow',String(Math.round(limit?currentX/limit*100:0)))}
  function unlock(){
-  const t=track(),b=thumb(),p=panel();t.classList.add('is-unlocked');b.innerHTML='<span>✓</span>';b.setAttribute('aria-label','Calendario desbloqueado');p.hidden=false;
+  const t=track(),b=thumb(),p=panel();t.classList.add('is-unlocked');b.innerHTML='<span>✓</span>';b.setAttribute('aria-label','Desliza a la izquierda para cerrar el calendario');p.hidden=false;
   const input=document.getElementById('historyDate');
   if(input){setTimeout(()=>{try{if(typeof input.showPicker==='function')input.showPicker();else{input.focus();input.click()}}catch(e){input.focus()}},180)}
  }
- function down(e){if(!track()||panel().hidden===false)return;dragging=true;pointerId=e.pointerId;startX=e.clientX;currentX=0;maxTravel=travelLimit();thumb().setPointerCapture?.(pointerId);e.preventDefault()}
- function move(e){if(!dragging||e.pointerId!==pointerId)return;setPosition(e.clientX-startX)}
- function up(e){if(!dragging||e.pointerId!==pointerId)return;dragging=false;const limit=travelLimit();if(currentX>=limit*.78){setPosition(limit);unlock()}else{setPosition(0)}}
- function key(e){if(e.key==='Enter'||e.key===' '||e.key==='ArrowRight'){e.preventDefault();setPosition(travelLimit());unlock()}}
+ function lock(){
+  const t=track(),b=thumb(),p=panel();p.hidden=true;t.classList.remove('is-unlocked');b.innerHTML='<span>››</span>';b.setAttribute('aria-label','Desliza a la derecha para abrir el calendario');setPosition(0);
+ }
+ function down(e){
+  if(!track())return;
+  dragging=true;pointerId=e.pointerId;startX=e.clientX;startPosition=currentX;
+  thumb().setPointerCapture?.(pointerId);e.preventDefault();
+ }
+ function move(e){
+  if(!dragging||e.pointerId!==pointerId)return;
+  setPosition(startPosition+(e.clientX-startX));
+ }
+ function up(e){
+  if(!dragging||e.pointerId!==pointerId)return;
+  dragging=false;const limit=travelLimit();
+  if(currentX>=limit*.78){setPosition(limit);if(panel().hidden)unlock()}
+  else if(currentX<=limit*.22){lock()}
+  else{setPosition(panel().hidden?0:limit)}
+ }
+ function key(e){
+  if(e.key==='Enter'||e.key===' '||e.key==='ArrowRight'){e.preventDefault();setPosition(travelLimit());unlock()}
+  else if(e.key==='ArrowLeft'||e.key==='Escape'){e.preventDefault();lock()}
+ }
  document.addEventListener('DOMContentLoaded',function(){
   const b=thumb();if(!b)return;
   b.addEventListener('pointerdown',down);b.addEventListener('pointermove',move);b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('keydown',key);
