@@ -1475,13 +1475,49 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
 </div>
 
 <div class="sectionHead"><h2>Suplementación</h2><span class="pill">SUPPLEMENT CONTROL</span></div>
-<div class="supplement-switches">
-<div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="#B8FF32"><rect x="8" y="16" width="32" height="16" rx="8" transform="rotate(-42 24 24)"/><path d="M14 11l11 11-6 6-11-11z" opacity=".55"/></g><path d="M24 12l12 12" stroke="#101713" stroke-width="2.5" stroke-linecap="round"/></svg></div><div class="supp-copy"><strong>CREATINA</strong><small>5 g · Consumo diario</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppCreatine"><span class="warm-slider"></span></label></div>
-<div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="#B8FF32"><rect x="8" y="16" width="32" height="16" rx="8" transform="rotate(-42 24 24)"/><path d="M14 11l11 11-6 6-11-11z" opacity=".55"/></g><path d="M24 12l12 12" stroke="#101713" stroke-width="2.5" stroke-linecap="round"/></svg></div><div class="supp-copy"><strong>MAGNESIO</strong><small>Dosis habitual</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppMagnesium"><span class="warm-slider"></span></label></div>
-<div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#B8FF32" d="M5 24c7-10 20-13 29-5l9-7v24l-9-7C25 37 12 34 5 24z"/><circle cx="29" cy="20" r="2.4" fill="#101713"/><path d="M18 17l5 7-5 7" fill="none" stroke="#101713" stroke-width="2"/></svg></div><div class="supp-copy"><strong>OMEGA 3</strong><small>1 cápsula</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppOmega"><span class="warm-slider"></span></label></div>
-<div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#B8FF32" d="M14 13h23l-3 29H17z"/><path fill="#B8FF32" d="M25 3h5v13h-5z" transform="rotate(18 27 9)"/><rect x="16" y="20" width="18" height="4" fill="#101713"/><path d="M18 30h14" stroke="#101713" stroke-width="2"/></svg></div><div class="supp-copy"><strong>1 COOP PROTEÍNA WHEY</strong><small>34 g · 130 kcal · 24 g proteína</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppWhey"><span class="warm-slider"></span></label></div>
+<style id="supplement-dashboard-v2172">
+.supp-dashboard{display:grid;gap:14px;margin-top:16px}
+.supp-overview{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.supp-overview-card{padding:15px;border:1px solid #2b3b2e;border-radius:17px;background:linear-gradient(145deg,#111a13,#090e0b)}
+.supp-overview-card small{display:block;color:#9aa99b;font-size:11px;font-weight:750;letter-spacing:.08em;text-transform:uppercase}
+.supp-overview-card strong{display:block;color:#A6FF00;font-size:25px;font-weight:950;margin-top:5px}
+.supp-progress-wrap{padding:14px 16px;border:1px solid #2b3b2e;border-radius:16px;background:#0c120e}
+.supp-progress-head{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:12px;font-weight:850;color:#dce8dc}
+.supp-progress-head b{color:#A6FF00}
+.supp-progress-track{height:9px;border-radius:99px;background:#263329;overflow:hidden;margin-top:10px}
+.supp-progress-fill{height:100%;width:0;background:linear-gradient(90deg,#83ed00,#c4ff45);border-radius:99px;box-shadow:0 0 12px #A6FF0055;transition:width .25s}
+.supp-list-title,.supp-history-title{font-size:13px;letter-spacing:.12em;font-weight:950;color:#A6FF00;text-transform:uppercase;margin:3px 2px}
+.supplement-switches{display:grid;gap:10px}
+.supp-item{display:flex;align-items:center;gap:12px;padding:13px;border:1px solid #2b3b2e;border-radius:17px;background:linear-gradient(145deg,#111914,#090e0b);min-height:76px}
+.supp-icon{width:42px;height:42px;flex:0 0 42px;border-radius:13px;background:#1b2a19;display:grid;place-items:center}
+.supp-icon svg{width:28px;height:28px}
+.supp-copy{flex:1;min-width:0}.supp-copy strong{display:block;font-size:14px;letter-spacing:.035em;color:#f2f7f1}.supp-copy small{display:block;color:#9eaa9f;font-size:11px;margin-top:4px}
+.supp-item:has(input:checked){border-color:#7ebc25;box-shadow:inset 0 0 18px #A6FF000b}
+.supp-item:has(input:checked) .supp-copy:after{content:'✓ CONFIRMADO';display:block;color:#A6FF00;font-size:9px;font-weight:950;letter-spacing:.12em;margin-top:5px}
+.supp-day-history{padding:16px;border:1px solid #2b3b2e;border-radius:18px;background:linear-gradient(145deg,#101811,#090e0b)}
+.supp-day-history h3{font-size:15px;margin:0 0 12px;color:#f0f5ef}
+.supp-history-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid #263329}
+.supp-history-row:last-child{border-bottom:0}.supp-history-row strong{font-size:13px;color:#edf4ec}.supp-history-row small{font-size:11px;color:#A6FF00;text-align:right}
+.supp-empty{padding:12px;border:1px dashed #344637;border-radius:13px;color:#9eaa9f;font-size:12px;line-height:1.5}
+.supp-recent{display:grid;gap:8px}.supp-recent-day{padding:11px 12px;border-radius:13px;background:#0b120d;border:1px solid #243328}.supp-recent-day strong{display:block;color:#e5eee4;font-size:12px}.supp-recent-day small{display:block;color:#98a799;font-size:11px;margin-top:4px}
+@media(max-width:420px){.supp-overview-card strong{font-size:22px}.supp-item{padding:11px;gap:9px}.supp-copy strong{font-size:12px}}
+</style>
+<div class="supp-dashboard">
+ <div class="supp-overview">
+  <div class="supp-overview-card"><small>Confirmados hoy</small><strong id="suppDayCount">0 / 4</strong></div>
+  <div class="supp-overview-card"><small>Último consumo</small><strong id="suppDayLast">—</strong></div>
+ </div>
+ <div class="supp-progress-wrap"><div class="supp-progress-head"><span>PROGRESO DIARIO</span><b id="suppDayPercent">0%</b></div><div class="supp-progress-track"><div class="supp-progress-fill" id="suppDayProgress"></div></div></div>
+ <div class="supp-list-title">MIS SUPLEMENTOS</div>
+ <div class="supplement-switches">
+  <div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="#B8FF32"><rect x="8" y="16" width="32" height="16" rx="8" transform="rotate(-42 24 24)"/><path d="M14 11l11 11-6 6-11-11z" opacity=".55"/></g><path d="M24 12l12 12" stroke="#101713" stroke-width="2.5" stroke-linecap="round"/></svg></div><div class="supp-copy"><strong>CREATINA</strong><small>5 g · Consumo diario</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppCreatine"><span class="warm-slider"></span></label></div>
+  <div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#B8FF32" d="M24 5c-7 9-13 15-13 23a13 13 0 0 0 26 0C37 20 31 13 24 5z"/><path d="M18 29c1 4 3 6 7 7" fill="none" stroke="#101713" stroke-width="2.5" stroke-linecap="round"/></svg></div><div class="supp-copy"><strong>MAGNESIO</strong><small>Dosis habitual · configurable</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppMagnesium"><span class="warm-slider"></span></label></div>
+  <div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#B8FF32" d="M5 24c7-10 20-13 29-5l9-7v24l-9-7C25 37 12 34 5 24z"/><circle cx="29" cy="20" r="2.4" fill="#101713"/><path d="M18 17l5 7-5 7" fill="none" stroke="#101713" stroke-width="2"/></svg></div><div class="supp-copy"><strong>OMEGA 3</strong><small>1 cápsula · configurable</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppOmega"><span class="warm-slider"></span></label></div>
+  <div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#B8FF32" d="M14 13h23l-3 29H17z"/><path fill="#B8FF32" d="M25 3h5v13h-5z" transform="rotate(18 27 9)"/><rect x="16" y="20" width="18" height="4" fill="#101713"/><path d="M18 30h14" stroke="#101713" stroke-width="2"/></svg></div><div class="supp-copy"><strong>WHEY PROTEIN</strong><small>34 g · 130 kcal · 24 g proteína</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppWhey"><span class="warm-slider"></span></label></div>
+ </div>
+ <div class="card supp-day-history"><h3>CONSUMO CONFIRMADO HOY</h3><div id="suppDayHistory"><p class="supp-empty">Todavía no hay suplementos confirmados hoy. Activa el interruptor al consumir cada suplemento.</p></div></div>
+ <div class="card supp-day-history"><h3>ÚLTIMOS 7 DÍAS</h3><div id="suppRecentHistory" class="supp-recent"><p class="supp-empty">Aquí aparecerá tu seguimiento semanal.</p></div></div>
 </div>
-<div class="card supp-day-history"><h3>Historial de suplementos consumidos del día</h3><div id="suppDayHistory"><p class="muted">Todavía no hay suplementos confirmados hoy.</p></div></div>
 </section>
 
 <section id="peso" class="section">
@@ -2584,32 +2620,28 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
   {id:'suppCreatine',name:'Creatina',dose:'5 g'},
   {id:'suppMagnesium',name:'Magnesio',dose:'Dosis habitual'},
   {id:'suppOmega',name:'Omega 3',dose:'1 cápsula'},
-  {id:'suppWhey',name:'1 scoop proteína whey',dose:'34 g · 130 kcal · 24 g proteína'}
+  {id:'suppWhey',name:'Whey Protein',dose:'34 g · 130 kcal · 24 g proteína'}
  ];
  const STORE='fitness_performance_supplements_daily_v1';
- const dateKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
- const timeNow=()=>new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit',hour12:false});
+ const dateKey=(d=new Date())=>{const p=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d),g=t=>p.find(x=>x.type===t)?.value;return `${g('year')}-${g('month')}-${g('day')}`};
+ const timeNow=()=>new Intl.DateTimeFormat('es-CL',{timeZone:'America/Santiago',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date());
  const load=()=>{try{return JSON.parse(localStorage.getItem(STORE)||'{}')}catch(_){return {}}};
  const save=data=>localStorage.setItem(STORE,JSON.stringify(data));
+ const fmtDate=k=>{const [y,m,d]=k.split('-');return `${d}/${m}/${y}`};
  function render(){
-   const all=load(),day=all[dateKey()]||{},container=document.getElementById('suppDayHistory');
-   supplements.forEach(s=>{const el=document.getElementById(s.id);if(el)el.checked=!!day[s.id]});
-   if(!container)return;
-   const done=supplements.filter(s=>day[s.id]);
-   container.innerHTML=done.length?done.map(s=>`<div class="supp-history-row"><strong>${s.name}</strong><small>${day[s.id].time||'—'} · ${s.dose}</small></div>`).join(''):'<p class="muted">Todavía no hay suplementos confirmados hoy.</p>';
+  const all=load(),key=dateKey(),day=all[key]||{},container=document.getElementById('suppDayHistory');
+  supplements.forEach(x=>{const el=document.getElementById(x.id);if(el)el.checked=!!day[x.id]});
+  const done=supplements.filter(x=>day[x.id]),count=document.getElementById('suppDayCount'),percent=document.getElementById('suppDayPercent'),bar=document.getElementById('suppDayProgress'),last=document.getElementById('suppDayLast');
+  if(count)count.textContent=`${done.length} / ${supplements.length}`;
+  if(percent)percent.textContent=Math.round(done.length/supplements.length*100)+'%';
+  if(bar)bar.style.width=(done.length/supplements.length*100)+'%';
+  if(last)last.textContent=done.map(x=>day[x.id].time||'').filter(Boolean).sort().pop()||'—';
+  if(container)container.innerHTML=done.length?done.map(x=>`<div class="supp-history-row"><strong>✓ ${x.name}</strong><small>${day[x.id].time||'—'} · ${day[x.id].dose||x.dose}</small></div>`).join(''):'<p class="supp-empty">Todavía no hay suplementos confirmados hoy. Activa el interruptor al consumir cada suplemento.</p>';
+  const recent=document.getElementById('suppRecentHistory');
+  if(recent){const rows=[];for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);const k=dateKey(d),v=all[k]||{},names=supplements.filter(x=>v[x.id]).map(x=>x.name);if(names.length)rows.push(`<div class="supp-recent-day"><strong>${i===0?'HOY':fmtDate(k)} · ${names.length}/4 confirmados</strong><small>${names.join(' · ')}</small></div>`)}recent.innerHTML=rows.join('')||'<p class="supp-empty">Todavía no hay consumos registrados en los últimos 7 días.</p>';}
  }
- supplements.forEach(s=>{
-   const el=document.getElementById(s.id);if(!el)return;
-   el.addEventListener('change',()=>{
-     const all=load(),key=dateKey();all[key]=all[key]||{};
-     if(el.checked)all[key][s.id]={time:timeNow(),dose:s.dose};
-     else delete all[key][s.id];
-     save(all);render();
-   });
- });
- render();
- window.addEventListener('pageshow',render);
- document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
+ supplements.forEach(x=>{const el=document.getElementById(x.id);if(!el)return;el.addEventListener('change',()=>{const all=load(),key=dateKey();all[key]=all[key]||{};if(el.checked)all[key][x.id]={time:timeNow(),dose:x.dose};else delete all[key][x.id];save(all);render();});});
+ render();window.addEventListener('pageshow',render);document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
 })();
 </script>
 
