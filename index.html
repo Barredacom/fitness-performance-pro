@@ -892,9 +892,15 @@ body.measure-modal-open{overflow:hidden}
   <button type="button" onclick="addMeasure()">＋ Guardar medición</button>
  </div>
 </div>
-<div class="card" style="margin-top:12px"><div class="sectionHead"><h3>Historial de mediciones</h3><span class="pill" id="measureCount">0 registros</span></div><div id="measureList" class="list"></div></div>
+<button type="button" class="measure-history-launch" id="measureHistoryLaunch" onclick="openMeasureHistoryModal()" aria-haspopup="dialog" aria-controls="measureHistoryModal"><span class="measure-history-title">HISTORIAL DE MEDICIONES</span><span class="measure-history-count" id="measureCount">0 registros</span></button>
+<div class="body-measure-modal" id="measureHistoryModal" hidden><div class="body-measure-backdrop" data-close-measure-history></div><div class="body-measure-dialog measure-history-dialog card" role="dialog" aria-modal="true" aria-labelledby="measureHistoryTitle"><div class="sectionHead"><h3 id="measureHistoryTitle">Historial de mediciones</h3><button type="button" class="body-form-close" id="closeMeasureHistory" aria-label="Cerrar historial">×</button></div><div id="measureList" class="list"></div></div></div>
 </section>
 
+<style id="measure-history-modal-v2133">
+.measure-history-launch{width:100%;min-height:94px;margin-top:12px;padding:22px 24px;border:0;border-radius:24px;background:linear-gradient(105deg,#A4FF28 0%,#A4FF28 78%,#79C91B 100%);color:#080d08;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;box-shadow:0 0 24px rgba(164,255,40,.12);text-align:left;font:inherit;transition:filter .15s,transform .15s}
+.measure-history-launch:active{transform:scale(.99);filter:brightness(.94)}.measure-history-title{font-size:clamp(17px,3.8vw,25px);font-weight:900;letter-spacing:.035em}.measure-history-count{font-size:clamp(14px,3vw,19px);font-weight:800;white-space:nowrap;background:rgba(8,13,8,.12);padding:9px 13px;border-radius:999px}.measure-history-dialog{width:min(100%,620px)}.measure-history-dialog #measureList{margin-top:16px;max-height:min(58dvh,520px);overflow-y:auto;padding-right:3px}
+@media(max-width:480px){.measure-history-launch{min-height:78px;padding:17px 16px;border-radius:20px}.measure-history-count{padding:8px 10px}}
+</style>
 <section id="turnos" class="section">
  <div class="sectionHead"><h2>Calendario rotativo 7×7</h2><span class="pill">Descanso → Noche → Descanso → Día</span></div>
  <div class="card shift-calendar-card">
@@ -1706,6 +1712,12 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
   knob.addEventListener('lostpointercapture',function(){if(dragging)reset();});
   knob.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key==='End'){e.preventDefault();finishOpen();}});
   close.addEventListener('click',closeBodyMeasureModal);
+  const historyModal=document.getElementById('measureHistoryModal'),historyClose=document.getElementById('closeMeasureHistory');
+  window.openMeasureHistoryModal=function(){if(!historyModal)return;renderMeasureHistory();historyModal.hidden=false;document.body.classList.add('measure-modal-open');};
+  function closeMeasureHistoryModal(){if(historyModal)historyModal.hidden=true;document.body.classList.remove('measure-modal-open');}
+  if(historyClose)historyClose.addEventListener('click',closeMeasureHistoryModal);
+  if(historyModal)historyModal.addEventListener('click',function(e){if(e.target&&e.target.hasAttribute('data-close-measure-history'))closeMeasureHistoryModal();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&historyModal&&!historyModal.hidden)closeMeasureHistoryModal();});
   modal.addEventListener('click',function(e){if(e.target&&e.target.hasAttribute('data-close-measure-modal'))closeBodyMeasureModal();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!modal.hidden)closeBodyMeasureModal();});
   window.addEventListener('resize',function(){if(!dragging)setLeft(edge);},{passive:true});
