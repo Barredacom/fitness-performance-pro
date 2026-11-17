@@ -473,6 +473,29 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
   color:#9bad9f!important;
 }
 
+
+/* V21.45 — Electric Lime sólido con tipografía negra en ambas tarjetas */
+.body-kpis-live > .body-kpi:nth-child(1),
+.body-kpis-live > .body-kpi:nth-child(2){
+  background:linear-gradient(135deg,#A6FF00 0%,#A6FF00 72%,#8FE000 100%)!important;
+  border:1px solid #A6FF00!important;
+  border-radius:18px!important;
+  box-shadow:
+    0 0 0 1px #A6FF0080,
+    0 0 22px #A6FF0048,
+    inset 0 1px 0 #ffffff70!important;
+}
+.body-kpis-live > .body-kpi:nth-child(1) *,
+.body-kpis-live > .body-kpi:nth-child(2) *{
+  color:#071000!important;
+  text-shadow:none!important;
+}
+.body-kpis-live > .body-kpi:nth-child(1) strong,
+.body-kpis-live > .body-kpi:nth-child(2) strong{
+  color:#071000!important;
+  font-weight:800!important;
+}
+
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
