@@ -1438,14 +1438,28 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
 </section>
 
 
-<section id="entrenamiento" class="section">
+<section id="entrenamiento" class="section"><style id="training-swipe-v2171">
+.tp-workout-swipe-wrap{margin-top:14px}
+.tp-workout-swipe-track{min-height:76px!important;border-radius:17px!important}
+.tp-workout-swipe-track .history-swipe-thumb{touch-action:none!important;pointer-events:auto!important}
+.tp-workout-swipe-track .history-swipe-title{font-size:clamp(10px,2.7vw,13px)!important}
+.tp-workout-swipe-track .history-swipe-subtitle{font-size:clamp(10px,2.5vw,12px)!important}
+.tp-workout-swipe-track.is-completed{border-color:#A4FF28;box-shadow:0 0 18px #A4FF2825,inset 0 0 14px #A4FF2810}
+</style>
+
 <div class="training-pro-shell">
  <div class="tp-hero"><div class="tp-hero-copy"><h2>Entrenamiento</h2><div class="tp-shift-reco"><div class="tp-shift-kicker">RECOMENDACIÓN SEGÚN TURNO</div><div class="tp-shift-title" id="trainingShiftTitle">Plan del día</div><div class="tp-shift-desc" id="trainingShiftDesc">Recomendación personalizada según tu calendario 7×7.</div><div class="tp-shift-tags"><span class="tp-shift-tag" id="trainingIntensity">Intensidad —</span><span class="tp-shift-tag" id="trainingDuration">Duración sugerida —</span></div><div class="tp-shift-note" id="trainingRecovery"></div></div></div></div>
  <div class="tp-stats"><div class="tp-stat"><span class="tp-stat-icon">▥</span><div><small>Turno</small><strong id="tpTurnLabel">ADAPTADO</strong></div></div><div class="tp-stat"><span class="tp-stat-icon" style="color:#ff8a24">♨</span><div><small>Calorías estim.</small><strong id="tpCaloriesLabel">≈ 300–400 kcal</strong></div></div><div class="tp-stat"><span class="tp-stat-icon" style="color:#d7ff00">◷</span><div><small>Tiempo</small><strong id="tpDurationLabel">60 min</strong></div></div></div>
  <div class="tp-warm"><div class="tp-warm-title"><span class="fire">♨</span><div><h3>CALENTAMIENTO</h3><p>Spinning o tronadora · 5–10 minutos</p></div></div><button class="tp-switch" id="tpWarmSwitch" aria-label="Activar calentamiento y mostrar ejercicios" aria-pressed="false"><span></span></button></div>
  <div class="tp-list-head"><h3><i>▰</i> EJERCICIOS DEL DÍA</h3></div>
  <div class="tp-exercises" id="tpExerciseCards" style="display:none"></div>
- <button class="tp-start" type="button" id="tpStartWorkout">▶ &nbsp; EJERCICIOS REALIZADOS</button>
+ <div class="tp-workout-swipe-wrap" id="tpWorkoutSwipeWrap">
+  <div class="body-swipe-track history-swipe-track tp-workout-swipe-track" id="tpWorkoutSwipeTrack">
+   <div class="body-swipe-progress history-swipe-progress" id="tpWorkoutSwipeProgress"></div>
+   <div class="body-swipe-track-copy history-swipe-copy" id="tpWorkoutSwipeCopy"><span class="history-swipe-title">DESLIZA PARA REGISTRAR</span><span class="history-swipe-subtitle">Desliza a la derecha para registrar el entrenamiento</span></div>
+   <button type="button" class="body-swipe-knob history-swipe-thumb" id="tpWorkoutSwipe" aria-label="Desliza a la derecha para registrar los ejercicios realizados"><span>››</span></button>
+  </div>
+ </div>
  <div hidden aria-hidden="true"><select id="routine"><option>Pecho + tríceps</option><option>Espalda + bíceps</option><option>Piernas</option><option>Hombros + abdomen</option><option>Cardio</option><option>Full body</option><option>Movilidad + recuperación</option><option>Descanso</option></select><input id="duration" type="number" min="1" value="60"><input id="workDate" type="date" onchange="renderTrainingPlan()"></div>
  
 
@@ -2524,7 +2538,7 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
 <script>renderMealDraft();</script>
 <script>document.addEventListener("DOMContentLoaded",()=>{const u=document.getElementById("catalogUnit");if(u)u.addEventListener("change",()=>{document.getElementById("catalogUnitLabel").textContent=u.value;document.querySelectorAll(".unitLabel").forEach(x=>x.textContent="g");});});
 // Training Pro interactions
-(function(){const sw=document.getElementById('tpWarmSwitch');if(sw)sw.addEventListener('click',()=>{const on=sw.classList.toggle('on');sw.setAttribute('aria-pressed',String(on));sw.setAttribute('aria-label',on?'Calentamiento activo':'Calentamiento desactivado');if(typeof renderTrainingPlan==='function')renderTrainingPlan();const cards=document.getElementById('tpExerciseCards'),head=document.querySelector('.tp-list-head');if(cards)cards.style.display=on?'grid':'none';if(head)head.style.display=on?'flex':'none';});const st=document.getElementById('tpStartWorkout');if(st)st.addEventListener('click',()=>{const d=document.getElementById('duration');if(d&&!d.value)d.value=45;const date=document.getElementById('workDate');if(date&&!date.value)date.value=new Date().toISOString().slice(0,10);if(typeof addWorkout==='function'){addWorkout();st.textContent='✓ SESIÓN REGISTRADA';st.classList.add('completed');st.disabled=true;}});})();
+(function(){const sw=document.getElementById('tpWarmSwitch');if(sw)sw.addEventListener('click',()=>{const on=sw.classList.toggle('on');sw.setAttribute('aria-pressed',String(on));sw.setAttribute('aria-label',on?'Calentamiento activo':'Calentamiento desactivado');if(typeof renderTrainingPlan==='function')renderTrainingPlan();const cards=document.getElementById('tpExerciseCards'),head=document.querySelector('.tp-list-head');if(cards)cards.style.display=on?'grid':'none';if(head)head.style.display=on?'flex':'none';});const st=document.getElementById('tpWorkoutSwipe'),track=document.getElementById('tpWorkoutSwipeTrack'),copy=document.getElementById('tpWorkoutSwipeCopy');if(st&&track&&st.dataset.ready!=='1'){st.dataset.ready='1';let dragging=false,startX=0,startLeft=7,pointerId=null;const edge=7,knobWidth=58;function maxLeft(){return Math.max(edge,track.clientWidth-knobWidth-edge)}function setLeft(left){const max=maxLeft(),x=Math.max(edge,Math.min(max,left));st.style.left=x+'px';const pct=max===edge?0:(x-edge)/(max-edge)*100;track.style.setProperty('--swipe-progress',pct+'%');return pct}function reset(){dragging=false;pointerId=null;setLeft(edge)}function finish(){reset();const d=document.getElementById('duration');if(d&&!d.value)d.value=45;const date=document.getElementById('workDate');if(date&&!date.value)date.value=new Date().toISOString().slice(0,10);if(typeof addWorkout==='function'){addWorkout();track.classList.add('is-completed');if(copy)copy.innerHTML='<span class="history-swipe-title">✓ ENTRENAMIENTO REGISTRADO</span><span class="history-swipe-subtitle">Actividad guardada en tu historial</span>';st.setAttribute('aria-label','Entrenamiento registrado');}}st.addEventListener('pointerdown',e=>{if(track.classList.contains('is-completed'))return;dragging=true;startX=e.clientX;startLeft=parseFloat(getComputedStyle(st).left)||edge;pointerId=e.pointerId;try{st.setPointerCapture(pointerId)}catch(_){}e.preventDefault()});st.addEventListener('pointermove',e=>{if(!dragging||e.pointerId!==pointerId)return;const pct=setLeft(startLeft+e.clientX-startX);if(pct>=94){try{st.releasePointerCapture(pointerId)}catch(_){}finish()}e.preventDefault()});function end(e){if(!dragging)return;reset();if(e&&e.cancelable)e.preventDefault()}st.addEventListener('pointerup',end);st.addEventListener('pointercancel',end);st.addEventListener('lostpointercapture',()=>{if(dragging)reset()});st.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='End'){e.preventDefault();if(!track.classList.contains('is-completed'))finish()}});}})();
 </script>
 <div id="customFoodModal" class="fp-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="customFoodTitle" onclick="if(event.target===this)toggleFoodCatalog(false)">
  <div class="fp-modal">
