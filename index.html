@@ -1272,6 +1272,52 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
 .history-data-close:active{background:rgba(166,255,0,.13) !important;border-color:#A6FF00 !important;box-shadow:0 0 18px rgba(166,255,0,.25) !important}
 </style>
 
+
+<style id="body-measure-swipe-match-history-v2166">
+.body-swipe-wrap{display:flex;flex-direction:column;gap:12px}
+.body-swipe-track{
+ height:76px !important;min-height:76px !important;box-sizing:border-box;
+ position:relative !important;display:flex !important;align-items:center !important;
+ justify-content:center !important;overflow:hidden !important;
+ padding:7px !important;border:1px solid #40513f !important;border-radius:17px !important;
+ background:linear-gradient(145deg,#111914,#090e0b) !important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 8px 24px rgba(0,0,0,.18) !important;
+ touch-action:pan-y !important;
+}
+.body-swipe-track:after{
+ content:"";position:absolute;inset:5px auto 5px 5px;width:var(--swipe-progress,0%);
+ max-width:100%;border-radius:12px;
+ background:linear-gradient(90deg,rgba(166,255,0,.08),rgba(166,255,0,.18));
+ pointer-events:none;z-index:0;
+}
+.body-swipe-track-copy{
+ position:absolute !important;inset:0 !important;display:flex !important;flex-direction:column !important;
+ align-items:center !important;justify-content:center !important;gap:5px !important;
+ padding:0 72px !important;text-align:center !important;pointer-events:none !important;z-index:1;
+}
+.body-swipe-track-copy .history-swipe-title{font-size:10px !important;letter-spacing:1.5px !important;font-weight:950 !important;color:#a6ff00 !important}
+.body-swipe-track-copy .history-swipe-subtitle{font-size:10px !important;color:#89978a !important}
+.body-swipe-knob{
+ position:absolute !important;left:7px;top:7px;bottom:7px;
+ width:58px !important;height:58px !important;min-width:58px !important;
+ border:1px solid #a6ff00 !important;border-radius:12px !important;
+ background:#172116 !important;color:#a6ff00 !important;
+ display:flex !important;align-items:center !important;justify-content:center !important;
+ font-size:22px !important;font-weight:950 !important;
+ box-shadow:0 0 15px rgba(166,255,0,.12) !important;
+ padding:0 !important;z-index:5 !important;cursor:grab;
+ touch-action:none !important;pointer-events:auto !important;
+}
+.body-swipe-knob:active{cursor:grabbing}
+.body-swipe-knob span{font-size:22px;line-height:1;letter-spacing:-2px}
+@media(max-width:600px){
+ .body-swipe-track{height:72px !important;min-height:72px !important}
+ .body-swipe-knob{width:56px !important;height:56px !important;min-width:56px !important;top:7px;bottom:7px}
+ .body-swipe-track-copy{padding:0 66px !important}
+ .body-swipe-track-copy .history-swipe-title{font-size:9px !important;letter-spacing:1.1px !important}
+}
+</style>
+
 </head><body>
 
 
@@ -1451,9 +1497,10 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
 <div class="body-measure-launch card" id="bodyMeasureLaunch" style="margin-top:12px">
  <div class="body-swipe-wrap" id="bodySwipeWrap">
   <div class="body-swipe-copy"><strong>REGISTRO DE MEDICIONES</strong><span>Desliza para abrir las opciones</span></div>
-  <div class="body-swipe-track" id="bodySwipeTrack">
-   <span class="body-swipe-track-label">DESLIZAR PARA REGISTRAR</span>
-   <button type="button" class="body-swipe-knob" id="bodyMeasureSwipe" aria-label="Desliza para mostrar las opciones de registro"><svg class="body-swipe-arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 4.8 16.4 12l-7.2 7.2-2.4-2.4 4.8-4.8-4.8-4.8z"/></svg></button>
+  <div class="body-swipe-track history-swipe-track" id="bodySwipeTrack">
+   <div class="body-swipe-progress history-swipe-progress" id="bodySwipeProgress"></div>
+   <div class="body-swipe-track-copy history-swipe-copy"><span class="history-swipe-title">DESLIZA PARA REGISTRAR</span><span class="history-swipe-subtitle">Desliza a la derecha para abrir las opciones</span></div>
+   <button type="button" class="body-swipe-knob history-swipe-thumb" id="bodyMeasureSwipe" aria-label="Desliza a la derecha para abrir el registro de mediciones"><span>››</span></button>
   </div>
  </div>
 </div>
@@ -2523,7 +2570,7 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
   if(!knob||!track||!modal||!close||knob.dataset.ready==='1')return;
   knob.dataset.ready='1';
   let dragging=false,startX=0,startLeft=5,pointerId=null;
-  const edge=5,knobWidth=46;
+  const edge=7,knobWidth=58;
   function maxLeft(){return Math.max(edge,track.clientWidth-knobWidth-edge);}
   function setLeft(left){const max=maxLeft(),x=Math.max(edge,Math.min(max,left));knob.style.left=x+'px';const pct=max===edge?0:(x-edge)/(max-edge)*100;track.style.setProperty('--swipe-progress',pct+'%');return pct;}
   function reset(){dragging=false;pointerId=null;setLeft(edge);}
