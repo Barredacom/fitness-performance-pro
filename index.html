@@ -1027,6 +1027,25 @@ $('foodDate').addEventListener('change',()=>{updateDateDisplay();renderMealMiniS
 const DBKEY='fppro_v2';let db=JSON.parse(localStorage.getItem(DBKEY)||'{"foods":[],"workouts":[],"supplements":[],"measures":[{"date":"2026-10-25","weight":82.3,"waist":95}]}');
 if(!Array.isArray(db.measures))db.measures=[];
 db.measures.forEach((m,i)=>{if(!m.id)m.id='measure-'+String(m.date||'sin-fecha')+'-'+i+'-'+Date.now();});
+// Historial histórico confirmado por el usuario. Se integra por fecha sin duplicar registros
+// y conserva cualquier dato de cintura que ya exista para esas fechas.
+const confirmedWeightHistory=[
+ ['2026-08-04',89.8],
+ ['2026-09-27',88.7],
+ ['2026-10-04',85.8],
+ ['2026-10-11',85.3],
+ ['2026-10-18',84.3],
+ ['2026-10-25',82.6],
+ ['2026-11-08',80.2],
+ ['2026-11-15',80.4]
+];
+confirmedWeightHistory.forEach(([date,weight])=>{
+ const existing=db.measures.find(m=>String(m.date)===date);
+ if(existing){existing.weight=weight;if(!existing.id)existing.id='history-'+date;}
+ else db.measures.push({id:'history-'+date,date,weight,waist:null});
+});
+db.measures.sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
+
 const suppDefaults=[['creatina','Creatina','5 g'],['magnesio','Magnesio','Dosis configurable'],['omega','Omega 3','Dosis configurable'],['cop','COP de proteína','34 g']];
 if(!Array.isArray(db.supplements))db.supplements=[];
 suppDefaults.forEach(([key,name,dose],i)=>{let x=db.supplements.find(z=>String(z.name||'').toLowerCase().includes(key==='omega'?'omega':key));if(!x){x={id:Date.now()+i+1,name,dose,time:'',done:false,date:today};db.supplements.push(x)}else{x.name=name;if(!x.dose)x.dose=dose;}});
@@ -1265,27 +1284,28 @@ function chart(id){let data=db.measures.filter(x=>x.weight).sort((a,b)=>a.date.l
 function renderBodyHistoryLineChart(weights,waists){
  const host=$('bodyHistoryLineChart');if(!host)return;
  const series=[
-  {name:'Peso',unit:'kg',data:weights,color:'#A4FF28'},
-  {name:'Cintura',unit:'cm',data:waists,color:'#55D6FF'}
- ];
- const usable=series.filter(s=>s.data.length);
- if(!usable.length){host.innerHTML='<p class="muted">Registra peso o cintura para visualizar tu historial.</p>';return;}
- const allDates=[...new Set(usable.flatMap(s=>s.data.map(x=>x.date)))].sort();
- const W=560,H=145,L=35,R=12,T=12,B=25,innerW=W-L-R,innerH=H-T-B;
- const xFor=date=>L+(allDates.length>1?allDates.indexOf(date)/(allDates.length-1):.5)*innerW;
- let grid=[0,.5,1].map(t=>`<line x1="${L}" y1="${T+t*innerH}" x2="${W-R}" y2="${T+t*innerH}" stroke="#263329" stroke-width="1"/>`).join('');
+  {name:'Peso',unit:'kg',data:Array.isArray(weights)?weights:[],color:'#A4FF28'},
+  {name:'Cintura',unit:'cm',data:Array.isArray(waists)?waists:[],color:'#55D6FF'}
+ ].filter(s=>s.data.length);
+ if(!series.length){host.innerHTML='<div class="muted" style="padding:18px 4px">Aún no hay datos válidos para graficar. Revisa el historial de mediciones.</div>';return;}
+ const dates=[...new Set(series.flatMap(s=>s.data.map(x=>String(x.date||''))))].filter(Boolean).sort();
+ const W=560,H=145,L=38,R=12,T=14,B=25,iw=W-L-R,ih=H-T-B;
+ const xFor=d=>L+(dates.length>1?dates.indexOf(d)/(dates.length-1):.5)*iw;
+ let grid=[0,.5,1].map(t=>`<line x1="${L}" y1="${T+t*ih}" x2="${W-R}" y2="${T+t*ih}" stroke="#263b2d" stroke-width="1"/>`).join('');
  let paths='',dots='';
- usable.forEach(s=>{
-  const vals=s.data.map(x=>Number(s.name==='Peso'?x.weight:x.waist));
-  const min=Math.min(...vals),max=Math.max(...vals),span=max-min||1;
-  const yFor=v=>T+innerH-((v-min)/span)*innerH;
-  const pts=s.data.map(x=>`${xFor(x.date).toFixed(1)},${yFor(Number(s.name==='Peso'?x.weight:x.waist)).toFixed(1)}`);
-  if(pts.length>1)paths+=`<polyline points="${pts.join(' ')}" fill="none" stroke="${s.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 4px ${s.color}70)"/>`;
-  dots+=s.data.map(x=>`<circle cx="${xFor(x.date).toFixed(1)}" cy="${yFor(Number(s.name==='Peso'?x.weight:x.waist)).toFixed(1)}" r="4" fill="${s.color}" stroke="#0b100d" stroke-width="1.5"><title>${x.date}: ${Number(s.name==='Peso'?x.weight:x.waist).toFixed(1)} ${s.unit}</title></circle>`).join('');
+ series.forEach(s=>{
+  const field=s.name==='Peso'?'weight':'waist';
+  const vals=s.data.map(x=>Number(x[field])).filter(Number.isFinite);
+  const min=Math.min(...vals),max=Math.max(...vals),span=Math.max(max-min,1);
+  const yFor=v=>T+ih-((v-min)/span)*ih;
+  const points=s.data.map(x=>({x:xFor(String(x.date||'')),y:yFor(Number(x[field])),v:Number(x[field]),date:String(x.date||'')})).filter(p=>Number.isFinite(p.v));
+  if(points.length>1)paths+=`<polyline points="${points.map(p=>p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ')}" fill="none" stroke="${s.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 4px ${s.color}88)"/>`;
+  dots+=points.map(p=>`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4.5" fill="${s.color}" stroke="#0b100d" stroke-width="1.5"><title>${p.date}: ${p.v.toFixed(1)} ${s.unit}</title></circle>`).join('');
  });
- const first=allDates[0]||'',last=allDates[allDates.length-1]||'';
- host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${grid}${paths}${dots}<text x="${L}" y="${H-5}" fill="#91a397" font-size="10">${first}</text><text x="${W-R}" y="${H-5}" text-anchor="end" fill="#91a397" font-size="10">${last}</text></svg><div class="body-chart-legend">${usable.map(s=>`<span><i style="background:${s.color};box-shadow:0 0 7px ${s.color}"></i>${s.name} (${s.unit})</span>`).join('')}</div>`;
+ const first=dates[0]||'',last=dates[dates.length-1]||'';
+ host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${grid}${paths}${dots}<text x="${L}" y="${H-5}" fill="#91a397" font-size="10">${first}</text><text x="${W-R}" y="${H-5}" text-anchor="end" fill="#91a397" font-size="10">${last}</text></svg><div class="body-chart-legend">${series.map(s=>`<span><i style="background:${s.color};box-shadow:0 0 7px ${s.color}"></i>${s.name} (${s.unit})</span>`).join('')}</div>`;
 }
+
 function renderBodyGoalProgress(weights,current){
  const host=$('bodyGoalProgress'),remaining=$('bodyTo80');if(!host||!remaining)return;
  if(!current){remaining.textContent='—';host.innerHTML='<p class="muted">Registra tu peso para calcular el progreso.</p>';return;}
@@ -1295,20 +1315,27 @@ function renderBodyGoalProgress(weights,current){
  host.innerHTML=`<div class="body-goal-percent">${progress.toFixed(0)}% <span style="font-size:12px;color:#9bad9f;font-weight:600">del recorrido</span></div><div class="body-goal-track"><div class="body-goal-fill" style="width:${progress.toFixed(1)}%"></div></div><div class="body-goal-labels"><span>Inicio: ${start.toFixed(1)} kg</span><span>Actual: ${now.toFixed(1)} kg</span><span>Meta: 80 kg</span></div>`;
 }
 function renderBodyEvolution(){
- const rows=[...db.measures].filter(x=>x.date).sort((a,b)=>a.date.localeCompare(b.date));
- const weights=rows.filter(x=>Number.isFinite(+x.weight)&&+x.weight>0);
- const waists=rows.filter(x=>Number.isFinite(+x.waist)&&+x.waist>0);
- const latest=a=>a.length?a[a.length-1]:null, prev=a=>a.length>1?a[a.length-2]:null;
+ const weightEl=$('bodyCurrentWeight'),waistEl=$('bodyCurrentWaist');
+ const rows=(Array.isArray(db.measures)?db.measures:[])
+  .filter(x=>x&&x.date)
+  .slice()
+  .sort((a,b)=>String(a.date).localeCompare(String(b.date))||((Number(a.id)||0)-(Number(b.id)||0)));
+ const valid=(field)=>rows.filter(x=>x[field]!==null&&x[field]!==undefined&&String(x[field]).trim()!==''&&Number.isFinite(Number(x[field]))&&Number(x[field])>0);
+ const weights=valid('weight'),waists=valid('waist');
+ const latest=a=>a.length?a[a.length-1]:null,prev=a=>a.length>1?a[a.length-2]:null;
  const w=latest(weights),pw=prev(weights),c=latest(waists),pc=prev(waists);
- $('bodyCurrentWeight').textContent=w?Number(w.weight).toFixed(1)+' kg':'—';
- $('bodyCurrentWaist').textContent=c?Number(c.waist).toFixed(1)+' cm':'—';
- $('bodyWeightDelta').textContent=w&&pw?(Number(w.weight)-Number(pw.weight)>0?'+':'')+(Number(w.weight)-Number(pw.weight)).toFixed(1)+' kg vs. anterior':'Primer registro';
- $('bodyWaistDelta').textContent=c&&pc?(Number(c.waist)-Number(pc.waist)>0?'+':'')+(Number(c.waist)-Number(pc.waist)).toFixed(1)+' cm vs. anterior':'Primer registro';
+ if(weightEl)weightEl.textContent=w?Number(w.weight).toFixed(1)+' kg':'—';
+ if(waistEl)waistEl.textContent=c?Number(c.waist).toFixed(1)+' cm':'—';
+ const wd=$('bodyWeightDelta'),cd=$('bodyWaistDelta');
+ if(wd)wd.textContent=w&&pw?((Number(w.weight)-Number(pw.weight)>0?'+':'')+(Number(w.weight)-Number(pw.weight)).toFixed(1)+' kg vs. anterior'):'Último registro disponible';
+ if(cd)cd.textContent=c&&pc?((Number(c.waist)-Number(pc.waist)>0?'+':'')+(Number(c.waist)-Number(pc.waist)).toFixed(1)+' cm vs. anterior'):'Último registro disponible';
  renderBodyHistoryLineChart(weights,waists);
  renderBodyGoalProgress(weights,w);
- $('bodyTo75').textContent=w?'Meta final: restan '+Math.max(0,Number(w.weight)-75).toFixed(1)+' kg':'Meta final: —';
- $('measureCount').textContent=rows.length+' registros';
+ const finalGoal=$('bodyTo75');
+ if(finalGoal)finalGoal.textContent=w?'Meta final: restan '+Math.max(0,Number(w.weight)-75).toFixed(1)+' kg':'Meta final: —';
+ const count=$('measureCount');if(count)count.textContent=rows.length+' '+(rows.length===1?'registro':'registros');
 }
+
 const EXERCISE_LIBRARY={
 'Pecho':[['Press de pecho en Home Gym','Máquina · 3×8–12'],['Press con mancuernas en banco','Mancuernas 6/10 kg · 3×8–12'],['Aperturas con mancuernas','Banco + mancuernas · 3×10–15'],['Flexiones','Peso corporal · 2–3×8–15']],
 'Espalda':[['Jalón al pecho','Home Gym · 3×8–12'],['Remo sentado','Home Gym · 3×8–12'],['Remo unilateral','Mancuerna 10 kg · 3×10–12/lado'],['Pullover','Mancuerna · 2–3×10–12']],
@@ -1395,7 +1422,7 @@ function clearAll(){if(confirm('¿Borrar todos los registros?')){db={foods:[],wo
 function chileNowParts(){const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const get=t=>parts.find(p=>p.type===t)?.value;return `${get('year')}-${get('month')}-${get('day')}`}
 function updateGlobalShiftClock(){const now=new Date();const timeEl=document.getElementById('liveClock'),dateEl=document.getElementById('liveDate'),shiftEl=document.getElementById('todayShift');if(timeEl)timeEl.textContent=new Intl.DateTimeFormat('es-CL',{timeZone:'America/Santiago',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);if(dateEl)dateEl.textContent=new Intl.DateTimeFormat('es-CL',{timeZone:'America/Santiago',weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(now);if(shiftEl){const sh=shiftForDate(chileNowParts());shiftEl.className='pill shift-pill '+sh.cls;shiftEl.textContent='● '+sh.name;}}
 updateGlobalShiftClock();setInterval(updateGlobalShiftClock,1000);
-renderAll();preview();
+try{renderBodyEvolution();}catch(e){console.error('Error al cargar el panel corporal:',e)}renderAll();try{renderBodyEvolution();}catch(e){console.error('Error al actualizar el panel corporal:',e)}preview();
 </script>
 
 <!-- SUPABASE AUTH INTEGRATION -->
@@ -1862,6 +1889,7 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initBodyMeasureSwipe);else initBodyMeasureSwipe();
  window.addEventListener('pageshow',initBodyMeasureSwipe);
 })();
+window.addEventListener('pageshow',()=>{try{renderBodyEvolution()}catch(e){console.error(e)}});
 </script>
 
 </body></html>
