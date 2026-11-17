@@ -684,6 +684,23 @@ document.addEventListener('DOMContentLoaded',function(){
 .body-swipe-track{touch-action:pan-y}
 </style>
 
+
+<style id="body-measure-modal-v2131">
+.body-measure-modal[hidden]{display:none!important}
+.body-measure-modal{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}
+.body-measure-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+.body-measure-dialog{position:relative;z-index:1;width:min(100%,560px);max-height:calc(100dvh - 40px);overflow-y:auto;padding:20px!important;border:1px solid #A4FF28!important;border-radius:22px!important;background:linear-gradient(145deg,#121a10,#080d09)!important;box-shadow:0 20px 70px #000b,0 0 28px #A4FF2820}
+.body-measure-dialog .sectionHead{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.body-measure-dialog h3{margin:0}
+.body-measure-dialog .formrow{display:grid;grid-template-columns:1fr;gap:12px;margin:16px 0}
+.body-measure-dialog input{width:100%;box-sizing:border-box}
+.body-measure-dialog .body-form-close{min-width:40px;min-height:40px;border-radius:50%!important;font-size:23px!important}
+.body-measure-dialog>button{width:100%;min-height:50px;background:#A4FF28!important;color:#10120a!important;font-weight:850!important;border:0!important;border-radius:13px!important}
+body.measure-modal-open{overflow:hidden}
+.body-measure-launch .body-swipe-track .body-swipe-knob{pointer-events:auto!important;touch-action:none!important;background:#A4FF28!important;color:#10120a!important}
+@media(min-width:640px){.body-measure-dialog .formrow{grid-template-columns:1fr 1fr}.body-measure-dialog .formrow label:last-child{grid-column:1/-1}}
+</style>
+
 </head><body>
 
 
@@ -860,14 +877,14 @@ document.addEventListener('DOMContentLoaded',function(){
    <button type="button" class="body-swipe-knob" id="bodyMeasureSwipe" aria-label="Desliza para mostrar las opciones de registro">››</button>
   </div>
  </div>
- <div class="body-measure-actions" id="bodyMeasureActions" hidden>
-  <button type="button" class="body-measure-action" id="bodyOpenMeasureForm">＋ Registrar mediciones</button>
- </div>
 </div>
-<div class="card body-measure-form" id="bodyMeasureForm" style="margin-top:12px" hidden>
- <div class="sectionHead"><h3>＋ Registrar medición</h3><button type="button" class="body-form-close" id="bodyCloseMeasureForm" aria-label="Cerrar formulario">×</button></div>
- <div class="formrow three"><label>Peso (kg)<input id="weight" type="number" step=".1" min="1" placeholder="82.3"></label><label>Cintura (cm)<input id="waist" type="number" step=".1" min="1" placeholder="95"></label><label>Fecha<input id="measureDate" type="date"></label></div>
- <button type="button" onclick="addMeasure()">＋ Guardar medición</button>
+<div class="body-measure-modal" id="bodyMeasureModal" hidden>
+ <div class="body-measure-backdrop" data-close-measure-modal></div>
+ <div class="body-measure-dialog card" id="bodyMeasureForm" role="dialog" aria-modal="true" aria-labelledby="bodyMeasureModalTitle">
+  <div class="sectionHead"><h3 id="bodyMeasureModalTitle">＋ Registrar medición</h3><button type="button" class="body-form-close" id="bodyCloseMeasureForm" aria-label="Cerrar formulario">×</button></div>
+  <div class="formrow three"><label>Peso (kg)<input id="weight" type="number" step=".1" min="1" placeholder="82.3"></label><label>Cintura (cm)<input id="waist" type="number" step=".1" min="1" placeholder="95"></label><label>Fecha<input id="measureDate" type="date"></label></div>
+  <button type="button" onclick="addMeasure()">＋ Guardar medición</button>
+ </div>
 </div>
 <div class="card" style="margin-top:12px"><div class="sectionHead"><h3>Historial de mediciones</h3><span class="pill" id="measureCount">0 registros</span></div><div id="measureList" class="list"></div></div>
 </section>
@@ -893,6 +910,7 @@ function updateDateDisplay(){const el=$('foodDate'),out=$('dateDisplayText');if(
 $('foodDate').value=$('workDate').value=$('measureDate').value=today;updateDateDisplay();
 $('foodDate').addEventListener('change',()=>{updateDateDisplay();renderMealMiniSummary()});$('dateDisplayCard')?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('foodDate').showPicker?.();}});
 const DBKEY='fppro_v2';let db=JSON.parse(localStorage.getItem(DBKEY)||'{"foods":[],"workouts":[],"supplements":[],"measures":[{"date":"2026-10-25","weight":82.3,"waist":95}]}');
+if(!Array.isArray(db.measures))db.measures=[];
 const suppDefaults=[['creatina','Creatina','5 g'],['magnesio','Magnesio','Dosis configurable'],['omega','Omega 3','Dosis configurable'],['cop','COP de proteína','34 g']];
 if(!Array.isArray(db.supplements))db.supplements=[];
 suppDefaults.forEach(([key,name,dose],i)=>{let x=db.supplements.find(z=>String(z.name||'').toLowerCase().includes(key==='omega'?'omega':key));if(!x){x={id:Date.now()+i+1,name,dose,time:'',done:false,date:today};db.supplements.push(x)}else{x.name=name;if(!x.dose)x.dose=dose;}});
@@ -1085,7 +1103,8 @@ async function addFood(){
 
 function addWorkout(){db.workouts.push({routine:$('routine').value,minutes:+$('duration').value||0,date:$('workDate').value,id:Date.now()});save()}
 function addSupp(){let n=$('suppName').value.trim();if(!n)return alert('Escribe el suplemento');db.supplements.push({name:n,dose:$('suppDose').value,time:$('suppTime').value,done:false,date:today,id:Date.now()});$('suppName').value=$('suppDose').value=$('suppTime').value='';save()}
-function addMeasure(){let w=+$('weight').value,wa=+$('waist').value,date=$('measureDate').value;if(!w&&!wa)return alert('Ingresa peso o cintura');if((w&&w<=0)||(wa&&wa<=0))return alert('Peso y cintura deben ser valores positivos');if(!date)return alert('Selecciona una fecha');db.measures.push({date,weight:w||null,waist:wa||null,id:Date.now()});$('weight').value=$('waist').value='';save();const form=document.getElementById('bodyMeasureForm'),actions=document.getElementById('bodyMeasureActions'),knob=document.getElementById('bodyMeasureSwipe'),track=document.getElementById('bodySwipeTrack');if(form)form.hidden=true;if(actions)actions.hidden=false;if(knob)knob.style.left='5px';if(track)track.style.setProperty('--swipe-progress','0%');}
+function renderMeasureHistory(){const list=$('measureList'),count=$('measureCount');if(!list||!count)return;const rows=(Array.isArray(db.measures)?db.measures:[]).slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||(Number(b.id)||0)-(Number(a.id)||0));list.innerHTML=rows.map(x=>`<div class="item"><span>${x.date||'Sin fecha'}<small>${x.weight?x.weight+' kg':''} ${x.waist?'· '+x.waist+' cm':''}</small></span><button onclick="del('measures',${x.id})">Eliminar</button></div>`).join('')||'<p class="muted">Todavía no hay mediciones registradas.</p>';count.textContent=rows.length+' '+(rows.length===1?'registro':'registros');}
+function addMeasure(){const w=Number($('weight').value),wa=Number($('waist').value),date=$('measureDate').value;if(!w&&!wa)return alert('Ingresa peso o cintura');if((w&&w<=0)||(wa&&wa<=0))return alert('Peso y cintura deben ser valores positivos');if(!date)return alert('Selecciona una fecha');if(!Array.isArray(db.measures))db.measures=[];db.measures.push({date,weight:w||null,waist:wa||null,id:Date.now()});try{localStorage.setItem(DBKEY,JSON.stringify(db));}catch(e){alert('No se pudo guardar en el almacenamiento del navegador.');return;} $('weight').value='';$('waist').value='';renderMeasureHistory();try{renderAll();}catch(e){console.error('Registro guardado; hubo un error al actualizar otros módulos:',e);renderMeasureHistory();}closeBodyMeasureModal();}
 function del(arr,id){db[arr]=db[arr].filter(x=>x.id!==id);save()}
 function renderAll(){let m=macros();$('kCal').textContent=Math.round(m.k)+' kcal';renderSupplements();
 let last=[...db.measures].reverse().find(x=>x.weight);if(last)$('kWeight').textContent=last.weight+' kg';let lw=[...db.measures].reverse().find(x=>x.waist);if(lw)$('kWaist').textContent=lw.waist+' cm';
@@ -1093,7 +1112,7 @@ $('foodTotals').textContent=`${Math.round(m.k)} kcal · P ${m.p.toFixed(1)} · C
 $('foodList').innerHTML=db.foods.filter(x=>x.date===$('foodDate').value).map(x=>`<div class="item"><span>${x.n}<small>${x.meal} · ${x.g} g</small></span><b>${Math.round(x.k)} kcal <button onclick="del('foods',${x.id})">×</button></b></div>`).join('')||'<p class="muted">Sin alimentos registrados para esta fecha.</p>';
 
 $('suppList').innerHTML=db.supplements.map(x=>`<div class="item"><span>${x.name}<small>${x.dose||'Dosis no indicada'} · ${x.time||'Horario libre'} · ${x.date}</small></span><span><button onclick="toggleSupp(${x.id})">${x.done?'✓ Consumido':'Confirmar consumo'}</button> <button onclick="del('supplements',${x.id})">×</button></span></div>`).join('')||'<p class="muted">Agrega tus suplementos.</p>';
-$('measureList').innerHTML=[...db.measures].slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||(Number(b.id)||0)-(Number(a.id)||0)).map(x=>`<div class="item"><span>${x.date}<small>${x.weight?x.weight+' kg':''} ${x.waist?'· '+x.waist+' cm':''}</small></span><button onclick="del('measures',${x.id})">Eliminar</button></div>`).join('')||'<p class="muted">Todavía no hay mediciones registradas.</p>';$('measureCount').textContent=db.measures.length+' '+(db.measures.length===1?'registro':'registros');
+renderMeasureHistory();
 chart('weightChart');renderBodyEvolution();renderExercises();renderExerciseLibrary();renderCalendar();renderHistory();renderMealMiniSummary()}
 function toggleSupp(id,checked){
  const x=db.supplements.find(z=>String(z.id)===String(id));if(!x)return;
@@ -1647,63 +1666,44 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
 })();
 </script>
 
-<script id="body-measure-swipe-init-v2129">
+<script id="body-measure-swipe-init-v2131">
 (function(){
+ function closeBodyMeasureModal(){
+  const modal=document.getElementById('bodyMeasureModal');
+  if(modal)modal.hidden=true;
+  document.body.classList.remove('measure-modal-open');
+ }
+ window.closeBodyMeasureModal=closeBodyMeasureModal;
+ function openBodyMeasureModal(){
+  const modal=document.getElementById('bodyMeasureModal'),date=document.getElementById('measureDate');
+  if(!modal)return;
+  if(date&&!date.value){const now=new Date();date.value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');}
+  modal.hidden=false;document.body.classList.add('measure-modal-open');
+  setTimeout(function(){const field=document.getElementById('weight');if(field)field.focus({preventScroll:true});},80);
+ }
  function initBodyMeasureSwipe(){
-  const knob=document.getElementById('bodyMeasureSwipe'),track=document.getElementById('bodySwipeTrack');
-  const actions=document.getElementById('bodyMeasureActions'),form=document.getElementById('bodyMeasureForm');
-  const open=document.getElementById('bodyOpenMeasureForm'),close=document.getElementById('bodyCloseMeasureForm');
-  if(!knob||!track||!actions||!form||!open||!close||knob.dataset.ready==='1')return;
+  const knob=document.getElementById('bodyMeasureSwipe'),track=document.getElementById('bodySwipeTrack'),modal=document.getElementById('bodyMeasureModal'),close=document.getElementById('bodyCloseMeasureForm');
+  if(!knob||!track||!modal||!close||knob.dataset.ready==='1')return;
   knob.dataset.ready='1';
   let dragging=false,startX=0,startLeft=5,pointerId=null;
-  const knobWidth=46,edge=5;
+  const edge=5,knobWidth=46;
   function maxLeft(){return Math.max(edge,track.clientWidth-knobWidth-edge);}
-  function setLeft(left){
-   const max=maxLeft(),clamped=Math.max(edge,Math.min(max,left));
-   knob.style.left=clamped+'px';
-   const pct=max===edge?0:((clamped-edge)/(max-edge))*100;
-   track.style.setProperty('--swipe-progress',pct+'%');
-   return pct;
-  }
-  function unlock(){
-   actions.hidden=false;
-   track.classList.add('is-unlocked');
-   setLeft(edge);
-   knob.setAttribute('aria-label','Opciones de registro disponibles');
-  }
-  knob.addEventListener('pointerdown',function(e){
-   if(!actions.hidden)return;
-   dragging=true;startX=e.clientX;startLeft=parseFloat(getComputedStyle(knob).left)||edge;pointerId=e.pointerId;
-   try{knob.setPointerCapture(pointerId)}catch(_){}
-   e.preventDefault();
-  });
-  knob.addEventListener('pointermove',function(e){
-   if(!dragging||e.pointerId!==pointerId)return;
-   const pct=setLeft(startLeft+(e.clientX-startX));
-   if(pct>=94){dragging=false;try{knob.releasePointerCapture(pointerId)}catch(_){}pointerId=null;unlock();}
-   e.preventDefault();
-  });
-  function finish(e){
-   if(!dragging)return;
-   dragging=false;pointerId=null;
-   if(actions.hidden)setLeft(edge);
-   if(e&&e.cancelable)e.preventDefault();
-  }
-  knob.addEventListener('pointerup',finish);
-  knob.addEventListener('pointercancel',finish);
-  knob.addEventListener('lostpointercapture',function(){if(dragging)finish();});
-  open.addEventListener('click',function(){
-   form.hidden=false;
-   const d=document.getElementById('measureDate');
-   if(d&&!d.value){const now=new Date();d.value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');}
-   form.scrollIntoView({behavior:'smooth',block:'nearest'});
-  });
-  close.addEventListener('click',function(){form.hidden=true;});
-  window.addEventListener('resize',function(){if(actions.hidden)setLeft(edge);},{passive:true});
+  function setLeft(left){const max=maxLeft(),x=Math.max(edge,Math.min(max,left));knob.style.left=x+'px';const pct=max===edge?0:(x-edge)/(max-edge)*100;track.style.setProperty('--swipe-progress',pct+'%');return pct;}
+  function reset(){dragging=false;pointerId=null;setLeft(edge);}
+  function finishOpen(){reset();openBodyMeasureModal();}
+  knob.addEventListener('pointerdown',function(e){dragging=true;startX=e.clientX;startLeft=parseFloat(getComputedStyle(knob).left)||edge;pointerId=e.pointerId;try{knob.setPointerCapture(pointerId)}catch(_){}e.preventDefault();});
+  knob.addEventListener('pointermove',function(e){if(!dragging||e.pointerId!==pointerId)return;const pct=setLeft(startLeft+e.clientX-startX);if(pct>=94){try{knob.releasePointerCapture(pointerId)}catch(_){}finishOpen();}e.preventDefault();});
+  function endDrag(e){if(!dragging)return;reset();if(e&&e.cancelable)e.preventDefault();}
+  knob.addEventListener('pointerup',endDrag);knob.addEventListener('pointercancel',endDrag);
+  knob.addEventListener('lostpointercapture',function(){if(dragging)reset();});
+  knob.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key==='End'){e.preventDefault();finishOpen();}});
+  close.addEventListener('click',closeBodyMeasureModal);
+  modal.addEventListener('click',function(e){if(e.target&&e.target.hasAttribute('data-close-measure-modal'))closeBodyMeasureModal();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!modal.hidden)closeBodyMeasureModal();});
+  window.addEventListener('resize',function(){if(!dragging)setLeft(edge);},{passive:true});
   setLeft(edge);
  }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initBodyMeasureSwipe);
- else initBodyMeasureSwipe();
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initBodyMeasureSwipe);else initBodyMeasureSwipe();
  window.addEventListener('pageshow',initBodyMeasureSwipe);
 })();
 </script>
