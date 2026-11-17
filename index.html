@@ -656,6 +656,10 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
   animation:navIconPulse 2.2s ease-in-out infinite!important;
 }
 
+
+/* V21.52 — Separación conceptual entre descanso laboral y descanso físico */
+.tp-shift-reco .tp-shift-note{line-height:1.5}
+
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
@@ -1254,7 +1258,7 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
   <div id="calendar" aria-label="Calendario mensual de turnos"></div>
   <div class="shift-selected" id="calendarSelected" aria-live="polite"></div>
   <div class="shift-next" id="calendarNextShift"></div>
-  <p class="muted shift-note">Ciclo de referencia: 03–09 nov descanso · 10–16 nov noche · 17–23 nov descanso · 24–30 nov día. Turno noche: 19:00–07:00 · Turno día: horario por confirmar.</p>
+  <p class="muted shift-note">Ciclo de referencia: 03–09 nov descanso · 10–16 nov noche · 17–23 nov descanso · 24–30 nov día. Turno noche: 19:00–07:00 · Turno día: 07:00–19:00.</p>
  </div>
 </section>
 
@@ -1634,9 +1638,9 @@ const EXERCISE_IMAGES={
 function exerciseImage(name){return EXERCISE_IMAGES[name]||''}
 
 function renderTrainingPlan(){
- const date=$('workDate').value||today,shift=shiftForDate(date),isMonday=(new Date(date+'T12:00:00').getDay()===1),plan=isMonday?{title:'Lunes · descanso programado',desc:'Día libre fijo para recuperación muscular.',intensity:'Intensidad: descanso',duration:'0 min',recovery:'Hoy no se programa entrenamiento. Recuperación y descanso.',routine:'Descanso',exercises:[]}: (TRAINING_PLANS[shift.name]||TRAINING_PLANS.Descanso);
+ const date=$('workDate').value||today,shift=shiftForDate(date),isMonday=(new Date(date+'T12:00:00').getDay()===1),plan=isMonday?{title:'Lunes · descanso físico',desc:'Día fijo sin entrenamiento, independiente de tu turno laboral o de tus días de descanso 7×7.',intensity:'Intensidad: descanso físico',duration:'0 min',recovery:'Hoy no se programan ejercicios. Mantén el lunes como día fijo de recuperación, estés trabajando de día, de noche o en descanso laboral.',routine:'Descanso',exercises:[]}: (TRAINING_PLANS[shift.name]||TRAINING_PLANS.Descanso);
  $('trainingShiftTitle').textContent=plan.title;$('trainingShiftDesc').textContent=plan.desc;$('trainingIntensity').textContent=plan.intensity;$('trainingDuration').textContent='Duración sugerida: '+plan.duration;$('trainingRecovery').textContent=plan.recovery;
- const turnLabel=$('tpTurnLabel'),calLabel=$('tpCaloriesLabel'),durationLabel=$('tpDurationLabel');if(turnLabel)turnLabel.textContent=isMonday?'DESCANSO':shift.name.toUpperCase();if(calLabel)calLabel.textContent=isMonday?'0 kcal':(shift.name==='Noche'?'≈ 250–350 kcal':'≈ 300–400 kcal');if(durationLabel)durationLabel.textContent=isMonday?'0 min':'60 min';
+ const turnLabel=$('tpTurnLabel'),calLabel=$('tpCaloriesLabel'),durationLabel=$('tpDurationLabel');if(turnLabel)turnLabel.textContent=shift.name.toUpperCase();if(calLabel)calLabel.textContent=isMonday?'0 kcal':(shift.name==='Noche'?'≈ 250–350 kcal':'≈ 300–400 kcal');if(durationLabel)durationLabel.textContent=isMonday?'0 min':'60 min';
  const routine=$('routine');if(routine)routine.value=plan.routine;const cards=$('tpExerciseCards'),start=$('tpStartWorkout'),sw=document.getElementById('tpWarmSwitch'),on=!!sw?.classList.contains('on');
  if(cards){cards.innerHTML=(plan.exercises||[]).map((e,i)=>{const name=e[0],meta=e[1]||'',url=e[2]||('https://www.youtube.com/results?search_query='+encodeURIComponent(name+' técnica'));return `<article class="tp-ex-card"><img class="tp-ex-img" src="${exerciseImage(name)}" alt="Imagen de referencia para ${name}" loading="lazy" onerror="this.onerror=null;this.style.visibility='hidden';this.parentElement.classList.add('tp-image-unavailable')"><div class="tp-ex-info"><strong>${name}</strong><div class="tp-ex-meta"><span><b>◷</b> ${meta}</span></div></div><button class="tp-play" aria-label="Demostración ${name}" onclick="window.open('${url}','_blank','noopener')">▶</button></article>`}).join('');cards.style.display=(isMonday||!on)?'none':'grid';}
  const listHead=document.querySelector('.tp-list-head');if(listHead)listHead.style.display=(isMonday||!on)?'none':'flex';if(start){start.disabled=isMonday;start.textContent=isMonday?'DESCANSO PROGRAMADO':'✓  EJERCICIOS REALIZADOS';start.classList.toggle('completed',isMonday);}
@@ -1664,7 +1668,7 @@ function renderCalendar(){
  }
  html+='</div>';$('calendar').innerHTML=html;
  const selected=new Date(calendarSelectedDate+'T12:00:00'),sel=shiftForDate(calendarSelectedDate);
- $('calendarSelected').innerHTML=`<strong>Fecha seleccionada:</strong> ${selected.toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}<br><b>Estado:</b> ${sel.name}${sel.name==='Noche'?' · 19:00–07:00':sel.name==='Día'?' · horario por confirmar':' · recuperación y descanso'}`;
+ $('calendarSelected').innerHTML=`<strong>Fecha seleccionada:</strong> ${selected.toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}<br><b>Estado:</b> ${sel.name}${sel.name==='Noche'?' · 19:00–07:00':sel.name==='Día'?' · 07:00–19:00':' · descanso laboral'}`;
  let next=new Date(calendarSelectedDate+'T12:00:00');next.setDate(next.getDate()+1);let count=1;
  while(shiftForDate(localDateISO(next)).name===sel.name&&count<8){next.setDate(next.getDate()+1);count++}
  $('calendarNextShift').innerHTML=`<strong>Próximo cambio:</strong> ${next.toLocaleDateString('es-CL',{day:'numeric',month:'long'})} · ${shiftForDate(localDateISO(next)).name} (en ${count} ${count===1?'día':'días'})`;
