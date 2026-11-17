@@ -669,6 +669,21 @@ document.addEventListener('DOMContentLoaded',function(){
 @media(prefers-reduced-motion:reduce){.body-swipe-knob{transition:none!important}}
 </style>
 
+
+<style id="body-measure-swipe-touch-fix-v2130">
+/* Fix iOS touch/pointer interaction on the draggable neon handle */
+.body-swipe-track .body-swipe-knob{
+ pointer-events:auto!important;
+ touch-action:none!important;
+ -webkit-user-select:none;
+ user-select:none;
+ cursor:grab;
+ z-index:5!important;
+}
+.body-swipe-track .body-swipe-knob:active{cursor:grabbing}
+.body-swipe-track{touch-action:pan-y}
+</style>
+
 </head><body>
 
 
