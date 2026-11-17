@@ -656,10 +656,6 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
   animation:navIconPulse 2.2s ease-in-out infinite!important;
 }
 
-
-/* V21.52 — Separación conceptual entre descanso laboral y descanso físico */
-.tp-shift-reco .tp-shift-note{line-height:1.5}
-
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
@@ -1250,15 +1246,56 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
 .body-swipe-knob{display:grid!important;place-items:center!important;padding:0!important;line-height:0!important}.body-swipe-arrow-icon{display:block;width:25px;height:25px;fill:#10120a;flex:none;pointer-events:none}
 @media(max-width:480px){.measure-history-launch{min-height:60px;padding:10px 14px;border-radius:17px}.measure-history-title{font-size:15px}.measure-history-count{padding:6px 9px}}
 </style>
-<section id="turnos" class="section">
+<style id="turnos-7x7-solid-neon-v2153"> 
+/* TURNOS 7x7 · SOLID NEON / ELECTRIC LIME */
+.shift-live-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin:0 0 16px}
+.shift-live-card,.shift-config-card{background:linear-gradient(145deg,#111914,#090e0b);border:1px solid #31452c;border-radius:18px;padding:18px;box-shadow:0 0 22px rgba(166,255,0,.055)}
+.shift-live-card{border-color:#547b24;box-shadow:0 0 25px rgba(166,255,0,.09)}
+.shift-live-kicker{font-size:10px;font-weight:900;letter-spacing:2px;color:#a6ff00}
+.shift-live-main{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:12px 0 4px}
+.shift-live-main strong{font-size:clamp(25px,5vw,38px);line-height:1;color:#f1f8ed}
+.shift-live-main span{font-size:13px;color:#b7c5b5;font-weight:800}
+.shift-live-meta{font-size:12px;color:#9caa9d;line-height:1.5;margin-top:6px}
+.shift-countdown-label{font-size:10px;letter-spacing:1.6px;color:#8e9b8e;font-weight:900;margin-top:20px}
+.shift-countdown{font-size:clamp(27px,5vw,38px);font-weight:950;letter-spacing:1px;color:#a6ff00;font-variant-numeric:tabular-nums;margin-top:4px;text-shadow:0 0 18px #a6ff0038}
+.shift-config-label{display:block;color:#dce7dc;font-size:12px;font-weight:700;margin:14px 0 7px}
+.shift-config-card input{width:100%;min-height:43px;background:#080d0a;color:#f4fff0;border:1px solid #3b5133;border-radius:10px;padding:9px 11px;font:inherit}
+.shift-config-card p{font-size:11px;line-height:1.5;color:#9caa9d;margin:10px 0}
+.shift-config-save{width:100%;border:0;border-radius:10px;background:#a6ff00;color:#10150a;font-weight:950;font-size:11px;letter-spacing:1px;padding:12px;cursor:pointer}
+.shift-config-feedback{font-size:11px;color:#a6ff00;min-height:15px;margin-top:7px}
+.shift-calendar-card{border-color:#263b2a}
+.shift-calendar-card .calendar-cell.is-selected{border-color:#a6ff00;box-shadow:0 0 0 1px #a6ff00,0 0 16px #a6ff0030}
+.shift-calendar-card .calendar-cell.is-today{outline:2px solid #25d9ff;outline-offset:-3px}
+.shift-calendar-card .shift-selected strong{color:#a6ff00}
+.shift-calendar-card .shift-next{color:#a6ff00;border-color:#38512c}
+@media(max-width:650px){.shift-live-grid{grid-template-columns:1fr}.shift-live-card,.shift-config-card{padding:15px}.shift-live-main{align-items:flex-start;flex-direction:column;gap:7px}.shift-countdown{font-size:31px}}
+</style>\n<section id="turnos" class="section">
  <div class="sectionHead"><h2>Calendario rotativo 7×7</h2><span class="pill">Descanso → Noche → Descanso → Día</span></div>
+ <div class="shift-live-grid">
+  <article class="shift-live-card">
+   <div class="shift-live-kicker">ESTADO LABORAL ACTUAL</div>
+   <div class="shift-live-main"><strong id="shiftCurrentName">—</strong><span id="shiftCurrentHours">—</span></div>
+   <div class="shift-live-meta" id="shiftCurrentDates">—</div>
+   <div class="shift-countdown-label">PRÓXIMO CAMBIO DE CICLO</div>
+   <div class="shift-countdown" id="shiftCountdown">—</div>
+   <div class="shift-live-meta" id="shiftNextInfo">—</div>
+  </article>
+  <article class="shift-config-card">
+   <div class="shift-live-kicker">CONFIGURACIÓN DEL CICLO</div>
+   <label class="shift-config-label" for="shiftReferenceDate">Fecha de inicio de la secuencia de referencia</label>
+   <input id="shiftReferenceDate" type="date" value="2026-11-03">
+   <p>La fecha elegida corresponde al primer día del bloque de descanso. Desde ella se calcula automáticamente la rotación completa de 28 días.</p>
+   <button type="button" class="shift-config-save" onclick="saveShiftReference()">GUARDAR REFERENCIA</button>
+   <div class="shift-config-feedback" id="shiftConfigFeedback" aria-live="polite"></div>
+  </article>
+ </div>
  <div class="card shift-calendar-card">
   <div class="shift-monthbar"><button type="button" onclick="changeCalendarMonth(-1)" aria-label="Mes anterior">‹</button><strong id="calendarMonthLabel">Noviembre 2026</strong><button type="button" onclick="changeCalendarMonth(1)" aria-label="Mes siguiente">›</button></div>
-  <div class="shift-legend"><span><i class="shift-rest"></i>Descanso</span><span><i class="shift-night"></i>Turno noche</span><span><i class="shift-day"></i>Turno día</span></div>
+  <div class="shift-legend"><span><i class="shift-rest"></i>Descanso laboral</span><span><i class="shift-night"></i>Turno noche</span><span><i class="shift-day"></i>Turno día</span></div>
   <div id="calendar" aria-label="Calendario mensual de turnos"></div>
   <div class="shift-selected" id="calendarSelected" aria-live="polite"></div>
   <div class="shift-next" id="calendarNextShift"></div>
-  <p class="muted shift-note">Ciclo de referencia: 03–09 nov descanso · 10–16 nov noche · 17–23 nov descanso · 24–30 nov día. Turno noche: 19:00–07:00 · Turno día: 07:00–19:00.</p>
+  <p class="muted shift-note">Jornada día: 07:00–19:00 · Jornada noche: 19:00–07:00. El descanso laboral corresponde a bloques de 7 días. El lunes se mantiene como descanso físico fijo y no modifica la rotación laboral.</p>
  </div>
 </section>
 
@@ -1638,9 +1675,9 @@ const EXERCISE_IMAGES={
 function exerciseImage(name){return EXERCISE_IMAGES[name]||''}
 
 function renderTrainingPlan(){
- const date=$('workDate').value||today,shift=shiftForDate(date),isMonday=(new Date(date+'T12:00:00').getDay()===1),plan=isMonday?{title:'Lunes · descanso físico',desc:'Día fijo sin entrenamiento, independiente de tu turno laboral o de tus días de descanso 7×7.',intensity:'Intensidad: descanso físico',duration:'0 min',recovery:'Hoy no se programan ejercicios. Mantén el lunes como día fijo de recuperación, estés trabajando de día, de noche o en descanso laboral.',routine:'Descanso',exercises:[]}: (TRAINING_PLANS[shift.name]||TRAINING_PLANS.Descanso);
+ const date=$('workDate').value||today,shift=shiftForDate(date),isMonday=(new Date(date+'T12:00:00').getDay()===1),plan=isMonday?{title:'Lunes · descanso físico fijo',desc:'Día sin entrenamiento, independiente del turno laboral o del bloque 7×7.',intensity:'Intensidad: descanso',duration:'0 min',recovery:'Hoy no se programa entrenamiento. Recuperación y descanso.',routine:'Descanso',exercises:[]}: (TRAINING_PLANS[shift.name]||TRAINING_PLANS.Descanso);
  $('trainingShiftTitle').textContent=plan.title;$('trainingShiftDesc').textContent=plan.desc;$('trainingIntensity').textContent=plan.intensity;$('trainingDuration').textContent='Duración sugerida: '+plan.duration;$('trainingRecovery').textContent=plan.recovery;
- const turnLabel=$('tpTurnLabel'),calLabel=$('tpCaloriesLabel'),durationLabel=$('tpDurationLabel');if(turnLabel)turnLabel.textContent=shift.name.toUpperCase();if(calLabel)calLabel.textContent=isMonday?'0 kcal':(shift.name==='Noche'?'≈ 250–350 kcal':'≈ 300–400 kcal');if(durationLabel)durationLabel.textContent=isMonday?'0 min':'60 min';
+ const turnLabel=$('tpTurnLabel'),calLabel=$('tpCaloriesLabel'),durationLabel=$('tpDurationLabel');if(turnLabel)turnLabel.textContent=isMonday?'DESCANSO FÍSICO':shift.name.toUpperCase();if(calLabel)calLabel.textContent=isMonday?'0 kcal':(shift.name==='Noche'?'≈ 250–350 kcal':'≈ 300–400 kcal');if(durationLabel)durationLabel.textContent=isMonday?'0 min':'60 min';
  const routine=$('routine');if(routine)routine.value=plan.routine;const cards=$('tpExerciseCards'),start=$('tpStartWorkout'),sw=document.getElementById('tpWarmSwitch'),on=!!sw?.classList.contains('on');
  if(cards){cards.innerHTML=(plan.exercises||[]).map((e,i)=>{const name=e[0],meta=e[1]||'',url=e[2]||('https://www.youtube.com/results?search_query='+encodeURIComponent(name+' técnica'));return `<article class="tp-ex-card"><img class="tp-ex-img" src="${exerciseImage(name)}" alt="Imagen de referencia para ${name}" loading="lazy" onerror="this.onerror=null;this.style.visibility='hidden';this.parentElement.classList.add('tp-image-unavailable')"><div class="tp-ex-info"><strong>${name}</strong><div class="tp-ex-meta"><span><b>◷</b> ${meta}</span></div></div><button class="tp-play" aria-label="Demostración ${name}" onclick="window.open('${url}','_blank','noopener')">▶</button></article>`}).join('');cards.style.display=(isMonday||!on)?'none':'grid';}
  const listHead=document.querySelector('.tp-list-head');if(listHead)listHead.style.display=(isMonday||!on)?'none':'flex';if(start){start.disabled=isMonday;start.textContent=isMonday?'DESCANSO PROGRAMADO':'✓  EJERCICIOS REALIZADOS';start.classList.toggle('completed',isMonday);}
@@ -1649,29 +1686,60 @@ function renderTrainingPlan(){
 function renderExercises(){renderTrainingPlan()}
  document.addEventListener('DOMContentLoaded',()=>{renderTrainingPlan()});
 $('routine').addEventListener('change',()=>{$('routine').dataset.userChanged='1'});
-const SHIFT_CYCLE=[{name:'Descanso',cls:'shift-rest'},{name:'Noche',cls:'shift-night'},{name:'Descanso',cls:'shift-rest'},{name:'Día',cls:'shift-day'}];
+const SHIFT_CYCLE=[{name:'Descanso',label:'Descanso laboral',short:'DESCANSO',cls:'shift-rest',hours:'Sin jornada laboral'},{name:'Noche',label:'Turno noche',short:'NOCHE',cls:'shift-night',hours:'19:00–07:00'},{name:'Descanso',label:'Descanso laboral',short:'DESCANSO',cls:'shift-rest',hours:'Sin jornada laboral'},{name:'Día',label:'Turno día',short:'DÍA',cls:'shift-day',hours:'07:00–19:00'}];
+const SHIFT_REF_KEY='fppro_shift_reference_v1';
+let shiftReferenceDate=localStorage.getItem(SHIFT_REF_KEY)||'2026-11-03';
 let calendarView=new Date(new Date().getFullYear(),new Date().getMonth(),1,12),calendarSelectedDate=localDateISO(new Date());
 function localDateISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function shiftForDate(dateString){const anchor=new Date('2026-11-03T12:00:00'),date=new Date(dateString+'T12:00:00'),days=Math.floor((date-anchor)/86400000),block=((Math.floor(days/7)%4)+4)%4;return SHIFT_CYCLE[block]}
+function shiftForDate(dateString){
+ const anchor=new Date(shiftReferenceDate+'T12:00:00'),date=new Date(dateString+'T12:00:00');
+ const days=Math.floor((date-anchor)/86400000),block=((Math.floor(days/7)%4)+4)%4;
+ return {...SHIFT_CYCLE[block],block,dayInBlock:((days%7)+7)%7+1};
+}
+function saveShiftReference(){
+ const input=$('shiftReferenceDate'),value=input?.value;
+ if(!value){$('shiftConfigFeedback').textContent='Selecciona una fecha válida.';return}
+ shiftReferenceDate=value;localStorage.setItem(SHIFT_REF_KEY,value);
+ $('shiftConfigFeedback').textContent='Referencia guardada. Calendario y rotación actualizados.';
+ renderCalendar();updateShiftLivePanel();updateGlobalShiftClock();renderTrainingPlan();
+}
 function changeCalendarMonth(delta){calendarView=new Date(calendarView.getFullYear(),calendarView.getMonth()+delta,1,12);renderCalendar()}
 function selectCalendarDate(dateString){calendarSelectedDate=dateString;renderCalendar()}
+function blockBounds(dateString){
+ const d=new Date(dateString+'T12:00:00'),sh=shiftForDate(dateString);
+ const start=new Date(d);start.setDate(start.getDate()-(sh.dayInBlock-1));
+ const end=new Date(start);end.setDate(end.getDate()+6);
+ const next=new Date(end);next.setDate(next.getDate()+1);
+ return {start,end,next,nextShift:shiftForDate(localDateISO(next))};
+}
 function renderCalendar(){
  const year=calendarView.getFullYear(),month=calendarView.getMonth(),first=new Date(year,month,1,12),days=new Date(year,month+1,0).getDate(),offset=(first.getDay()+6)%7;
  $('calendarMonthLabel').textContent=first.toLocaleDateString('es-CL',{month:'long',year:'numeric'});
  let html='<div class="calendar-grid">'+['L','M','X','J','V','S','D'].map(x=>`<div class="calendar-weekday">${x}</div>`).join('');
- for(let i=0;i<offset;i++)html+='<div aria-hidden="true"></div>';
- const todayISO=localDateISO(new Date());
- for(let n=1;n<=days;n++){
-  const date=new Date(year,month,n,12),iso=localDateISO(date),shift=shiftForDate(iso),classes=['calendar-cell',shift.cls];
-  if(iso===todayISO)classes.push('is-today');if(iso===calendarSelectedDate)classes.push('is-selected');
-  html+=`<button type="button" class="${classes.join(' ')}" onclick="selectCalendarDate('${iso}')" aria-pressed="${iso===calendarSelectedDate}" aria-label="${iso}, ${shift.name}"><span class="calendar-num">${n}</span><span class="calendar-shift">${shift.name}</span></button>`;
+ const total=Math.ceil((offset+days)/7)*7;
+ for(let i=0;i<total;i++){
+  const date=new Date(year,month,1-offset+i,12),iso=localDateISO(date),shift=shiftForDate(iso),classes=['calendar-cell',shift.cls];
+  if(date.getMonth()!==month)classes.push('is-outside');
+  if(iso===localDateISO(new Date()))classes.push('is-today');
+  if(iso===calendarSelectedDate)classes.push('is-selected');
+  html+=`<button type="button" class="${classes.join(' ')}" onclick="selectCalendarDate('${iso}')" aria-pressed="${iso===calendarSelectedDate}" aria-label="${iso}, ${shift.name}"><span class="calendar-num">${date.getDate()}</span><span class="calendar-shift">${shift.short}</span></button>`;
  }
  html+='</div>';$('calendar').innerHTML=html;
- const selected=new Date(calendarSelectedDate+'T12:00:00'),sel=shiftForDate(calendarSelectedDate);
- $('calendarSelected').innerHTML=`<strong>Fecha seleccionada:</strong> ${selected.toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}<br><b>Estado:</b> ${sel.name}${sel.name==='Noche'?' · 19:00–07:00':sel.name==='Día'?' · 07:00–19:00':' · descanso laboral'}`;
- let next=new Date(calendarSelectedDate+'T12:00:00');next.setDate(next.getDate()+1);let count=1;
- while(shiftForDate(localDateISO(next)).name===sel.name&&count<8){next.setDate(next.getDate()+1);count++}
- $('calendarNextShift').innerHTML=`<strong>Próximo cambio:</strong> ${next.toLocaleDateString('es-CL',{day:'numeric',month:'long'})} · ${shiftForDate(localDateISO(next)).name} (en ${count} ${count===1?'día':'días'})`;
+ const sel=shiftForDate(calendarSelectedDate),bounds=blockBounds(calendarSelectedDate);
+ const fmt=d=>d.toLocaleDateString('es-CL',{day:'numeric',month:'short'});
+ $('calendarSelected').innerHTML=`<strong>Fecha seleccionada:</strong> ${new Date(calendarSelectedDate+'T12:00:00').toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}<br><b>Estado:</b> ${sel.label} · ${sel.hours}<br><b>Bloque:</b> ${fmt(bounds.start)} al ${fmt(bounds.end)} · Día ${sel.dayInBlock} de 7`;
+ $('calendarNextShift').innerHTML=`<strong>Próximo cambio:</strong> ${fmt(bounds.next)} · ${bounds.nextShift.label} (${bounds.nextShift.hours})`;
+}
+function updateShiftLivePanel(){
+ const nowISO=chileNowParts(),sh=shiftForDate(nowISO),bounds=blockBounds(nowISO);
+ const fmt=d=>d.toLocaleDateString('es-CL',{day:'numeric',month:'long'});
+ $('shiftCurrentName').textContent=sh.label;
+ $('shiftCurrentHours').textContent=sh.hours;
+ $('shiftCurrentDates').textContent=`Bloque ${fmt(bounds.start)} al ${fmt(bounds.end)} · Día ${sh.dayInBlock} de 7`;
+ $('shiftNextInfo').textContent=`Siguiente: ${bounds.nextShift.label} · ${bounds.nextShift.hours} · ${fmt(bounds.next)}`;
+ const remaining=Math.max(0,bounds.next.getTime()-Date.now());
+ const days=Math.floor(remaining/86400000),hours=Math.floor((remaining%86400000)/3600000),mins=Math.floor((remaining%3600000)/60000),secs=Math.floor((remaining%60000)/1000);
+ $('shiftCountdown').textContent=`${days}d ${String(hours).padStart(2,'0')}h ${String(mins).padStart(2,'0')}m ${String(secs).padStart(2,'0')}s`;
 }
 function renderHistory(){let date=$('historyDate').value,month=$('historyMonth').value;let all=[...db.foods.map(x=>({...x,type:'Alimento'})),...db.workouts.map(x=>({...x,type:'Entrenamiento'})),...db.supplements.map(x=>({...x,type:'Suplemento'})),...db.measures.map(x=>({...x,type:'Medición'}))];let filtered=all.filter(x=>date?x.date===date:month?x.date?.startsWith(month):true).sort((a,b)=>b.date.localeCompare(a.date));$('historyResult').innerHTML=filtered.map(x=>`<div class="item"><span>${x.type}: ${x.n||x.routine||x.name||((x.weight||'')+' kg / '+(x.waist||'')+' cm')}<small>${x.date}</small></span><b>${x.k?Math.round(x.k)+' kcal':x.minutes?x.minutes+' min':x.done?'Consumido':''}</b></div>`).join('')||'<p class="muted">No hay registros para ese filtro.</p>'}
 function exportData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='fitness-performance-respaldo.json';a.click();URL.revokeObjectURL(a.href)}
@@ -1680,7 +1748,8 @@ function clearAll(){if(confirm('¿Borrar todos los registros?')){db={foods:[],wo
 // GLOBAL SHIFT STATUS PRO + LIVE CLOCK · America/Santiago
 function chileNowParts(){const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const get=t=>parts.find(p=>p.type===t)?.value;return `${get('year')}-${get('month')}-${get('day')}`}
 function updateGlobalShiftClock(){const now=new Date();const timeEl=document.getElementById('liveClock'),dateEl=document.getElementById('liveDate'),shiftEl=document.getElementById('todayShift');if(timeEl)timeEl.textContent=new Intl.DateTimeFormat('es-CL',{timeZone:'America/Santiago',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);if(dateEl)dateEl.textContent=new Intl.DateTimeFormat('es-CL',{timeZone:'America/Santiago',weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(now);if(shiftEl){const sh=shiftForDate(chileNowParts());shiftEl.className='pill shift-pill '+sh.cls;shiftEl.textContent='● '+sh.name;}}
-updateGlobalShiftClock();setInterval(updateGlobalShiftClock,1000);
+updateGlobalShiftClock();setInterval(()=>{updateGlobalShiftClock();updateShiftLivePanel()},1000);
+if($('shiftReferenceDate'))$('shiftReferenceDate').value=shiftReferenceDate;renderCalendar();updateShiftLivePanel();
 try{renderBodyEvolution();}catch(e){console.error('Error al cargar el panel corporal:',e)}renderAll();try{renderBodyEvolution();}catch(e){console.error('Error al actualizar el panel corporal:',e)}preview();
 </script>
 
