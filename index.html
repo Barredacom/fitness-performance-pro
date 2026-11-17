@@ -880,7 +880,7 @@ body.measure-modal-open{overflow:hidden}
   <div class="body-swipe-copy"><strong>REGISTRO DE MEDICIONES</strong><span>Desliza para abrir las opciones</span></div>
   <div class="body-swipe-track" id="bodySwipeTrack">
    <span class="body-swipe-track-label">DESLIZAR PARA REGISTRAR</span>
-   <button type="button" class="body-swipe-knob" id="bodyMeasureSwipe" aria-label="Desliza para mostrar las opciones de registro">››</button>
+   <button type="button" class="body-swipe-knob" id="bodyMeasureSwipe" aria-label="Desliza para mostrar las opciones de registro"><svg class="body-swipe-arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 4.8 16.4 12l-7.2 7.2-2.4-2.4 4.8-4.8-4.8-4.8z"/></svg></button>
   </div>
  </div>
 </div>
@@ -896,10 +896,11 @@ body.measure-modal-open{overflow:hidden}
 <div class="body-measure-modal" id="measureHistoryModal" hidden><div class="body-measure-backdrop" data-close-measure-history></div><div class="body-measure-dialog measure-history-dialog card" role="dialog" aria-modal="true" aria-labelledby="measureHistoryTitle"><div class="sectionHead"><h3 id="measureHistoryTitle">Historial de mediciones</h3><button type="button" class="body-form-close" id="closeMeasureHistory" aria-label="Cerrar historial">×</button></div><div id="measureList" class="list"></div></div></div>
 </section>
 
-<style id="measure-history-modal-v2133">
-.measure-history-launch{width:100%;min-height:94px;margin-top:12px;padding:22px 24px;border:0;border-radius:24px;background:linear-gradient(105deg,#A4FF28 0%,#A4FF28 78%,#79C91B 100%);color:#080d08;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;box-shadow:0 0 24px rgba(164,255,40,.12);text-align:left;font:inherit;transition:filter .15s,transform .15s}
-.measure-history-launch:active{transform:scale(.99);filter:brightness(.94)}.measure-history-title{font-size:clamp(17px,3.8vw,25px);font-weight:900;letter-spacing:.035em}.measure-history-count{font-size:clamp(14px,3vw,19px);font-weight:800;white-space:nowrap;background:rgba(8,13,8,.12);padding:9px 13px;border-radius:999px}.measure-history-dialog{width:min(100%,620px)}.measure-history-dialog #measureList{margin-top:16px;max-height:min(58dvh,520px);overflow-y:auto;padding-right:3px}
-@media(max-width:480px){.measure-history-launch{min-height:78px;padding:17px 16px;border-radius:20px}.measure-history-count{padding:8px 10px}}
+<style id="measure-history-modal-v2134">
+.measure-history-launch{width:100%;min-height:66px;margin-top:12px;padding:12px 18px;border:0;border-radius:20px;background:linear-gradient(105deg,#A4FF28 0%,#A4FF28 78%,#79C91B 100%);color:#080d08;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;box-shadow:0 0 24px rgba(164,255,40,.12);text-align:left;font:inherit;transition:filter .15s,transform .15s}
+.measure-history-launch:active{transform:scale(.99);filter:brightness(.94)}.measure-history-title{font-size:clamp(15px,3.2vw,21px);font-weight:900;letter-spacing:.035em;line-height:1.15}.measure-history-count{font-size:clamp(13px,2.7vw,17px);font-weight:800;white-space:nowrap;background:rgba(8,13,8,.12);padding:7px 11px;border-radius:999px}.measure-history-dialog{width:min(100%,620px)}.measure-history-dialog #measureList{margin-top:16px;max-height:min(58dvh,520px);overflow-y:auto;padding-right:3px}
+.body-swipe-knob{display:grid!important;place-items:center!important;padding:0!important;line-height:0!important}.body-swipe-arrow-icon{display:block;width:25px;height:25px;fill:#10120a;flex:none;pointer-events:none}
+@media(max-width:480px){.measure-history-launch{min-height:60px;padding:10px 14px;border-radius:17px}.measure-history-title{font-size:15px}.measure-history-count{padding:6px 9px}}
 </style>
 <section id="turnos" class="section">
  <div class="sectionHead"><h2>Calendario rotativo 7×7</h2><span class="pill">Descanso → Noche → Descanso → Día</span></div>
