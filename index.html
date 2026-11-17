@@ -447,6 +447,32 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
   text-shadow:0 0 12px #35ff9166!important;
 }
 .body-kpis-live>.body-kpi:nth-child(2) small{color:#a5f5c8!important}
+
+/* V21.44 — Igualar ambas tarjetas KPI al mismo Solid Neon UI */
+.body-kpis-live > .body-kpi:nth-child(1),
+.body-kpis-live > .body-kpi:nth-child(2){
+  background:linear-gradient(145deg,#0b1b12 0%,#0b1510 100%)!important;
+  border:1px solid #35ff91!important;
+  border-radius:18px!important;
+  box-shadow:
+    0 0 0 1px #35ff9145,
+    0 0 16px #35ff9128,
+    inset 0 0 18px #35ff910a!important;
+}
+.body-kpis-live > .body-kpi:nth-child(1) small,
+.body-kpis-live > .body-kpi:nth-child(2) small{
+  color:#a5f5c8!important;
+}
+.body-kpis-live > .body-kpi:nth-child(1) strong,
+.body-kpis-live > .body-kpi:nth-child(2) strong{
+  color:#35ff91!important;
+  text-shadow:0 0 12px #35ff9155!important;
+}
+.body-kpis-live > .body-kpi:nth-child(1) em,
+.body-kpis-live > .body-kpi:nth-child(2) em{
+  color:#9bad9f!important;
+}
+
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
