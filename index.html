@@ -701,6 +701,12 @@ body.measure-modal-open{overflow:hidden}
 @media(min-width:640px){.body-measure-dialog .formrow{grid-template-columns:1fr 1fr}.body-measure-dialog .formrow label:last-child{grid-column:1/-1}}
 </style>
 
+
+<style id="measure-delete-fix-v2132">
+.measure-delete-btn{min-height:38px!important;padding:8px 13px!important;border:1px solid #a4ff2855!important;border-radius:10px!important;background:#182410!important;color:#A4FF28!important;font-weight:750!important;cursor:pointer!important;pointer-events:auto!important;position:relative;z-index:2}
+.measure-delete-btn:active{transform:scale(.97);background:#26391a!important}
+</style>
+
 </head><body>
 
 
@@ -911,6 +917,7 @@ $('foodDate').value=$('workDate').value=$('measureDate').value=today;updateDateD
 $('foodDate').addEventListener('change',()=>{updateDateDisplay();renderMealMiniSummary()});$('dateDisplayCard')?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('foodDate').showPicker?.();}});
 const DBKEY='fppro_v2';let db=JSON.parse(localStorage.getItem(DBKEY)||'{"foods":[],"workouts":[],"supplements":[],"measures":[{"date":"2026-10-25","weight":82.3,"waist":95}]}');
 if(!Array.isArray(db.measures))db.measures=[];
+db.measures.forEach((m,i)=>{if(!m.id)m.id='measure-'+String(m.date||'sin-fecha')+'-'+i+'-'+Date.now();});
 const suppDefaults=[['creatina','Creatina','5 g'],['magnesio','Magnesio','Dosis configurable'],['omega','Omega 3','Dosis configurable'],['cop','COP de proteína','34 g']];
 if(!Array.isArray(db.supplements))db.supplements=[];
 suppDefaults.forEach(([key,name,dose],i)=>{let x=db.supplements.find(z=>String(z.name||'').toLowerCase().includes(key==='omega'?'omega':key));if(!x){x={id:Date.now()+i+1,name,dose,time:'',done:false,date:today};db.supplements.push(x)}else{x.name=name;if(!x.dose)x.dose=dose;}});
@@ -1103,7 +1110,8 @@ async function addFood(){
 
 function addWorkout(){db.workouts.push({routine:$('routine').value,minutes:+$('duration').value||0,date:$('workDate').value,id:Date.now()});save()}
 function addSupp(){let n=$('suppName').value.trim();if(!n)return alert('Escribe el suplemento');db.supplements.push({name:n,dose:$('suppDose').value,time:$('suppTime').value,done:false,date:today,id:Date.now()});$('suppName').value=$('suppDose').value=$('suppTime').value='';save()}
-function renderMeasureHistory(){const list=$('measureList'),count=$('measureCount');if(!list||!count)return;const rows=(Array.isArray(db.measures)?db.measures:[]).slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||(Number(b.id)||0)-(Number(a.id)||0));list.innerHTML=rows.map(x=>`<div class="item"><span>${x.date||'Sin fecha'}<small>${x.weight?x.weight+' kg':''} ${x.waist?'· '+x.waist+' cm':''}</small></span><button onclick="del('measures',${x.id})">Eliminar</button></div>`).join('')||'<p class="muted">Todavía no hay mediciones registradas.</p>';count.textContent=rows.length+' '+(rows.length===1?'registro':'registros');}
+function renderMeasureHistory(){const list=$('measureList'),count=$('measureCount');if(!list||!count)return;const rows=(Array.isArray(db.measures)?db.measures:[]).slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||(Number(b.id)||0)-(Number(a.id)||0));list.innerHTML=rows.map(x=>`<div class="item"><span>${x.date||'Sin fecha'}<small>${x.weight?x.weight+' kg':''} ${x.waist?'· '+x.waist+' cm':''}</small></span><button type="button" class="measure-delete-btn" onclick="deleteMeasure('${String(x.id).replace(/'/g,"\\\\'")}')">Eliminar</button></div>`).join('')||'<p class="muted">Todavía no hay mediciones registradas.</p>';count.textContent=rows.length+' '+(rows.length===1?'registro':'registros');}
+function deleteMeasure(id){if(!Array.isArray(db.measures))return;const before=db.measures.length;db.measures=db.measures.filter(x=>String(x.id)!==String(id));if(db.measures.length===before)return;try{localStorage.setItem(DBKEY,JSON.stringify(db));}catch(e){alert('No se pudo actualizar el historial en el almacenamiento del navegador.');return;}renderMeasureHistory();try{renderAll();}catch(e){console.error('Medición eliminada; hubo un error al actualizar otros módulos:',e);renderMeasureHistory();}}
 function addMeasure(){const w=Number($('weight').value),wa=Number($('waist').value),date=$('measureDate').value;if(!w&&!wa)return alert('Ingresa peso o cintura');if((w&&w<=0)||(wa&&wa<=0))return alert('Peso y cintura deben ser valores positivos');if(!date)return alert('Selecciona una fecha');if(!Array.isArray(db.measures))db.measures=[];db.measures.push({date,weight:w||null,waist:wa||null,id:Date.now()});try{localStorage.setItem(DBKEY,JSON.stringify(db));}catch(e){alert('No se pudo guardar en el almacenamiento del navegador.');return;} $('weight').value='';$('waist').value='';renderMeasureHistory();try{renderAll();}catch(e){console.error('Registro guardado; hubo un error al actualizar otros módulos:',e);renderMeasureHistory();}closeBodyMeasureModal();}
 function del(arr,id){db[arr]=db[arr].filter(x=>x.id!==id);save()}
 function renderAll(){let m=macros();$('kCal').textContent=Math.round(m.k)+' kcal';renderSupplements();
