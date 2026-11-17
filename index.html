@@ -802,6 +802,28 @@ svg.nav-icon{fill:currentColor!important;stroke:none!important}
 svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:none!important}
 </style>
 
+
+<style id="solid-neon-kpi-v2142">
+/* Solid Neon UI — tarjetas de peso y cintura */
+.body-kpis-live>.body-kpi:nth-child(1){
+ background:linear-gradient(145deg,#071a12 0%,#0b1711 100%);
+ border:1px solid #35ff91;box-shadow:inset 0 0 0 1px #35ff9122,0 0 16px #35ff9120;
+}
+.body-kpis-live>.body-kpi:nth-child(1) strong{color:#35ff91;text-shadow:0 0 12px #35ff9166}
+.body-kpis-live>.body-kpi:nth-child(1) small{color:#a5f5c8}
+.body-kpis-live>.body-kpi:nth-child(2){
+ background:linear-gradient(145deg,#071923 0%,#0b151b 100%);
+ border:1px solid #35d9ff;box-shadow:inset 0 0 0 1px #35d9ff22,0 0 16px #35d9ff20;
+}
+.body-kpis-live>.body-kpi:nth-child(2) strong{color:#35d9ff;text-shadow:0 0 12px #35d9ff66}
+.body-kpis-live>.body-kpi:nth-child(2) small{color:#a5edff}
+.body-chart-detail{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:7px 2px 2px;padding:9px 11px;background:#080e0b;border:1px solid #314538;border-radius:10px;color:#b7c9bd;font-size:12px}
+.body-chart-point{cursor:pointer;transition:r .15s ease,filter .15s ease;outline:none}
+.body-chart-point:focus{stroke:#fff;stroke-width:3}
+.body-history-chart{height:210px}
+@media(max-width:600px){.body-history-chart{height:190px}.body-chart-detail{font-size:11px}}
+</style>
+
 </head><body>
 
 
@@ -1284,28 +1306,41 @@ function chart(id){let data=db.measures.filter(x=>x.weight).sort((a,b)=>a.date.l
 function renderBodyHistoryLineChart(weights,waists){
  const host=$('bodyHistoryLineChart');if(!host)return;
  const series=[
-  {name:'Peso',unit:'kg',data:Array.isArray(weights)?weights:[],color:'#A4FF28'},
-  {name:'Cintura',unit:'cm',data:Array.isArray(waists)?waists:[],color:'#55D6FF'}
+  {name:'Peso',unit:'kg',field:'weight',data:Array.isArray(weights)?weights:[],color:'#A4FF28'},
+  {name:'Cintura',unit:'cm',field:'waist',data:Array.isArray(waists)?waists:[],color:'#35D9FF'}
  ].filter(s=>s.data.length);
  if(!series.length){host.innerHTML='<div class="muted" style="padding:18px 4px">Aún no hay datos válidos para graficar. Revisa el historial de mediciones.</div>';return;}
  const dates=[...new Set(series.flatMap(s=>s.data.map(x=>String(x.date||''))))].filter(Boolean).sort();
- const W=560,H=145,L=38,R=12,T=14,B=25,iw=W-L-R,ih=H-T-B;
+ const W=680,H=210,L=42,R=18,T=28,B=34,iw=W-L-R,ih=H-T-B;
  const xFor=d=>L+(dates.length>1?dates.indexOf(d)/(dates.length-1):.5)*iw;
- let grid=[0,.5,1].map(t=>`<line x1="${L}" y1="${T+t*ih}" x2="${W-R}" y2="${T+t*ih}" stroke="#263b2d" stroke-width="1"/>`).join('');
- let paths='',dots='';
- series.forEach(s=>{
-  const field=s.name==='Peso'?'weight':'waist';
-  const vals=s.data.map(x=>Number(x[field])).filter(Number.isFinite);
+ const fmtDate=d=>{const a=String(d).split('-');return a.length===3?a[2]+'/'+a[1]+'/'+a[0]:d};
+ let grid=[0,.5,1].map(t=>`<line x1="${L}" y1="${T+t*ih}" x2="${W-R}" y2="${T+t*ih}" stroke="#263b2d" stroke-width="1" stroke-dasharray="4 5"/>`).join('');
+ let paths='',dots='',labels='';
+ series.forEach((s,si)=>{
+  const vals=s.data.map(x=>Number(x[s.field])).filter(Number.isFinite);
   const min=Math.min(...vals),max=Math.max(...vals),span=Math.max(max-min,1);
   const yFor=v=>T+ih-((v-min)/span)*ih;
-  const points=s.data.map(x=>({x:xFor(String(x.date||'')),y:yFor(Number(x[field])),v:Number(x[field]),date:String(x.date||'')})).filter(p=>Number.isFinite(p.v));
-  if(points.length>1)paths+=`<polyline points="${points.map(p=>p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ')}" fill="none" stroke="${s.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 4px ${s.color}88)"/>`;
-  dots+=points.map(p=>`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4.5" fill="${s.color}" stroke="#0b100d" stroke-width="1.5"><title>${p.date}: ${p.v.toFixed(1)} ${s.unit}</title></circle>`).join('');
+  const points=s.data.map(x=>({x:xFor(String(x.date||'')),y:yFor(Number(x[s.field])),v:Number(x[s.field]),date:String(x.date||''),series:si,unit:s.unit,name:s.name})).filter(p=>Number.isFinite(p.v));
+  if(points.length>1)paths+=`<polyline points="${points.map(p=>p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ')}" fill="none" stroke="${s.color}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 5px ${s.color}99)"/>`;
+  dots+=points.map((p,i)=>`<circle class="body-chart-point" data-series="${si}" data-index="${i}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="6" fill="${s.color}" stroke="#07100b" stroke-width="2.5" tabindex="0" role="button" aria-label="${p.name}: ${p.v.toFixed(1)} ${p.unit}, ${fmtDate(p.date)}"><title>${fmtDate(p.date)}: ${p.v.toFixed(1)} ${p.unit} · Toca para ver detalle</title></circle>`).join('');
+  labels+=points.map(p=>`<text x="${p.x.toFixed(1)}" y="${Math.max(13,p.y-11).toFixed(1)}" text-anchor="middle" fill="${s.color}" font-size="11" font-weight="800">${p.v.toFixed(1)}</text>`).join('');
  });
  const first=dates[0]||'',last=dates[dates.length-1]||'';
- host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${grid}${paths}${dots}<text x="${L}" y="${H-5}" fill="#91a397" font-size="10">${first}</text><text x="${W-R}" y="${H-5}" text-anchor="end" fill="#91a397" font-size="10">${last}</text></svg><div class="body-chart-legend">${series.map(s=>`<span><i style="background:${s.color};box-shadow:0 0 7px ${s.color}"></i>${s.name} (${s.unit})</span>`).join('')}</div>`;
+ host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" aria-label="Gráfico interactivo de pesajes y cintura">${grid}${paths}${dots}${labels}<text x="${L}" y="${H-8}" fill="#AABCB0" font-size="11">${fmtDate(first)}</text><text x="${W-R}" y="${H-8}" text-anchor="end" fill="#AABCB0" font-size="11">${fmtDate(last)}</text></svg><div class="body-chart-detail" aria-live="polite">Toca un punto del gráfico para ver el detalle del registro.</div><div class="body-chart-legend">${series.map(s=>`<span><i style="background:${s.color};box-shadow:0 0 9px ${s.color}"></i>${s.name} (${s.unit})</span>`).join('')}</div>`;
+ const detail=host.querySelector('.body-chart-detail');
+ const selectPoint=el=>{
+  const si=Number(el.dataset.series),idx=Number(el.dataset.index),ser=series[si],row=ser&&ser.data[idx];if(!row)return;
+  host.querySelectorAll('.body-chart-point').forEach(n=>{n.setAttribute('r','6');n.style.filter='none'});
+  el.setAttribute('r','9');el.style.filter=`drop-shadow(0 0 8px ${ser.color})`;
+  detail.innerHTML=`<strong style="color:${ser.color}">${ser.name}: ${Number(row[ser.field]).toFixed(1)} ${ser.unit}</strong><span>${fmtDate(row.date)}</span>`;
+ };
+ host.querySelectorAll('.body-chart-point').forEach(el=>{
+  el.addEventListener('click',()=>selectPoint(el));
+  el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectPoint(el)}});
+ });
+ const weightPoints=host.querySelectorAll('.body-chart-point[data-series="0"]');
+ if(weightPoints.length)selectPoint(weightPoints[weightPoints.length-1]);
 }
-
 function renderBodyGoalProgress(weights,current){
  const host=$('bodyGoalProgress'),remaining=$('bodyTo80');if(!host||!remaining)return;
  if(!current){remaining.textContent='—';host.innerHTML='<p class="muted">Registra tu peso para calcular el progreso.</p>';return;}
