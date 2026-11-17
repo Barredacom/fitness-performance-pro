@@ -707,6 +707,35 @@ body.measure-modal-open{overflow:hidden}
 .measure-delete-btn:active{transform:scale(.97);background:#26391a!important}
 </style>
 
+
+<style id="solid-neon-measure-modal-v2135">
+/* Solid Neon UI — mediciones: foco, cierre e iconografía */
+#bodyMeasureModal .body-measure-dialog input,
+#bodyMeasureModal .body-measure-dialog input:focus,
+#bodyMeasureModal .body-measure-dialog input:focus-visible,
+#bodyMeasureModal .body-measure-dialog input:active{
+  -webkit-appearance:none!important;appearance:none!important;
+  outline:0!important;outline-color:transparent!important;
+  border:1.5px solid #344b39!important;
+  box-shadow:none!important;
+  -webkit-tap-highlight-color:transparent;
+  caret-color:#A4FF28!important;
+}
+#bodyMeasureModal .body-measure-dialog input:focus,
+#bodyMeasureModal .body-measure-dialog input:focus-visible{
+  border:2px solid #A4FF28!important;
+  box-shadow:0 0 0 3px #A4FF2828,0 0 16px #A4FF2825!important;
+}
+#bodyMeasureModal #bodyMeasureModalTitle{display:flex;align-items:center;gap:11px}
+#bodyMeasureModal .solid-neon-modal-icon,
+#bodyMeasureModal .solid-neon-save-icon{width:23px;height:23px;flex:0 0 auto;fill:#A4FF28;filter:drop-shadow(0 0 5px #A4FF2870)}
+#bodyMeasureModal .body-form-close.solid-neon-close{display:flex;align-items:center;justify-content:center;background:#142316!important;border:1px solid #A4FF2875!important;color:#A4FF28!important;box-shadow:0 0 13px #A4FF2825!important;padding:0!important}
+#bodyMeasureModal .body-form-close.solid-neon-close svg{width:19px;height:19px;fill:#A4FF28;filter:drop-shadow(0 0 4px #A4FF2870)}
+#bodyMeasureModal .body-form-close.solid-neon-close:active{background:#20391c!important;transform:scale(.96)}
+#bodyMeasureModal .body-measure-dialog>button{display:flex;align-items:center;justify-content:center;gap:11px}
+#bodyMeasureModal .solid-neon-save-icon{fill:#10120a;filter:none}
+</style>
+
 </head><body>
 
 
@@ -887,9 +916,9 @@ body.measure-modal-open{overflow:hidden}
 <div class="body-measure-modal" id="bodyMeasureModal" hidden>
  <div class="body-measure-backdrop" data-close-measure-modal></div>
  <div class="body-measure-dialog card" id="bodyMeasureForm" role="dialog" aria-modal="true" aria-labelledby="bodyMeasureModalTitle">
-  <div class="sectionHead"><h3 id="bodyMeasureModalTitle">＋ Registrar medición</h3><button type="button" class="body-form-close" id="bodyCloseMeasureForm" aria-label="Cerrar formulario">×</button></div>
+  <div class="sectionHead"><h3 id="bodyMeasureModalTitle"><svg class="solid-neon-modal-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2h4v8h8v4h-8v8h-4v-8H2v-4h8z"/></svg><span>Registrar medición</span></h3><button type="button" class="body-form-close solid-neon-close" id="bodyCloseMeasureForm" aria-label="Cerrar formulario"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.2 2.4 12 9.2l6.8-6.8 3.6 3.6-6.8 6.8 6.8 6.8-3.6 3.6-6.8-6.8-6.8 6.8-3.6-3.6 6.8-6.8-6.8-6.8z"/></svg></button></div>
   <div class="formrow three"><label>Peso (kg)<input id="weight" type="number" step=".1" min="1" placeholder="82.3"></label><label>Cintura (cm)<input id="waist" type="number" step=".1" min="1" placeholder="95"></label><label>Fecha<input id="measureDate" type="date"></label></div>
-  <button type="button" onclick="addMeasure()">＋ Guardar medición</button>
+  <button type="button" onclick="addMeasure()"><svg class="solid-neon-save-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2h4v8h8v4h-8v8h-4v-8H2v-4h8z"/></svg><span>Guardar medición</span></button>
  </div>
 </div>
 <button type="button" class="measure-history-launch" id="measureHistoryLaunch" onclick="openMeasureHistoryModal()" aria-haspopup="dialog" aria-controls="measureHistoryModal"><span class="measure-history-title">HISTORIAL DE MEDICIONES</span><span class="measure-history-count" id="measureCount">0 registros</span></button>
