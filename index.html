@@ -1502,6 +1502,16 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
 .supp-recent{display:grid;gap:8px}.supp-recent-day{padding:11px 12px;border-radius:13px;background:#0b120d;border:1px solid #243328}.supp-recent-day strong{display:block;color:#e5eee4;font-size:12px}.supp-recent-day small{display:block;color:#98a799;font-size:11px;margin-top:4px}
 @media(max-width:420px){.supp-overview-card strong{font-size:22px}.supp-item{padding:11px;gap:9px}.supp-copy strong{font-size:12px}}
 </style>
+<style id="supplement-dropdown-v2173">
+.supp-history-dropdown{cursor:pointer;overflow:hidden}
+.supp-history-dropdown summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;font-size:15px;font-weight:950;color:#f0f5ef}
+.supp-history-dropdown summary::-webkit-details-marker{display:none}
+.supp-history-dropdown summary:after{content:'＋';display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;border:1px solid #54733b;border-radius:50%;color:#A6FF00;font-size:19px;transition:transform .2s,background .2s}
+.supp-history-dropdown[open] summary:after{content:'−';background:#A6FF00;color:#0b120d}
+.supp-dropdown-meta{margin-left:auto;color:#A6FF00;font-size:11px;font-weight:800;white-space:nowrap}
+.supp-dropdown-content{padding-top:12px}
+.supp-history-dropdown[open]{border-color:#668b3e;box-shadow:0 0 18px #A6FF0010}
+</style>
 <div class="supp-dashboard">
  <div class="supp-overview">
   <div class="supp-overview-card"><small>Confirmados hoy</small><strong id="suppDayCount">0 / 4</strong></div>
@@ -1515,8 +1525,10 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
   <div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#B8FF32" d="M5 24c7-10 20-13 29-5l9-7v24l-9-7C25 37 12 34 5 24z"/><circle cx="29" cy="20" r="2.4" fill="#101713"/><path d="M18 17l5 7-5 7" fill="none" stroke="#101713" stroke-width="2"/></svg></div><div class="supp-copy"><strong>OMEGA 3</strong><small>1 cápsula · configurable</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppOmega"><span class="warm-slider"></span></label></div>
   <div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#B8FF32" d="M14 13h23l-3 29H17z"/><path fill="#B8FF32" d="M25 3h5v13h-5z" transform="rotate(18 27 9)"/><rect x="16" y="20" width="18" height="4" fill="#101713"/><path d="M18 30h14" stroke="#101713" stroke-width="2"/></svg></div><div class="supp-copy"><strong>WHEY PROTEIN</strong><small>34 g · 130 kcal · 24 g proteína</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppWhey"><span class="warm-slider"></span></label></div>
  </div>
- <div class="card supp-day-history"><h3>CONSUMO CONFIRMADO HOY</h3><div id="suppDayHistory"><p class="supp-empty">Todavía no hay suplementos confirmados hoy. Activa el interruptor al consumir cada suplemento.</p></div></div>
- <div class="card supp-day-history"><h3>ÚLTIMOS 7 DÍAS</h3><div id="suppRecentHistory" class="supp-recent"><p class="supp-empty">Aquí aparecerá tu seguimiento semanal.</p></div></div>
+ <details class="card supp-day-history supp-history-dropdown" id="suppHistoryDropdown">
+  <summary><span>CONSUMO CONFIRMADO HOY</span><span class="supp-dropdown-meta" id="suppDropdownCount">0 registros</span></summary>
+  <div class="supp-dropdown-content" id="suppDayHistory"><p class="supp-empty">Todavía no hay suplementos confirmados hoy. Activa el interruptor al consumir cada suplemento.</p></div>
+ </details>
 </div>
 </section>
 
@@ -2623,22 +2635,20 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
   {id:'suppWhey',name:'Whey Protein',dose:'34 g · 130 kcal · 24 g proteína'}
  ];
  const STORE='fitness_performance_supplements_daily_v1';
- const dateKey=(d=new Date())=>{const p=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d),g=t=>p.find(x=>x.type===t)?.value;return `${g('year')}-${g('month')}-${g('day')}`};
+ const dateKey=()=>{const p=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()),g=t=>p.find(x=>x.type===t)?.value;return `${g('year')}-${g('month')}-${g('day')}`};
  const timeNow=()=>new Intl.DateTimeFormat('es-CL',{timeZone:'America/Santiago',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date());
  const load=()=>{try{return JSON.parse(localStorage.getItem(STORE)||'{}')}catch(_){return {}}};
  const save=data=>localStorage.setItem(STORE,JSON.stringify(data));
- const fmtDate=k=>{const [y,m,d]=k.split('-');return `${d}/${m}/${y}`};
  function render(){
   const all=load(),key=dateKey(),day=all[key]||{},container=document.getElementById('suppDayHistory');
   supplements.forEach(x=>{const el=document.getElementById(x.id);if(el)el.checked=!!day[x.id]});
-  const done=supplements.filter(x=>day[x.id]),count=document.getElementById('suppDayCount'),percent=document.getElementById('suppDayPercent'),bar=document.getElementById('suppDayProgress'),last=document.getElementById('suppDayLast');
+  const done=supplements.filter(x=>day[x.id]),count=document.getElementById('suppDayCount'),percent=document.getElementById('suppDayPercent'),bar=document.getElementById('suppDayProgress'),last=document.getElementById('suppDayLast'),dropCount=document.getElementById('suppDropdownCount');
   if(count)count.textContent=`${done.length} / ${supplements.length}`;
   if(percent)percent.textContent=Math.round(done.length/supplements.length*100)+'%';
   if(bar)bar.style.width=(done.length/supplements.length*100)+'%';
   if(last)last.textContent=done.map(x=>day[x.id].time||'').filter(Boolean).sort().pop()||'—';
+  if(dropCount)dropCount.textContent=done.length+' '+(done.length===1?'registro':'registros');
   if(container)container.innerHTML=done.length?done.map(x=>`<div class="supp-history-row"><strong>✓ ${x.name}</strong><small>${day[x.id].time||'—'} · ${day[x.id].dose||x.dose}</small></div>`).join(''):'<p class="supp-empty">Todavía no hay suplementos confirmados hoy. Activa el interruptor al consumir cada suplemento.</p>';
-  const recent=document.getElementById('suppRecentHistory');
-  if(recent){const rows=[];for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);const k=dateKey(d),v=all[k]||{},names=supplements.filter(x=>v[x.id]).map(x=>x.name);if(names.length)rows.push(`<div class="supp-recent-day"><strong>${i===0?'HOY':fmtDate(k)} · ${names.length}/4 confirmados</strong><small>${names.join(' · ')}</small></div>`)}recent.innerHTML=rows.join('')||'<p class="supp-empty">Todavía no hay consumos registrados en los últimos 7 días.</p>';}
  }
  supplements.forEach(x=>{const el=document.getElementById(x.id);if(!el)return;el.addEventListener('change',()=>{const all=load(),key=dateKey();all[key]=all[key]||{};if(el.checked)all[key][x.id]={time:timeNow(),dose:x.dose};else delete all[key][x.id];save(all);render();});});
  render();window.addEventListener('pageshow',render);document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
