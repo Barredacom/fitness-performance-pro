@@ -496,6 +496,62 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
   font-weight:800!important;
 }
 
+
+/* V21.46 — Electric Lime SOLO en el contorno de ambas tarjetas */
+.body-kpis-live > .body-kpi:nth-child(1),
+.body-kpis-live > .body-kpi:nth-child(2){
+  background:linear-gradient(145deg,#0b1b12 0%,#08130e 100%)!important;
+  border:2px solid #A6FF00!important;
+  border-radius:18px!important;
+  box-shadow:
+    0 0 0 1px #A6FF0060,
+    0 0 18px #A6FF0038,
+    inset 0 0 18px #A6FF000c!important;
+}
+.body-kpis-live > .body-kpi:nth-child(1) *,
+.body-kpis-live > .body-kpi:nth-child(2) *{
+  text-shadow:none!important;
+}
+.body-kpis-live > .body-kpi:nth-child(1) small,
+.body-kpis-live > .body-kpi:nth-child(2) small{
+  color:#A5F5C8!important;
+}
+.body-kpis-live > .body-kpi:nth-child(1) strong,
+.body-kpis-live > .body-kpi:nth-child(2) strong{
+  color:#35FF91!important;
+  font-weight:800!important;
+  text-shadow:0 0 12px #35FF9155!important;
+}
+.body-kpis-live > .body-kpi:nth-child(1) em,
+.body-kpis-live > .body-kpi:nth-child(2) em{
+  color:#9BAD9F!important;
+}
+
+
+/* V21.47 — Contorno Electric Lime neón + tipografía Electric Lime */
+.body-kpis-live > .body-kpi:nth-child(1),
+.body-kpis-live > .body-kpi:nth-child(2){
+  background:linear-gradient(145deg,#0b1b12 0%,#08130e 100%)!important;
+  border:2px solid #A6FF00!important;
+  border-radius:18px!important;
+  box-shadow:
+    0 0 0 1px #A6FF0080,
+    0 0 10px #A6FF0070,
+    0 0 24px #A6FF0045,
+    inset 0 0 18px #A6FF0010!important;
+}
+.body-kpis-live > .body-kpi:nth-child(1) *,
+.body-kpis-live > .body-kpi:nth-child(2) *{
+  color:#A6FF00!important;
+  text-shadow:0 0 8px #A6FF0045!important;
+}
+.body-kpis-live > .body-kpi:nth-child(1) strong,
+.body-kpis-live > .body-kpi:nth-child(2) strong{
+  color:#A6FF00!important;
+  font-weight:800!important;
+  text-shadow:0 0 10px #A6FF0070,0 0 20px #A6FF0038!important;
+}
+
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
