@@ -628,6 +628,34 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
   50%{text-shadow:0 0 9px #A6FF00,0 0 16px #A6FF0080}
 }
 
+
+/* V21.51 — Eliminar completamente la cápsula/fondo de la sección activa */
+.nav button.active{
+  background:transparent!important;
+  background-color:transparent!important;
+  border:0!important;
+  border-color:transparent!important;
+  outline:0!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  animation:none!important;
+  color:#A6FF00!important;
+  text-shadow:0 0 7px #A6FF00,0 0 15px #A6FF0080!important;
+}
+.nav button.active::before,
+.nav button.active::after{
+  content:none!important;
+  display:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+.nav button.active .nav-icon{
+  color:#A6FF00!important;
+  filter:drop-shadow(0 0 4px #A6FF00) drop-shadow(0 0 11px #A6FF00b0)!important;
+  animation:navIconPulse 2.2s ease-in-out infinite!important;
+}
+
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
