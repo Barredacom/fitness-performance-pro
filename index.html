@@ -736,6 +736,24 @@ body.measure-modal-open{overflow:hidden}
 #bodyMeasureModal .solid-neon-save-icon{fill:#10120a;filter:none}
 </style>
 
+
+<style id="premium-neon-modal-effects-v2136">
+/* Premium Neon Modal — Zoom + Fade, backdrop blur y glow */
+@keyframes fppModalBackdropIn{from{opacity:0;backdrop-filter:blur(0);-webkit-backdrop-filter:blur(0)}to{opacity:1;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}}
+@keyframes fppModalBackdropOut{from{opacity:1}to{opacity:0}}
+@keyframes fppModalZoomIn{0%{opacity:0;transform:translateY(8px) scale(.88);filter:blur(5px)}70%{opacity:1;transform:translateY(0) scale(1.015);filter:blur(0)}100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+@keyframes fppModalZoomOut{from{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}to{opacity:0;transform:translateY(7px) scale(.94);filter:blur(3px)}}
+.body-measure-modal:not([hidden]) .body-measure-backdrop{animation:fppModalBackdropIn .28s ease-out both}
+.body-measure-modal:not([hidden]) .body-measure-dialog{animation:fppModalZoomIn .32s cubic-bezier(.2,.85,.25,1) both;box-shadow:0 20px 70px #000b,0 0 30px #A4FF2830,0 0 65px #A4FF2810}
+.body-measure-modal.is-closing .body-measure-backdrop{animation:fppModalBackdropOut .22s ease-in both}
+.body-measure-modal.is-closing .body-measure-dialog{animation:fppModalZoomOut .22s ease-in both}
+.fp-modal-backdrop.open{animation:fppModalBackdropIn .28s ease-out both}
+.fp-modal-backdrop.open .fp-modal{animation:fppModalZoomIn .32s cubic-bezier(.2,.85,.25,1) both;box-shadow:0 0 35px rgba(83,255,85,.24),0 0 65px rgba(83,255,85,.08)}
+.fp-modal-backdrop.is-closing{animation:fppModalBackdropOut .22s ease-in both}
+.fp-modal-backdrop.is-closing .fp-modal{animation:fppModalZoomOut .22s ease-in both}
+@media(prefers-reduced-motion:reduce){.body-measure-modal:not([hidden]) .body-measure-backdrop,.body-measure-modal:not([hidden]) .body-measure-dialog,.fp-modal-backdrop.open,.fp-modal-backdrop.open .fp-modal,.body-measure-modal.is-closing .body-measure-backdrop,.body-measure-modal.is-closing .body-measure-dialog,.fp-modal-backdrop.is-closing,.fp-modal-backdrop.is-closing .fp-modal{animation:none!important;transition:none!important}}
+</style>
+
 </head><body>
 
 
@@ -992,7 +1010,8 @@ function loadCustomFoods(){try{const arr=JSON.parse(localStorage.getItem(CUSTOM_
 function toggleFoodCatalog(show,mode='create'){
  const modal=$('customFoodModal');if(!modal)return;
  const open=show===undefined?!modal.classList.contains('open'):!!show;
- modal.classList.toggle('open',open);
+ if(open){modal.classList.remove('is-closing');modal.classList.add('open');}
+ else if(modal.classList.contains('open')){modal.classList.add('is-closing');window.setTimeout(()=>{modal.classList.remove('open','is-closing');},220);}
  if(open){
    const editing=mode==='edit';
    modal.dataset.mode=editing?'edit':'create';
@@ -1714,15 +1733,16 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
 (function(){
  function closeBodyMeasureModal(){
   const modal=document.getElementById('bodyMeasureModal');
-  if(modal)modal.hidden=true;
-  document.body.classList.remove('measure-modal-open');
+  if(!modal||modal.hidden||modal.classList.contains('is-closing'))return;
+  modal.classList.add('is-closing');
+  window.setTimeout(function(){modal.hidden=true;modal.classList.remove('is-closing');document.body.classList.remove('measure-modal-open');},220);
  }
  window.closeBodyMeasureModal=closeBodyMeasureModal;
  function openBodyMeasureModal(){
   const modal=document.getElementById('bodyMeasureModal'),date=document.getElementById('measureDate');
   if(!modal)return;
   if(date&&!date.value){const now=new Date();date.value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');}
-  modal.hidden=false;document.body.classList.add('measure-modal-open');
+  modal.classList.remove('is-closing');modal.hidden=false;document.body.classList.add('measure-modal-open');
   setTimeout(function(){const field=document.getElementById('weight');if(field)field.focus({preventScroll:true});},80);
  }
  function initBodyMeasureSwipe(){
@@ -1743,8 +1763,8 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
   knob.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key==='End'){e.preventDefault();finishOpen();}});
   close.addEventListener('click',closeBodyMeasureModal);
   const historyModal=document.getElementById('measureHistoryModal'),historyClose=document.getElementById('closeMeasureHistory');
-  window.openMeasureHistoryModal=function(){if(!historyModal)return;renderMeasureHistory();historyModal.hidden=false;document.body.classList.add('measure-modal-open');};
-  function closeMeasureHistoryModal(){if(historyModal)historyModal.hidden=true;document.body.classList.remove('measure-modal-open');}
+  window.openMeasureHistoryModal=function(){if(!historyModal)return;renderMeasureHistory();historyModal.classList.remove('is-closing');historyModal.hidden=false;document.body.classList.add('measure-modal-open');};
+  function closeMeasureHistoryModal(){if(!historyModal||historyModal.hidden||historyModal.classList.contains('is-closing'))return;historyModal.classList.add('is-closing');window.setTimeout(function(){historyModal.hidden=true;historyModal.classList.remove('is-closing');document.body.classList.remove('measure-modal-open');},220);}
   if(historyClose)historyClose.addEventListener('click',closeMeasureHistoryModal);
   if(historyModal)historyModal.addEventListener('click',function(e){if(e.target&&e.target.hasAttribute('data-close-measure-history'))closeMeasureHistoryModal();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&historyModal&&!historyModal.hidden)closeMeasureHistoryModal();});
