@@ -1227,7 +1227,39 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
 .history-swipe-track.is-unlocked .history-swipe-subtitle{color:#b7c5b5}
 .history-calendar-panel{transition:opacity .18s ease,transform .18s ease}
 </style>
-\n</head><body>
+\n
+<style id="history-data-bottom-sheet">
+.history-data-trigger-wrap{display:flex;justify-content:center;padding:4px 0 8px}
+.history-data-trigger{display:flex;align-items:center;justify-content:center;gap:11px;width:100%;max-width:340px;min-height:52px;padding:12px 18px;border:1px solid #b5ff45;border-radius:13px;background:linear-gradient(135deg,#b4ff39,#91e900);color:#10170b;font-size:11px;font-weight:950;letter-spacing:1.25px;box-shadow:0 0 18px rgba(166,255,0,.15),inset 0 1px 0 rgba(255,255,255,.35);cursor:pointer}
+.history-data-trigger:active{transform:scale(.985)}
+.history-data-trigger-icon{font-size:18px;font-weight:900}
+.history-data-trigger-chevron{font-size:17px;margin-left:auto}
+.history-data-modal{position:fixed;inset:0;z-index:9999;display:flex;align-items:flex-end;justify-content:center;visibility:hidden;pointer-events:none}
+.history-data-modal.is-open{visibility:visible;pointer-events:auto}
+.history-data-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.68);opacity:0;transition:opacity .25s ease}
+.history-data-modal.is-open .history-data-backdrop{opacity:1}
+.history-data-sheet{position:relative;width:min(100%,620px);max-height:min(84vh,760px);overflow:auto;padding:12px 20px calc(24px + env(safe-area-inset-bottom));border:1px solid #354638;border-bottom:0;border-radius:23px 23px 0 0;background:linear-gradient(160deg,#151e17 0%,#090e0b 82%);box-shadow:0 -18px 55px rgba(0,0,0,.45);transform:translateY(105%);transition:transform .34s cubic-bezier(.2,.8,.2,1)}
+.history-data-modal.is-open .history-data-sheet{transform:translateY(0)}
+.history-data-handle{width:42px;height:4px;border-radius:9px;background:#536253;margin:0 auto 18px}
+.history-data-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}
+.history-data-heading h3{font-size:22px;color:#f0f5ef;margin:5px 0 4px}
+.history-data-heading p{font-size:11px;color:#9ba99c;margin:0}
+.history-data-close{width:35px;height:35px;border:1px solid #3a4a3b;border-radius:50%;background:#111812;color:#a6ff00;font-size:24px;line-height:1;cursor:pointer}
+.history-data-action{display:flex;align-items:center;gap:13px;width:100%;box-sizing:border-box;padding:14px;margin:9px 0;border:1px solid #344638;border-radius:14px;background:#111813;color:#edf4ed;text-align:left;cursor:pointer}
+.history-data-action-icon{flex:0 0 38px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:11px;background:rgba(166,255,0,.1);color:#a6ff00;font-size:23px;font-weight:900}
+.history-data-action strong,.history-data-warning strong{display:block;font-size:12px;color:#edf4ed}
+.history-data-action small,.history-data-warning small{display:block;font-size:10px;line-height:1.45;color:#9ba99c;margin-top:4px}
+.history-data-action-arrow{margin-left:auto;color:#a6ff00;font-size:23px}
+.history-data-import{position:relative}
+.history-data-import input{display:block;width:100%;max-width:100%;margin-top:9px;color:#aab7aa;font-size:10px}
+.history-data-import input::file-selector-button{border:1px solid #a6ff00;border-radius:8px;background:#a6ff00;color:#10170b;font-weight:800;padding:8px 10px;margin-right:8px}
+.history-data-warning{display:flex;gap:13px;margin-top:18px;padding:14px;border:1px solid #453738;border-radius:14px;background:#171313}
+.history-data-warning-icon{flex:0 0 28px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid #9b6868;border-radius:50%;color:#d4a0a0;font-weight:900}
+.history-data-warning button{margin-top:12px;border:1px solid #785454;border-radius:9px;background:#241919;color:#d7aaaa;padding:9px 12px;font-size:10px;font-weight:800;cursor:pointer}
+@media(min-width:700px){.history-data-modal{align-items:center;padding:20px}.history-data-sheet{border-bottom:1px solid #354638;border-radius:23px;transform:translateY(35px) scale(.98);opacity:.7}.history-data-modal.is-open .history-data-sheet{transform:translateY(0) scale(1);opacity:1}}
+</style>
+
+</head><body>
 
 
 <!-- SUPABASE AUTH INTEGRATION -->
@@ -1537,7 +1569,19 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
    <div class="history-timeline-heading"><div><span class="history-eyebrow">REGISTRO CRONOLÓGICO</span><h3 id="historyTitle">Actividad del día</h3></div><span id="historyCount" class="history-count">0 registros</span></div>
    <div id="historyResult" class="history-timeline"></div>
   </div>
-  <div class="history-tools"><button onclick="exportData()">Exportar respaldo JSON</button><label>Importar respaldo<input type="file" accept=".json" onchange="importData(event)"></label><button class="history-danger" onclick="clearAll()">Borrar todos los datos</button></div>
+  <div class="history-data-trigger-wrap">
+   <button type="button" class="history-data-trigger" onclick="openHistoryDataModal()"><span class="history-data-trigger-icon">↗</span> GESTIÓN DE DATOS <span class="history-data-trigger-chevron">↑</span></button>
+  </div>
+  <div class="history-data-modal" id="historyDataModal" aria-hidden="true">
+   <div class="history-data-backdrop" onclick="closeHistoryDataModal()"></div>
+   <section class="history-data-sheet" role="dialog" aria-modal="true" aria-labelledby="historyDataTitle">
+    <div class="history-data-handle"></div>
+    <div class="history-data-heading"><div><span class="history-eyebrow">FITNESS PERFORMANCE PRO</span><h3 id="historyDataTitle">Gestión de datos</h3><p>Respalda y administra tus registros.</p></div><button type="button" class="history-data-close" onclick="closeHistoryDataModal()" aria-label="Cerrar">×</button></div>
+    <button type="button" class="history-data-action" onclick="exportData()"><span class="history-data-action-icon">↓</span><span><strong>Crear respaldo</strong><small>Descargar tus registros en un archivo JSON.</small></span><span class="history-data-action-arrow">›</span></button>
+    <label class="history-data-action history-data-import"><span class="history-data-action-icon">↑</span><span><strong>Restaurar respaldo</strong><small>Seleccionar un archivo JSON guardado anteriormente.</small><input type="file" accept=".json" onchange="importData(event)"></span><span class="history-data-action-arrow">›</span></label>
+    <div class="history-data-warning"><span class="history-data-warning-icon">!</span><span><strong>Administración avanzada</strong><small>Esta acción elimina los registros guardados en la aplicación.</small><button type="button" onclick="clearAll()">Borrar todos los datos</button></span></div>
+   </section>
+  </div>
  </div>
 </section>
 <div class="footer">FITNESS PERFORMANCE PRO · Prototipo local V1 · Tus registros se guardan en este navegador</div>
@@ -2541,6 +2585,21 @@ window.addEventListener('pageshow',()=>{try{renderBodyEvolution()}catch(e){conso
   window.addEventListener('resize',()=>{if(panel().hidden)setPosition(0);else setPosition(travelLimit())});
  });
 })();
+</script>
+
+
+<script id="history-data-modal-controller">
+function openHistoryDataModal(){
+ const modal=document.getElementById('historyDataModal');if(!modal)return;
+ modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+ const close=modal.querySelector('.history-data-close');setTimeout(()=>close?.focus(),120);
+}
+function closeHistoryDataModal(){
+ const modal=document.getElementById('historyDataModal');if(!modal)return;
+ modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');document.body.style.overflow='';
+ document.querySelector('.history-data-trigger')?.focus();
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('historyDataModal')?.classList.contains('is-open'))closeHistoryDataModal()});
 </script>
 
 </body></html>
