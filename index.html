@@ -254,7 +254,7 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 
 /* Modal alimento personalizado */
 .fp-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);z-index:99999;display:none;align-items:center;justify-content:center;padding:18px}
-.fp-modal-backdrop.open{display:flex}.fp-modal{width:min(560px,100%);max-height:90vh;overflow:auto;background:#101511;border:1px solid #53ff55;border-radius:18px;padding:22px;box-shadow:0 0 35px rgba(83,255,85,.18)}
+.fp-modal-backdrop.open{display:flex}.fp-modal{width:min(560px,100%);max-height:82dvh;overflow-y:auto;overscroll-behavior:contain;background:#101511;border:1px solid #53ff55;border-radius:18px;padding:15px;box-shadow:0 0 35px rgba(83,255,85,.18)}
 .fp-modal h2{margin:0 0 8px;color:#53ff55}.fp-modal .muted{color:#91a397}.fp-modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
 
 /* TRAINING PRO visual reconstruction */
@@ -277,7 +277,7 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 .fp-custom-units{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 0}.fp-custom-units button{padding:9px 5px;border-radius:10px}.fp-custom-units button.active{background:#1a2a17;border-color:#A4FF28;color:#A4FF28}
 .fp-custom-qty{background:#0b0e0b;border:1px solid #29372a;border-radius:12px;padding:10px;margin:8px 0 12px}.fp-custom-qty-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.fp-custom-qty input[type=range]{width:100%;accent-color:#A4FF28;margin:10px 0}.fp-custom-qty input[type=number]{width:90px}
 .fp-custom-macros{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}.fp-custom-macro{background:#171d17;border:1px solid #2b3a2c;border-radius:10px;padding:10px;min-width:0}.fp-custom-macro label{display:block;font-size:.82rem;color:#91a397;margin-bottom:5px}.fp-custom-macro input{width:100%;min-width:0;box-sizing:border-box}
-.fp-custom-results{display:grid;gap:6px;max-height:145px;overflow:auto;margin:6px 0}.fp-custom-result{width:100%;text-align:left;background:#172017;border:1px solid #344334;border-radius:9px;padding:9px;color:#edf7ef}.fp-custom-result small{display:block;color:#91a397;margin-top:3px}.fp-custom-status{font-size:.82rem;color:#91a397;margin:5px 0}
+.fp-custom-results{display:grid;gap:5px;max-height:126px;overflow-y:auto;overscroll-behavior:contain;margin:6px 0}.fp-custom-result{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#172017;border:1px solid #344334;border-radius:9px;padding:7px;color:#edf7ef}.fp-custom-result-info{min-width:0}.fp-custom-result small{display:block;color:#91a397;margin-top:2px;font-size:.72rem}.fp-custom-result-actions{display:flex;align-items:center;gap:5px;flex-shrink:0}.fp-custom-result-actions a,.fp-custom-result-actions button{font-size:.72rem;padding:7px 8px;border-radius:8px;white-space:nowrap}.fp-custom-result-actions a{color:#b7ff72;border:1px solid #405b35;text-decoration:none}.fp-custom-result-actions button{background:#a4ff28;color:#081006;border:0;font-weight:800}.fp-custom-status{font-size:.78rem;line-height:1.35;color:#91a397;margin:5px 0}
 
 /* FIX slider cantidad modal: control táctil visible y arrastrable */
 .fp-custom-qty input[type="range"]{
@@ -1834,8 +1834,14 @@ const CHILE_SUPERMARKETS=[{name:'Líder',domain:'lider.cl'},{name:'Jumbo',domain
 function searchChileFoods(){
  const q=$('catalogSearch').value.trim(),st=$('catalogSearchStatus'),box=$('catalogSearchResults');
  if(!q){st.textContent='Escribe el nombre, marca o tipo de producto.';return;}
- st.textContent='Búsqueda limitada a los cinco supermercados seleccionados. Elige una tienda para ver sus resultados disponibles.';
- box.innerHTML=CHILE_SUPERMARKETS.map(store=>{const url='https://www.google.com/search?q='+encodeURIComponent('site:'+store.domain+' '+q);return `<a class="fp-custom-result" href="${url}" target="_blank" rel="noopener noreferrer" style="display:block;text-decoration:none"><b>${store.name}</b><small>Buscar “${escCatalog(q)}” en ${store.domain} ↗</small></a>`;}).join('');
+ st.textContent='Selecciona una tienda para abrir sus productos. Cuando identifiques el producto, vuelve aquí y pulsa “Usar producto” para completar sus datos nutricionales.';
+ box.innerHTML=CHILE_SUPERMARKETS.map((store,i)=>{const url='https://www.google.com/search?q='+encodeURIComponent('site:'+store.domain+' '+q);return `<div class="fp-custom-result"><div class="fp-custom-result-info"><b>${store.name}</b><small>Buscar “${escCatalog(q)}” en ${store.domain}</small></div><div class="fp-custom-result-actions"><a href="${url}" target="_blank" rel="noopener noreferrer">Ver productos ↗</a><button type="button" onclick="useChileFoodSearch(${i})">Usar producto</button></div></div>`;}).join('');
+}
+function useChileFoodSearch(i){
+ const store=CHILE_SUPERMARKETS[i],q=$('catalogSearch').value.trim();if(!store||!q)return;
+ $('catalogName').value=q;
+ $('catalogSearchStatus').textContent=`Borrador seleccionado para ${store.name}. Confirma el nombre exacto del envase y completa los nutrientes según su etiqueta.`;
+ $('catalogK').focus();
 }
 function selectChileFood(i){const x=window.chileFoodResults?.[i];if(!x)return;const n=x.nutriments||{};$('catalogName').value=[x.product_name,x.brands].filter(Boolean).join(' · ');$('catalogK').value=Number(n['energy-kcal_100g']??n['energy-kcal_value']??0);$('catalogP').value=Number(n.proteins_100g||0);$('catalogC').value=Number(n.carbohydrates_100g||0);$('catalogF').value=Number(n.fat_100g||0);setCustomFoodUnit('g');$('catalogSearchStatus').textContent='Importado por 100 g. Confirma los datos con la etiqueta.';$('catalogSearchResults').innerHTML='';}
 function loadCustomFoods(){try{const arr=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');arr.forEach((f,i)=>{foods[f.key||('custom_'+i)]={n:f.n,k:+f.k,p:+f.p,c:+f.c,f:+f.f,unit:f.unit||'g',unitWeight:Number(f.unitWeight)||0};});}catch(e){console.warn('No se pudo cargar catálogo personal',e)}}
@@ -2686,7 +2692,7 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
  <div class="fp-modal">
   <h2 id="customFoodTitle">＋ Crear alimento personalizado</h2>
   <div id="catalogEditPickerWrap" hidden><label>Selecciona alimento para editar</label><select id="catalogEditPicker" onchange="loadCustomFoodForEdit(this.value)"></select></div>
-  <div id="catalogSearchWrap">  <p class="muted">Busca exclusivamente en Líder, Jumbo, Santa Isabel, Tottus y Unimarc. Los resultados se consultan por tienda; verifica los valores nutricionales en la etiqueta.</p>
+  <div id="catalogSearchWrap">  <p class="muted">Busca en Líder, Jumbo, Santa Isabel, Tottus y Unimarc. Abre la tienda, identifica el producto y selecciónalo aquí para completar sus datos.</p>
   <label>Buscar producto en supermercados de Chile</label><div class="fp-custom-search"><input id="catalogSearch" placeholder="Ej. Yogur Protein Soprole, avena, pan integral" maxlength="120" onkeydown="if(event.key==='Enter'){event.preventDefault();searchChileFoods();}"><button type="button" onclick="searchChileFoods()">Buscar en 5 tiendas</button></div>
   <div id="catalogSearchStatus" class="fp-custom-status" aria-live="polite"></div><div id="catalogSearchResults" class="fp-custom-results"></div>
   </div>
