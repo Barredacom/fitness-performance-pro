@@ -1427,11 +1427,33 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
     <div class="nutrition-actions nutrition-actions-v22">
       <button class="nutrition-primary-action" type="button" onclick="addFoodToMeal()">＋ AGREGAR ALIMENTO</button>
     </div>
-    <section class="nutrition-draft-card-v22" aria-label="Alimentos agregados a la comida">
+    <style id="nutrition-meal-swipe-v22">
+.nutrition-meal-swipe-wrap{margin-top:12px}
+.nutrition-meal-swipe-track{position:relative;display:flex;align-items:center;min-height:76px;padding:7px;border:1px solid #40513f;border-radius:17px;background:linear-gradient(145deg,#111914,#090e0b);overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 8px 24px rgba(0,0,0,.18);transition:border-color .2s ease,box-shadow .2s ease}
+.nutrition-meal-swipe-progress{position:absolute;inset:5px auto 5px 5px;width:var(--swipe-progress,0%);border-radius:12px;background:linear-gradient(90deg,rgba(166,255,40,.08),rgba(166,255,40,.2));pointer-events:none;transition:width .06s linear}
+.nutrition-meal-swipe-copy{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0 72px;text-align:center;pointer-events:none;transition:opacity .18s ease}
+.nutrition-meal-swipe-title{font-size:clamp(10px,2.7vw,13px);letter-spacing:1.5px;font-weight:950;color:#A4FF28}
+.nutrition-meal-swipe-subtitle{font-size:clamp(10px,2.5vw,12px);color:#89978a}
+.nutrition-meal-swipe-thumb{position:absolute;left:7px;top:7px;bottom:7px;width:58px;border:1px solid #A4FF28;border-radius:12px;background:#172116;color:#A4FF28;font-size:22px;font-weight:900;box-shadow:0 0 15px rgba(166,255,40,.12);display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none;z-index:2;transition:left .08s linear,transform .16s ease,background .18s ease,color .18s ease,box-shadow .18s ease}
+.nutrition-meal-swipe-thumb:active{cursor:grabbing;transform:scale(.97)}
+.nutrition-meal-swipe-track.is-unlocked{border-color:#A4FF28;box-shadow:0 0 0 1px rgba(166,255,40,.13),0 0 22px rgba(166,255,40,.08)}
+.nutrition-meal-swipe-track.is-unlocked .nutrition-meal-swipe-thumb{background:#A4FF28;color:#10160c}
+.nutrition-meal-swipe-track.is-unlocked .nutrition-meal-swipe-copy{opacity:.72}
+.nutrition-meal-swipe-track.is-completed .nutrition-meal-swipe-title{color:#D1FF83}
+@media(max-width:520px){.nutrition-meal-swipe-track{min-height:72px}.nutrition-meal-swipe-copy{padding:0 64px}.nutrition-meal-swipe-title{font-size:9px;letter-spacing:1.1px}.nutrition-meal-swipe-subtitle{font-size:10px}.nutrition-meal-swipe-thumb{width:56px}}
+@media(prefers-reduced-motion:reduce){.nutrition-meal-swipe-thumb,.nutrition-meal-swipe-copy,.nutrition-meal-swipe-progress{transition:none!important}}
+</style>
+<section class="nutrition-draft-card-v22" aria-label="Alimentos agregados a la comida">
       <div class="nutrition-draft-heading-v22"><span>ALIMENTOS AGREGADOS</span><span class="nutrition-draft-count-v22" id="nutritionDraftCount">0</span></div>
       <div id="mealDraftList" class="nutrition-draft-list-v22" aria-live="polite"></div>
       <div class="nutrition-draft-total-v22"><span>TOTAL DE LA COMIDA</span><strong id="mealDraftTotals">0 kcal · P 0 · C 0 · G 0</strong></div>
-      <button class="nutrition-secondary-action nutrition-register-v22" type="button" onclick="registerMeal()">✓ REGISTRAR COMIDA</button>
+      <div class="nutrition-meal-swipe-wrap" id="nutritionMealSwipeWrap" aria-label="Desliza para registrar la comida">
+        <div class="nutrition-meal-swipe-track" id="nutritionMealSwipeTrack">
+          <div class="nutrition-meal-swipe-progress" id="nutritionMealSwipeProgress"></div>
+          <div class="nutrition-meal-swipe-copy" id="nutritionMealSwipeCopy"><span class="nutrition-meal-swipe-title">DESLIZA PARA REGISTRAR</span><span class="nutrition-meal-swipe-subtitle">Desliza a la derecha para guardar la comida</span></div>
+          <button type="button" class="nutrition-meal-swipe-thumb" id="nutritionMealSwipe" aria-label="Desliza a la derecha para registrar la comida"><span>››</span></button>
+        </div>
+      </div>
     </section>
     <div class="nutrition-actions nutrition-catalog-actions-v22">
       <button class="nutrition-catalog-action" type="button" onclick="toggleFoodCatalog()">＋ Crear alimento personalizado</button>
@@ -1868,16 +1890,16 @@ function renderMealDraft(){
 function removeMealDraft(i){window.mealDraft.splice(i,1);renderMealDraft();}
 async function registerMeal(){
   const arr=window.mealDraft||[];
-  if(!arr.length)return alert('Agrega al menos un alimento a la comida');
+  if(!arr.length){alert('Agrega al menos un alimento a la comida');return false;}
   const supabase=window.fpSupabaseClient;
-  if(!supabase)return alert('Supabase no está conectado');
+  if(!supabase){alert('Supabase no está conectado');return false;}
   const {data:{user},error:userError}=await supabase.auth.getUser();
-  if(userError||!user)return alert('Debes iniciar sesión');
+  if(userError||!user){alert('Debes iniciar sesión');return false;}
   const rows=arr.map(x=>({fecha:x.date||$('foodDate').value,alimento:x.n,comida:x.meal||$('meal').value,gramos:x.g,calorias:x.k,proteina:x.p,carbohidratos:x.c,grasas:x.f,user_id:user.id}));
   const {error}=await supabase.from('registros_nutricion').insert(rows);
-  if(error){console.error(error);return alert('Error al registrar comida: '+error.message);}
+  if(error){console.error(error);alert('Error al registrar comida: '+error.message);return false;}
   arr.forEach(x=>db.foods.push({...x,meal:x.meal||$('meal').value,date:x.date||$('foodDate').value,id:Date.now()+Math.random()}));
-  save();renderMealMiniSummary();window.mealDraft=[];renderMealDraft();alert('Comida completa registrada correctamente');
+  save();renderMealMiniSummary();window.mealDraft=[];renderMealDraft();return true;
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
@@ -2810,4 +2832,25 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElement
 #nutricion .nutrition-catalog-actions-v22 .nutrition-catalog-action{grid-column:auto;min-height:48px}
 @media(max-width:650px){#nutricion .nutrition-catalog-actions-v22{grid-template-columns:1fr}}
 </style>
+<script id="nutrition-meal-swipe-handler-v22">
+(function(){
+ const knob=document.getElementById('nutritionMealSwipe'),track=document.getElementById('nutritionMealSwipeTrack'),copy=document.getElementById('nutritionMealSwipeCopy');
+ if(!knob||!track||knob.dataset.ready==='1')return;knob.dataset.ready='1';
+ let dragging=false,startX=0,startLeft=7,pointerId=null;const edge=7,knobWidth=58;
+ function maxLeft(){return Math.max(edge,track.clientWidth-knobWidth-edge)}
+ function setLeft(left){const max=maxLeft(),x=Math.max(edge,Math.min(max,left));knob.style.left=x+'px';const pct=max===edge?0:(x-edge)/(max-edge)*100;track.style.setProperty('--swipe-progress',pct+'%');return pct}
+ function reset(){dragging=false;pointerId=null;knob.style.left=edge+'px';track.style.setProperty('--swipe-progress','0%');track.classList.remove('is-unlocked')}
+ async function finish(){dragging=false;pointerId=null;const pct=setLeft(maxLeft());if(pct<94){reset();return}track.classList.add('is-unlocked');knob.style.left=maxLeft()+'px';
+  const result=await registerMeal();
+  if(result===true){track.classList.add('is-completed');if(copy)copy.innerHTML='<span class="nutrition-meal-swipe-title">✓ COMIDA REGISTRADA</span><span class="nutrition-meal-swipe-subtitle">Registro guardado correctamente</span>';knob.setAttribute('aria-label','Comida registrada correctamente');knob.style.left=maxLeft()+'px';
+    setTimeout(()=>{track.classList.remove('is-completed','is-unlocked');if(copy)copy.innerHTML='<span class="nutrition-meal-swipe-title">DESLIZA PARA REGISTRAR</span><span class="nutrition-meal-swipe-subtitle">Desliza a la derecha para guardar la comida</span>';knob.setAttribute('aria-label','Desliza a la derecha para registrar la comida');reset()},1700);
+  }else reset();
+ }
+ knob.addEventListener('pointerdown',e=>{if(track.classList.contains('is-completed'))return;dragging=true;startX=e.clientX;startLeft=parseFloat(getComputedStyle(knob).left)||edge;pointerId=e.pointerId;try{knob.setPointerCapture(pointerId)}catch(_){}e.preventDefault()});
+ knob.addEventListener('pointermove',e=>{if(!dragging||e.pointerId!==pointerId)return;const pct=setLeft(startLeft+e.clientX-startX);if(pct>=94){try{knob.releasePointerCapture(pointerId)}catch(_){}finish()}e.preventDefault()});
+ function end(e){if(!dragging)return;reset();if(e&&e.cancelable)e.preventDefault()}
+ knob.addEventListener('pointerup',end);knob.addEventListener('pointercancel',end);knob.addEventListener('lostpointercapture',()=>{if(dragging)reset()});
+ knob.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='End'){e.preventDefault();if(!track.classList.contains('is-completed'))finish()}});
+})();
+</script>
 </body></html>
