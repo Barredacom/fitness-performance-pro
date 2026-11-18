@@ -1931,26 +1931,34 @@ async function registerMeal(){
   const {data:{user},error:userError}=await supabase.auth.getUser();
   if(userError||!user){alert('Debes iniciar sesión');return false;}
 
-  // Guarda alimento por alimento y conserva en el borrador solo los que fallen.
+  // Guarda cada alimento por separado. Un fallo de refresco local nunca debe
+  // convertir un INSERT confirmado por Supabase en un falso error de registro.
   const pending=[];
   let savedCount=0;
+  if(!Array.isArray(db.foods))db.foods=[];
   for(const x of arr){
-    const row={fecha:x.date||$('foodDate').value,alimento:x.n,comida:x.meal||$('meal').value,gramos:x.g,calorias:x.k,proteina:x.p,carbohidratos:x.c,grasas:x.f,user_id:user.id};
+    const fecha=x.date||$('foodDate').value;
+    const comida=x.meal||$('meal').value;
+    const row={fecha,alimento:x.n,comida,gramos:x.g,calorias:x.k,proteina:x.p,carbohidratos:x.c,grasas:x.f,user_id:user.id};
     try{
-      const {error}=await supabase.from('registros_nutricion').insert(row);
-      if(error){console.error('Error guardando alimento:',x.n,error);pending.push(x);continue;}
-      db.foods.push({...x,meal:x.meal||$('meal').value,date:x.date||$('foodDate').value,id:Date.now()+Math.random()});
+      const response=await supabase.from('registros_nutricion').insert(row);
+      if(response?.error){console.error('Error guardando alimento:',x.n,response.error);pending.push(x);continue;}
+      db.foods.push({...x,meal:comida,date:fecha,id:Date.now()+Math.random()});
       savedCount++;
     }catch(err){console.error('Error guardando alimento:',x.n,err);pending.push(x);}
   }
   window.mealDraft=pending;
-  save();renderMealMiniSummary();renderMealDraft();
+  // Persistencia y renderizado local son secundarios: si fallan, se informa en
+  // consola pero se respeta el resultado real confirmado por Supabase.
+  try{localStorage.setItem(DBKEY,JSON.stringify(db));}catch(err){console.error('Alimento guardado en Supabase; no se pudo actualizar la copia local:',err);}
+  try{renderMealMiniSummary();}catch(err){console.error('Error refrescando resumen nutricional:',err);}
+  try{renderMealDraft();}catch(err){console.error('Error refrescando borrador nutricional:',err);}
   if(pending.length){
     const failedNames=pending.map(x=>x.n).join(', ');
     alert(savedCount?`Se guardaron ${savedCount} alimento(s). No se pudieron guardar: ${failedNames}. Quedaron pendientes para reintentar.`:`No se pudo guardar: ${failedNames}. Quedaron pendientes para reintentar.`);
     return 'partial';
   }
-  return true;
+  return savedCount>0;
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
