@@ -1872,7 +1872,7 @@ loadFoodCatalog();
 function foodVals(){const key=$('food').value,qty=Number($('grams').value)||0,v=foods[key];if(!v)return {n:'',k:0,p:0,c:0,f:0,g:0,qty};const base=(nutritionUnit==='unit')?qty*(Number(v.unitWeight)||0):qty;return {...v,k:v.k*base/100,p:v.p*base/100,c:v.c*base/100,f:v.f*base/100,g:base,qty};}
 
 let nutritionUnit='g';
-function setNutritionUnit(unit){nutritionUnit=['ml','unit'].includes(unit)?unit:'g';const ids={g:'unitGrams',ml:'unitMl',unit:'unitPieces'};Object.entries(ids).forEach(([u,id])=>{const b=$(id);if(b){b.classList.toggle('active',nutritionUnit===u);b.setAttribute('aria-pressed',String(nutritionUnit===u));}});$('quantityLabel').textContent=nutritionUnit==='g'?'GRAMOS':nutritionUnit==='ml'?'MILILITROS':'UNIDADES';$('grams').max=nutritionUnit==='unit'?'30':'1000';$('quantityRange').max=$('grams').max;syncQuantityRange();preview();}
+function setNutritionUnit(unit){nutritionUnit=['ml','unit'].includes(unit)?unit:'g';const ids={g:'unitGrams',ml:'unitMl',unit:'unitPieces'};Object.entries(ids).forEach(([u,id])=>{const b=$(id);if(b){b.classList.toggle('active',nutritionUnit===u);b.setAttribute('aria-pressed',String(nutritionUnit===u));}});$('quantityLabel').textContent=nutritionUnit==='g'?'GRAMOS':nutritionUnit==='ml'?'MILILITROS':'UNIDADES';$('grams').max=nutritionUnit==='unit'?'30':'1000';$('quantityRange').max=$('grams').max;syncQuantityRange();updateNutritionQtyPreset();preview();}
 function syncQuantityRange(){const input=$('grams'),range=$('quantityRange');if(!input||!range)return;const max=Number(input.max)||1000;let val=Number(input.value)||1;val=Math.min(max,Math.max(1,val));range.max=String(max);range.value=String(val);const pct=((val-1)/(max-1||1))*100;range.style.background=`linear-gradient(90deg,#a4ff28 0%,#a4ff28 ${pct}%,#26352a ${pct}%,#26352a 100%)`;}
 $('food').onchange=()=>{if(nutritionUnit==='unit'&&!Number(foods[$('food').value]?.unitWeight))setNutritionUnit('g');else preview();};
 $('grams').oninput=()=>{syncQuantityRange();preview();};
@@ -2921,7 +2921,35 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElement
 <script id="nutrition-quantity-redesign-v23-1">
 function adjustNutritionQty(delta){const input=document.getElementById('grams');if(!input)return;const step=Number(input.step)||1;const min=Number(input.min)||1;const max=Number(input.max)||1000;input.value=Math.max(min,Math.min(max,(Number(input.value)||min)+delta*step));input.dispatchEvent(new Event('input',{bubbles:true}));updateNutritionQtyPreset();}
 function setNutritionQtyPreset(value){const input=document.getElementById('grams');if(!input)return;input.value=Math.min(Number(input.max)||1000,Math.max(Number(input.min)||1,value));input.dispatchEvent(new Event('input',{bubbles:true}));updateNutritionQtyPreset();}
-function updateNutritionQtyPreset(){const input=document.getElementById('grams');if(!input)return;document.querySelectorAll('#nutritionQtyPresets button').forEach(btn=>{const v=parseInt(btn.textContent,10);btn.classList.toggle('selected',v===Number(input.value));});const unit=document.getElementById('nutritionQtyUnit');if(unit)unit.textContent=nutritionUnit==='ml'?'ml':nutritionUnit==='unit'?'ud':'g';}
+function updateNutritionQtyPreset(){const input=document.getElementById('grams');if(!input)return;document.querySelectorAll('#nutritionQtyPresets button').forEach(btn=>{const v=parseInt(btn.textContent,10);btn.classList.toggle('selected',v===Number(input.value));const span=btn.querySelector('span');if(span)span.textContent=nutritionUnit==='ml'?'ml':nutritionUnit==='unit'?'ud':'g';});const unit=document.getElementById('nutritionQtyUnit');if(unit)unit.textContent=nutritionUnit==='ml'?'ml':nutritionUnit==='unit'?'ud':'g';}
 const _nutritionQtyUnitObserver=setInterval(()=>{if(typeof nutritionUnit!=='undefined')updateNutritionQtyPreset();},500);window.addEventListener('beforeunload',()=>clearInterval(_nutritionQtyUnitObserver));
 </script>
+
+<style id="nutrition-quantity-compact-v23-2">
+/* V23.2 — selector de cantidad adaptado al espacio real */
+.nutrition-quantity-field{min-width:0!important;overflow:hidden!important}
+.nutrition-quantity-head{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:7px!important;margin-bottom:7px!important}
+.nutrition-quantity-head>label{font-size:clamp(10px,2.6vw,12px)!important;letter-spacing:.8px!important}
+.nutrition-unit-switch{height:38px!important;max-width:158px!important;border-radius:22px!important;padding:3px!important;display:flex!important;gap:2px!important}
+.nutrition-unit-switch button{height:31px!important;min-height:31px!important;border-radius:18px!important;font-size:12px!important;padding:0 9px!important}
+.nutrition-qty-main{grid-template-columns:36px minmax(0,1fr) 36px!important;gap:6px!important;margin:5px 0 7px!important}
+.nutrition-qty-step{min-height:48px!important;height:48px!important;border-radius:13px!important;font-size:23px!important}
+.nutrition-qty-value{min-height:48px!important;height:48px!important;padding:4px 8px!important;border-radius:13px!important;gap:5px!important}
+.nutrition-qty-value #grams{font-size:clamp(24px,6.4vw,32px)!important;min-height:36px!important;height:36px!important;width:min(100%,100px)!important}
+.nutrition-qty-value span{font-size:14px!important;min-width:16px!important}
+.nutrition-qty-presets{gap:5px!important;margin:0 0 5px!important}
+.nutrition-qty-presets button{min-height:34px!important;height:34px!important;border-radius:10px!important;font-size:11px!important;padding:3px 2px!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:3px!important}
+.nutrition-qty-presets button span{font-size:10px!important}
+.nutrition-quantity-range{height:6px!important;margin:4px 0 1px!important}
+.nutrition-range-labels{font-size:10px!important;margin-top:2px!important}
+@media(max-width:600px){
+ .nutrition-quantity-head{gap:5px!important}
+ .nutrition-unit-switch{max-width:145px!important}
+ .nutrition-qty-main{grid-template-columns:34px minmax(0,1fr) 34px!important;gap:5px!important}
+ .nutrition-qty-step{height:44px!important;min-height:44px!important;font-size:21px!important}
+ .nutrition-qty-value{height:44px!important;min-height:44px!important}
+ .nutrition-qty-value #grams{font-size:28px!important;min-height:32px!important;height:32px!important}
+ .nutrition-qty-presets button{height:32px!important;min-height:32px!important;font-size:10px!important}
+}
+</style>
 </body></html>
