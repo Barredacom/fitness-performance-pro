@@ -1412,14 +1412,17 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
         <input id="quantityRange" class="nutrition-quantity-range" type="range" min="1" max="1000" step="1" value="100" aria-label="Ajustar cantidad de alimento">
         <div class="nutrition-range-labels"><span>1</span><span>1000</span></div>
       </div>
-      <label class="nutrition-field">COMIDA
+      <label class="nutrition-field nutrition-field-wide nutrition-meal-field">COMIDA
         <select id="meal"><option>Desayuno</option><option>Almuerzo</option><option>Cena</option><option>Colación</option></select>
       </label>
-      <label class="nutrition-field nutrition-date-field">FECHA
-        <div class="date-display-card" id="dateDisplayCard" role="button" tabindex="0" aria-label="Seleccionar fecha">
-          <span class="date-display-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 2v4M17 2v4M3 9h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Z"/><path d="M7 13h2M12 13h2M7 17h2M12 17h2"/></svg></span>
-          <span class="date-display-divider" aria-hidden="true"></span>
-          <span class="date-display-text" id="dateDisplayText">Nov 15, 2026</span>
+      <label class="nutrition-field nutrition-field-wide nutrition-date-field">FECHA
+        <div class="nutrition-date-swipe" id="nutritionDateSwipe" role="button" tabindex="0" aria-label="Desliza a la derecha para abrir el calendario">
+          <button type="button" class="nutrition-date-swipe-thumb" id="nutritionDateSwipeThumb" aria-label="Deslizar para abrir calendario">››</button>
+          <div class="nutrition-date-swipe-copy">
+            <strong>DESLIZA PARA VER EL CALENDARIO</strong>
+            <span>Desliza a la derecha para abrir · a la izquierda para cerrar</span>
+            <b id="dateDisplayText">Nov 15, 2026</b>
+          </div>
           <input id="foodDate" type="date" onchange="updateDateDisplay();renderMealMiniSummary()" aria-label="Seleccionar fecha">
         </div>
       </label>
@@ -2952,4 +2955,46 @@ const _nutritionQtyUnitObserver=setInterval(()=>{if(typeof nutritionUnit!=='unde
  .nutrition-qty-presets button{height:32px!important;min-height:32px!important;font-size:10px!important}
 }
 </style>
+
+<style id="nutrition-form-layout-v23-3">
+/* V23.3: formulario reordenado a una columna y adaptado al contenedor existente */
+.nutrition-form-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto!important;gap:10px!important;overflow:visible!important}
+.nutrition-form-grid>.nutrition-field-wide,
+.nutrition-form-grid>.nutrition-field,
+.nutrition-form-grid>.nutrition-quantity-field{grid-column:1/-1!important;grid-row:auto!important;width:100%!important;max-width:100%!important;min-width:0!important}
+.nutrition-form-grid>.nutrition-quantity-field{order:4!important}
+.nutrition-form-grid>.nutrition-meal-field{order:2!important}
+.nutrition-form-grid>.nutrition-date-field{order:3!important}
+.nutrition-form-grid>label.nutrition-field-wide:first-child{order:1!important}
+.nutrition-form-grid>.nutrition-quantity-field{margin-top:0!important}
+.nutrition-date-swipe{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:76px;height:76px;padding:6px;border:1px solid #314536;border-radius:18px;background:linear-gradient(145deg,#101812,#070b08);box-shadow:inset 0 1px 0 rgba(255,255,255,.03);overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.nutrition-date-swipe-thumb{position:relative;z-index:1;flex:0 0 62px;width:62px;height:62px;border:1px solid #a4ff28;border-radius:15px;background:#101a12;color:#a4ff28;font-size:24px;font-weight:900;letter-spacing:-4px;padding-right:6px;box-shadow:0 0 12px #a4ff2818;transition:transform .12s ease,background .12s ease}
+.nutrition-date-swipe-thumb:active{background:#a4ff2815}
+.nutrition-date-swipe-copy{min-width:0;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;padding-right:4px}
+.nutrition-date-swipe-copy strong{color:#a4ff28;font-size:clamp(9px,2.5vw,12px);font-weight:900;letter-spacing:1.2px;line-height:1.2}
+.nutrition-date-swipe-copy span{color:#829086;font-size:clamp(10px,2.7vw,12px);line-height:1.2}
+.nutrition-date-swipe-copy b{display:none;color:#f2f6f2;font-size:14px}
+.nutrition-date-swipe input[type=date]{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;opacity:0!important}
+.nutrition-date-swipe:focus-visible{outline:2px solid #a4ff28;outline-offset:2px}
+@media(max-width:430px){
+ .nutrition-date-swipe{min-height:72px;height:72px;gap:8px;padding:5px;border-radius:16px}
+ .nutrition-date-swipe-thumb{flex-basis:54px;width:54px;height:58px;border-radius:13px;font-size:22px}
+ .nutrition-date-swipe-copy strong{font-size:9px;letter-spacing:.7px}
+ .nutrition-date-swipe-copy span{font-size:10px}
+}
+</style>
+<script id="nutrition-date-swipe-v23-3">
+(()=> {
+ const box=document.getElementById('nutritionDateSwipe'), thumb=document.getElementById('nutritionDateSwipeThumb'), input=document.getElementById('foodDate');
+ if(!box||!thumb||!input)return;
+ let startX=null, lastX=0, dragging=false, fired=false;
+ const openPicker=()=>{try{if(typeof input.showPicker==='function')input.showPicker();else input.click();}catch(e){input.click();}};
+ box.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;startX=e.clientX;lastX=startX;dragging=true;fired=false;});
+ box.addEventListener('pointermove',e=>{if(!dragging||startX===null)return;lastX=e.clientX;const dx=lastX-startX;if(dx>0)thumb.style.transform=`translateX(${Math.min(dx,Math.max(0,box.clientWidth-thumb.offsetWidth-12))}px)`;});
+ const finish=e=>{if(!dragging||startX===null)return;const dx=(e.clientX??lastX)-startX;dragging=false;startX=null;thumb.style.transform='';if(dx>Math.min(45,box.clientWidth*.16)){fired=true;openPicker();}};
+ box.addEventListener('pointerup',finish);box.addEventListener('pointercancel',()=>{dragging=false;startX=null;thumb.style.transform='';});
+ box.addEventListener('click',e=>{if(fired){fired=false;return;}if(e.detail===0)openPicker();});
+ box.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openPicker();}});
+})();
+</script>
 </body></html>
