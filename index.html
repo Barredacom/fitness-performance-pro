@@ -1416,11 +1416,11 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
         <select id="meal"><option>Desayuno</option><option>Almuerzo</option><option>Cena</option><option>Colación</option></select>
       </label>
       <label class="nutrition-field nutrition-field-wide nutrition-date-field">FECHA
-        <div class="nutrition-date-swipe" id="nutritionDateSwipe" role="button" tabindex="0" aria-label="Desliza a la derecha para abrir el calendario">
-          <button type="button" class="nutrition-date-swipe-thumb" id="nutritionDateSwipeThumb" aria-label="Deslizar para abrir calendario">››</button>
+        <div class="nutrition-date-swipe" id="nutritionDateSwipe" role="button" tabindex="0" aria-label="Desliza para revelar el campo de fecha">
+          <button type="button" class="nutrition-date-swipe-thumb" id="nutritionDateSwipeThumb" aria-label="Deslizar para revelar fecha">››</button>
           <div class="nutrition-date-swipe-copy">
-            <strong>DESLIZA PARA VER EL CALENDARIO</strong>
-            <span>Desliza a la derecha para abrir · a la izquierda para cerrar</span>
+            <strong>DESLIZA PARA REVELAR LA FECHA</strong>
+            <span>Desliza para revelar · luego toca la fecha</span>
             <b id="dateDisplayText">Nov 15, 2026</b>
           </div>
           <input id="foodDate" type="date" onchange="updateDateDisplay();renderMealMiniSummary()" aria-label="Seleccionar fecha">
@@ -1724,8 +1724,8 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
   <div class="history-swipe-shell">
    <div class="history-swipe-track" id="historySwipeTrack">
     <div class="history-swipe-progress" id="historySwipeProgress"></div>
-    <div class="history-swipe-copy"><span class="history-swipe-title">DESLIZA PARA VER EL CALENDARIO</span><span class="history-swipe-subtitle">Desliza a la derecha para abrir · a la izquierda para cerrar</span></div>
-    <button type="button" class="history-swipe-thumb" id="historySwipeThumb" aria-label="Deslizar para abrir calendario" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span>››</span></button>
+    <div class="history-swipe-copy"><span class="history-swipe-title">DESLIZA PARA REVELAR LA FECHA</span><span class="history-swipe-subtitle">Desliza para revelar · luego toca la fecha</span></div>
+    <button type="button" class="history-swipe-thumb" id="historySwipeThumb" aria-label="Deslizar para revelar fecha" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span>››</span></button>
    </div>
    <div class="history-calendar-panel" id="historyCalendarPanel" hidden>
     <label class="history-date-label">FECHA CONSULTADA<input id="historyDate" type="date" onchange="renderHistory()"></label>
@@ -2967,6 +2967,7 @@ const _nutritionQtyUnitObserver=setInterval(()=>{if(typeof nutritionUnit!=='unde
 .nutrition-form-grid>.nutrition-date-field{order:3!important}
 .nutrition-form-grid>label.nutrition-field-wide:first-child{order:1!important}
 .nutrition-form-grid>.nutrition-quantity-field{margin-top:0!important}
+/* V23.7: fecha usa el patrón Historial 360°: gesto revela control nativo; no abre picker por JS */
 .nutrition-date-swipe{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:76px;height:76px;padding:6px;border:1px solid #314536;border-radius:18px;background:linear-gradient(145deg,#101812,#070b08);box-shadow:inset 0 1px 0 rgba(255,255,255,.03);overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none}
 .nutrition-date-swipe-thumb{position:relative;z-index:1;flex:0 0 62px;width:62px;height:62px;border:1px solid #a4ff28;border-radius:15px;background:#101a12;color:#a4ff28;font-size:24px;font-weight:900;letter-spacing:-4px;padding-right:6px;box-shadow:0 0 12px #a4ff2818;transition:transform .12s ease,background .12s ease}
 .nutrition-date-swipe-thumb:active{background:#a4ff2815}
@@ -2974,16 +2975,33 @@ const _nutritionQtyUnitObserver=setInterval(()=>{if(typeof nutritionUnit!=='unde
 .nutrition-date-swipe-copy strong{color:#a4ff28;font-size:clamp(9px,2.5vw,12px);font-weight:900;letter-spacing:1.2px;line-height:1.2}
 .nutrition-date-swipe-copy span{color:#829086;font-size:clamp(10px,2.7vw,12px);line-height:1.2}
 .nutrition-date-swipe-copy b{display:none;color:#f2f6f2;font-size:14px}
-.nutrition-date-swipe input[type=date]{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;opacity:0!important}
+.nutrition-date-swipe input[type=date]{position:relative!important;display:none!important;width:100%!important;min-width:0!important;height:58px!important;max-width:100%!important;box-sizing:border-box!important;margin-top:8px!important;padding:8px 12px!important;opacity:1!important;font-size:16px!important;cursor:pointer!important;z-index:2!important;left:auto!important}
+.nutrition-date-field.date-unlocked .nutrition-date-swipe{border-color:#a4ff28;box-shadow:0 0 12px #a4ff2815}
+.nutrition-date-field.date-unlocked .nutrition-date-swipe-copy strong{content:'CALENDARIO DISPONIBLE';}
+.nutrition-date-field.date-unlocked .nutrition-date-swipe-copy span{content:'Toca el campo de fecha para seleccionar';}
+.nutrition-date-field.date-unlocked .nutrition-date-swipe-copy b{display:block}
+.nutrition-date-field.date-unlocked input[type=date]{display:block!important}
 .nutrition-date-swipe:focus-visible{outline:2px solid #a4ff28;outline-offset:2px}
-@media(max-width:430px){
- .nutrition-date-swipe{min-height:72px;height:72px;gap:8px;padding:5px;border-radius:16px}
- .nutrition-date-swipe-thumb{flex-basis:54px;width:54px;height:58px;border-radius:13px;font-size:22px}
- .nutrition-date-swipe-copy strong{font-size:9px;letter-spacing:.7px}
- .nutrition-date-swipe-copy span{font-size:10px}
-}
+@media(max-width:430px){.nutrition-date-swipe{min-height:72px;height:72px;gap:8px;padding:5px;border-radius:16px}.nutrition-date-swipe-thumb{flex-basis:54px;width:54px;height:58px;border-radius:13px;font-size:22px}.nutrition-date-swipe-copy strong{font-size:9px;letter-spacing:.7px}.nutrition-date-swipe-copy span{font-size:10px}}
 </style>
-<script id="nutrition-date-swipe-v23-6">(()=>{const box=document.getElementById('nutritionDateSwipe'),thumb=document.getElementById('nutritionDateSwipeThumb'),input=document.getElementById('foodDate');if(!box||!thumb||!input)return;let x0=0,drag=false,pid=null;const reset=()=>{drag=false;pid=null;thumb.style.transform='';};const picker=()=>{try{input.focus({preventScroll:true});input.click();}catch(e){input.click();}};thumb.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;drag=true;pid=e.pointerId;x0=e.clientX;try{thumb.setPointerCapture(pid);}catch(_){}});thumb.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==pid)return;const dx=Math.max(0,e.clientX-x0),max=Math.max(0,box.clientWidth-thumb.offsetWidth-12);thumb.style.transform=`translateX(${Math.min(dx,max)}px)`;});thumb.addEventListener('pointerup',e=>{if(!drag||e.pointerId!==pid)return;const dx=e.clientX-x0;reset();if(dx>Math.min(45,box.clientWidth*.14))picker();});thumb.addEventListener('pointercancel',reset);thumb.addEventListener('lostpointercapture',()=>{if(drag)reset();});thumb.addEventListener('click',e=>{e.preventDefault();picker();});box.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();picker();}});input.addEventListener('change',()=>{updateDateDisplay();renderMealMiniSummary();});})();</script>
+<script id="nutrition-date-swipe-v23-7">
+(()=>{
+ const field=document.querySelector('.nutrition-date-field'),box=document.getElementById('nutritionDateSwipe'),thumb=document.getElementById('nutritionDateSwipeThumb'),input=document.getElementById('foodDate');
+ if(!field||!box||!thumb||!input)return;
+ let dragging=false,startX=0,startPos=0,pos=0,pointerId=null;
+ const max=()=>Math.max(0,box.clientWidth-thumb.offsetWidth-12);
+ const set=x=>{pos=Math.max(0,Math.min(max(),x));thumb.style.transform=`translateX(${pos}px)`;};
+ const reveal=()=>{field.classList.add('date-unlocked');box.classList.add('is-unlocked');thumb.innerHTML='✓';thumb.setAttribute('aria-label','Desliza a la izquierda para ocultar el calendario');box.setAttribute('aria-label','Calendario revelado. Toca el campo de fecha para seleccionar.');};
+ const hide=()=>{field.classList.remove('date-unlocked');box.classList.remove('is-unlocked');thumb.innerHTML='››';thumb.setAttribute('aria-label','Deslizar para revelar calendario');box.setAttribute('aria-label','Desliza a la derecha para revelar el calendario');set(0);};
+ thumb.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;dragging=true;pointerId=e.pointerId;startX=e.clientX;startPos=pos;try{thumb.setPointerCapture(pointerId)}catch(_){}e.preventDefault();});
+ thumb.addEventListener('pointermove',e=>{if(!dragging||e.pointerId!==pointerId)return;set(startPos+e.clientX-startX);});
+ const finish=e=>{if(!dragging||e.pointerId!==pointerId)return;dragging=false;const threshold=max()*.72;if(pos>=threshold){set(max());reveal()}else if(pos<=max()*.18){hide()}else set(field.classList.contains('date-unlocked')?max():0);};
+ thumb.addEventListener('pointerup',finish);thumb.addEventListener('pointercancel',finish);
+ thumb.addEventListener('click',()=>{if(!field.classList.contains('date-unlocked')){set(max());reveal()}else hide();});
+ thumb.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();if(field.classList.contains('date-unlocked'))hide();else{set(max());reveal();}}});
+ window.addEventListener('resize',()=>set(field.classList.contains('date-unlocked')?max():0));
+})();
+</script>
 
 <style id="nutrition-full-width-fields-v23-4">
 /* V23.4: alimento, fecha y comida en ancho completo, orden vertical */
