@@ -1318,6 +1318,38 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
 }
 </style>
 
+
+<style id="nutrition-register-food-v23-8">
+/* V23.8: register-food layout and quantity selector only. Original calendar and clock controls remain untouched. */
+#nutricion .nutrition-form-grid,.nutrition-form-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-auto-flow:row!important;gap:10px!important;width:100%!important;min-width:0!important;overflow:visible!important}
+#nutricion .nutrition-form-grid>.nutrition-field-wide,#nutricion .nutrition-form-grid>.nutrition-date-field,#nutricion .nutrition-form-grid>.nutrition-meal-field,#nutricion .nutrition-form-grid>.nutrition-quantity-field,.nutrition-form-grid>.nutrition-field-wide,.nutrition-form-grid>.nutrition-date-field,.nutrition-form-grid>.nutrition-meal-field,.nutrition-form-grid>.nutrition-quantity-field{grid-column:1/-1!important;grid-row:auto!important;order:initial!important;width:100%!important;max-width:100%!important;min-width:0!important}
+#nutricion .nutrition-form-grid>.nutrition-field-wide,.nutrition-form-grid>.nutrition-field-wide{order:1!important}
+#nutricion .nutrition-form-grid>.nutrition-date-field,.nutrition-form-grid>.nutrition-date-field{order:2!important}
+#nutricion .nutrition-form-grid>.nutrition-meal-field,.nutrition-form-grid>.nutrition-meal-field{order:3!important}
+#nutricion .nutrition-form-grid>.nutrition-quantity-field,.nutrition-form-grid>.nutrition-quantity-field{order:4!important}
+.nutrition-form-grid .nutrition-field-wide select,.nutrition-form-grid .nutrition-date-field input[type=date],.nutrition-form-grid .nutrition-meal-field select{display:block!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+.nutrition-quantity-field{min-width:0!important;overflow:hidden!important}
+.nutrition-quantity-head{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:7px!important;margin-bottom:7px!important}
+.nutrition-unit-switch{height:38px!important;max-width:158px!important;border-radius:22px!important;padding:3px!important;display:flex!important;gap:2px!important}
+.nutrition-unit-switch button{height:31px!important;min-height:31px!important;border-radius:18px!important;font-size:12px!important;padding:0 9px!important}
+.nutrition-qty-main{display:grid!important;grid-template-columns:36px minmax(0,1fr) 36px!important;gap:6px!important;align-items:stretch!important;margin:5px 0 7px!important}
+.nutrition-qty-step{border:1px solid #8be72b!important;border-radius:13px!important;background:#0c150e!important;color:#a4ff28!important;font-size:23px!important;font-weight:800!important;height:48px!important;min-height:48px!important;padding:0!important}
+.nutrition-qty-value{display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;border:1px solid #4b7851!important;border-radius:13px!important;background:linear-gradient(145deg,#101a13,#0b110d)!important;padding:4px 8px!important;min-width:0!important;height:48px!important}
+.nutrition-qty-value #grams{border:0!important;background:transparent!important;box-shadow:none!important;text-align:center!important;width:min(100%,100px)!important;min-width:0!important;font-size:clamp(24px,6.4vw,32px)!important;font-weight:900!important;padding:0!important;min-height:36px!important;height:36px!important;color:#f4f7f4!important}
+.nutrition-qty-value span{font-size:14px!important;font-weight:900!important;color:#a4ff28!important;min-width:16px!important}
+.nutrition-qty-presets{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important;margin:0 0 5px!important}
+.nutrition-qty-presets button{min-height:34px!important;height:34px!important;border:1px solid #364b3b!important;border-radius:10px!important;background:linear-gradient(145deg,#151d18,#101510)!important;color:#f2f5f2!important;font-size:11px!important;font-weight:800!important;padding:3px 2px!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:3px!important}
+.nutrition-qty-presets button.selected{background:linear-gradient(135deg,#b5ff49,#75e900)!important;color:#101510!important;border-color:#c5ff75!important;box-shadow:0 0 12px #a4ff2830!important}
+.nutrition-qty-presets button span{font-size:10px!important;opacity:.82!important}
+.nutrition-quantity-range{height:6px!important;margin:4px 0 1px!important}
+.nutrition-range-labels{font-size:10px!important;margin-top:2px!important}
+@media(max-width:600px){.nutrition-quantity-head{gap:5px!important}.nutrition-unit-switch{max-width:145px!important}.nutrition-qty-main{grid-template-columns:34px minmax(0,1fr) 34px!important;gap:5px!important}.nutrition-qty-step{height:44px!important;min-height:44px!important;font-size:21px!important}.nutrition-qty-value{height:44px!important;min-height:44px!important}.nutrition-qty-value #grams{font-size:28px!important;min-height:32px!important;height:32px!important}.nutrition-qty-presets button{height:32px!important;min-height:32px!important;font-size:10px!important}}
+</style>
+<script id="nutrition-quantity-redesign-v23-8">
+function adjustNutritionQty(delta){const input=document.getElementById('grams');if(!input)return;const step=Number(input.step)||1;const min=Number(input.min)||1;const max=Number(input.max)||1000;input.value=Math.max(min,Math.min(max,(Number(input.value)||min)+delta*step));input.dispatchEvent(new Event('input',{bubbles:true}));updateNutritionQtyPreset();}
+function setNutritionQtyPreset(value){const input=document.getElementById('grams');if(!input)return;input.value=Math.min(Number(input.max)||1000,Math.max(Number(input.min)||1,value));input.dispatchEvent(new Event('input',{bubbles:true}));updateNutritionQtyPreset();}
+function updateNutritionQtyPreset(){const input=document.getElementById('grams');if(!input)return;document.querySelectorAll('#nutritionQtyPresets button').forEach(btn=>{const v=parseInt(btn.textContent,10);btn.classList.toggle('selected',v===Number(input.value));const span=btn.querySelector('span');if(span)span.textContent=nutritionUnit==='ml'?'ml':nutritionUnit==='unit'?'ud':'g';});const unit=document.getElementById('nutritionQtyUnit');if(unit)unit.textContent=nutritionUnit==='ml'?'ml':nutritionUnit==='unit'?'ud':'g';}
+</script>
 </head><body>
 
 
@@ -1395,11 +1427,12 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
       </label>
       <div class="nutrition-field nutrition-quantity-field">
         <div class="nutrition-quantity-head"><label for="grams" id="quantityLabel">GRAMOS</label><div class="nutrition-unit-switch" role="group" aria-label="Unidad de cantidad"><button type="button" class="active" id="unitGrams" aria-pressed="true" onclick="setNutritionUnit('g')">g</button><button type="button" id="unitMl" aria-pressed="false" onclick="setNutritionUnit('ml')">ml</button><button type="button" id="unitPieces" aria-pressed="false" onclick="setNutritionUnit('unit')">ud</button></div></div>
-        <input id="grams" type="number" value="100" min="1" max="1000" step="1" inputmode="decimal" aria-label="Cantidad de alimento">
+        <div class="nutrition-qty-main"><button type="button" class="nutrition-qty-step" onclick="adjustNutritionQty(-1)" aria-label="Disminuir cantidad">−</button><div class="nutrition-qty-value"><input id="grams" type="number" value="100" min="1" max="1000" step="1" inputmode="decimal" aria-label="Cantidad de alimento"><span id="nutritionQtyUnit">g</span></div><button type="button" class="nutrition-qty-step" onclick="adjustNutritionQty(1)" aria-label="Aumentar cantidad">＋</button></div>
+        <div class="nutrition-qty-presets" id="nutritionQtyPresets"><button type="button" onclick="setNutritionQtyPreset(50)">50 <span>g</span></button><button type="button" class="selected" onclick="setNutritionQtyPreset(100)">100 <span>g</span></button><button type="button" onclick="setNutritionQtyPreset(150)">150 <span>g</span></button><button type="button" onclick="setNutritionQtyPreset(200)">200 <span>g</span></button></div>
         <input id="quantityRange" class="nutrition-quantity-range" type="range" min="1" max="1000" step="1" value="100" aria-label="Ajustar cantidad de alimento">
         <div class="nutrition-range-labels"><span>1</span><span>1000</span></div>
       </div>
-      <label class="nutrition-field">COMIDA
+      <label class="nutrition-field nutrition-meal-field">COMIDA
         <select id="meal"><option>Desayuno</option><option>Almuerzo</option><option>Cena</option><option>Colación</option></select>
       </label>
       <label class="nutrition-field nutrition-date-field">FECHA
@@ -1859,7 +1892,7 @@ loadFoodCatalog();
 function foodVals(){const key=$('food').value,qty=Number($('grams').value)||0,v=foods[key];if(!v)return {n:'',k:0,p:0,c:0,f:0,g:0,qty};const base=(nutritionUnit==='unit')?qty*(Number(v.unitWeight)||0):qty;return {...v,k:v.k*base/100,p:v.p*base/100,c:v.c*base/100,f:v.f*base/100,g:base,qty};}
 
 let nutritionUnit='g';
-function setNutritionUnit(unit){nutritionUnit=['ml','unit'].includes(unit)?unit:'g';const ids={g:'unitGrams',ml:'unitMl',unit:'unitPieces'};Object.entries(ids).forEach(([u,id])=>{const b=$(id);if(b){b.classList.toggle('active',nutritionUnit===u);b.setAttribute('aria-pressed',String(nutritionUnit===u));}});$('quantityLabel').textContent=nutritionUnit==='g'?'GRAMOS':nutritionUnit==='ml'?'MILILITROS':'UNIDADES';$('grams').max=nutritionUnit==='unit'?'30':'1000';$('quantityRange').max=$('grams').max;syncQuantityRange();preview();}
+function setNutritionUnit(unit){nutritionUnit=['ml','unit'].includes(unit)?unit:'g';const ids={g:'unitGrams',ml:'unitMl',unit:'unitPieces'};Object.entries(ids).forEach(([u,id])=>{const b=$(id);if(b){b.classList.toggle('active',nutritionUnit===u);b.setAttribute('aria-pressed',String(nutritionUnit===u));}});$('quantityLabel').textContent=nutritionUnit==='g'?'GRAMOS':nutritionUnit==='ml'?'MILILITROS':'UNIDADES';$('grams').max=nutritionUnit==='unit'?'30':'1000';$('quantityRange').max=$('grams').max;syncQuantityRange();preview();updateNutritionQtyPreset();}
 function syncQuantityRange(){const input=$('grams'),range=$('quantityRange');if(!input||!range)return;const max=Number(input.max)||1000;let val=Number(input.value)||1;val=Math.min(max,Math.max(1,val));range.max=String(max);range.value=String(val);const pct=((val-1)/(max-1||1))*100;range.style.background=`linear-gradient(90deg,#a4ff28 0%,#a4ff28 ${pct}%,#26352a ${pct}%,#26352a 100%)`;}
 $('food').onchange=()=>{if(nutritionUnit==='unit'&&!Number(foods[$('food').value]?.unitWeight))setNutritionUnit('g');else preview();};
 $('grams').oninput=()=>{syncQuantityRange();preview();};
