@@ -656,6 +656,18 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
   animation:navIconPulse 2.2s ease-in-out infinite!important;
 }
 
+
+/* V23.1 Quantity selector redesign */
+.nutrition-qty-main{display:grid;grid-template-columns:54px minmax(0,1fr) 54px;gap:9px;align-items:stretch;margin:7px 0 12px}
+.nutrition-qty-step{border:1px solid #8be72b!important;border-radius:17px!important;background:#0c150e!important;color:#a4ff28!important;font-size:30px!important;font-weight:700!important;min-height:66px!important;box-shadow:0 0 10px #a4ff2812!important;padding:0!important}
+.nutrition-qty-value{display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid #4b7851;border-radius:18px;background:linear-gradient(145deg,#101a13,#0b110d);padding:8px 12px;min-width:0}
+.nutrition-qty-value #grams{border:0!important;background:transparent!important;box-shadow:none!important;text-align:center!important;width:min(100%,170px)!important;min-width:0!important;font-size:clamp(32px,9vw,48px)!important;font-weight:900!important;padding:0!important;min-height:52px!important;color:#f4f7f4!important}
+.nutrition-qty-value span{font-size:20px;font-weight:900;color:#a4ff28;min-width:24px}
+.nutrition-qty-presets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:0 0 7px}
+.nutrition-qty-presets button{min-height:40px;border:1px solid #364b3b!important;border-radius:13px!important;background:linear-gradient(145deg,#151d18,#101510)!important;color:#f2f5f2!important;font-size:13px!important;font-weight:800!important;padding:6px 3px!important}
+.nutrition-qty-presets button.selected{background:linear-gradient(135deg,#b5ff49,#75e900)!important;color:#101510!important;border-color:#c5ff75!important;box-shadow:0 0 12px #a4ff2830!important}
+.nutrition-qty-presets button span{opacity:.82}
+@media(max-width:390px){.nutrition-qty-main{grid-template-columns:44px minmax(0,1fr) 44px;gap:6px}.nutrition-qty-step{min-height:58px!important}.nutrition-qty-value #grams{font-size:34px!important}.nutrition-qty-presets button{font-size:12px!important}}
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
@@ -1395,7 +1407,8 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
       </label>
       <div class="nutrition-field nutrition-quantity-field">
         <div class="nutrition-quantity-head"><label for="grams" id="quantityLabel">GRAMOS</label><div class="nutrition-unit-switch" role="group" aria-label="Unidad de cantidad"><button type="button" class="active" id="unitGrams" aria-pressed="true" onclick="setNutritionUnit('g')">g</button><button type="button" id="unitMl" aria-pressed="false" onclick="setNutritionUnit('ml')">ml</button><button type="button" id="unitPieces" aria-pressed="false" onclick="setNutritionUnit('unit')">ud</button></div></div>
-        <input id="grams" type="number" value="100" min="1" max="1000" step="1" inputmode="decimal" aria-label="Cantidad de alimento">
+        <div class="nutrition-qty-main"><button type="button" class="nutrition-qty-step" onclick="adjustNutritionQty(-1)" aria-label="Disminuir cantidad">−</button><div class="nutrition-qty-value"><input id="grams" type="number" value="100" min="1" max="1000" step="1" inputmode="decimal" aria-label="Cantidad de alimento"><span id="nutritionQtyUnit">g</span></div><button type="button" class="nutrition-qty-step" onclick="adjustNutritionQty(1)" aria-label="Aumentar cantidad">＋</button></div>
+        <div class="nutrition-qty-presets" id="nutritionQtyPresets"><button type="button" onclick="setNutritionQtyPreset(50)">50 <span>g</span></button><button type="button" class="selected" onclick="setNutritionQtyPreset(100)">100 <span>g</span></button><button type="button" onclick="setNutritionQtyPreset(150)">150 <span>g</span></button><button type="button" onclick="setNutritionQtyPreset(200)">200 <span>g</span></button></div>
         <input id="quantityRange" class="nutrition-quantity-range" type="range" min="1" max="1000" step="1" value="100" aria-label="Ajustar cantidad de alimento">
         <div class="nutrition-range-labels"><span>1</span><span>1000</span></div>
       </div>
@@ -2905,4 +2918,10 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElement
 #nutricion .nutrition-draft-total-v22 strong{color:#f3f7f3!important}
 @media(max-width:420px){#nutricion .nutrition-form-grid{gap:11px 9px}#nutricion .nutrition-macro-v23{min-height:96px;padding:12px!important}#nutricion .nutrition-macro-v23 b{font-size:20px}#nutricion .nutrition-field{font-size:10px}}
 </style>
+<script id="nutrition-quantity-redesign-v23-1">
+function adjustNutritionQty(delta){const input=document.getElementById('grams');if(!input)return;const step=Number(input.step)||1;const min=Number(input.min)||1;const max=Number(input.max)||1000;input.value=Math.max(min,Math.min(max,(Number(input.value)||min)+delta*step));input.dispatchEvent(new Event('input',{bubbles:true}));updateNutritionQtyPreset();}
+function setNutritionQtyPreset(value){const input=document.getElementById('grams');if(!input)return;input.value=Math.min(Number(input.max)||1000,Math.max(Number(input.min)||1,value));input.dispatchEvent(new Event('input',{bubbles:true}));updateNutritionQtyPreset();}
+function updateNutritionQtyPreset(){const input=document.getElementById('grams');if(!input)return;document.querySelectorAll('#nutritionQtyPresets button').forEach(btn=>{const v=parseInt(btn.textContent,10);btn.classList.toggle('selected',v===Number(input.value));});const unit=document.getElementById('nutritionQtyUnit');if(unit)unit.textContent=nutritionUnit==='ml'?'ml':nutritionUnit==='unit'?'ud':'g';}
+const _nutritionQtyUnitObserver=setInterval(()=>{if(typeof nutritionUnit!=='undefined')updateNutritionQtyPreset();},500);window.addEventListener('beforeunload',()=>clearInterval(_nutritionQtyUnitObserver));
+</script>
 </body></html>
