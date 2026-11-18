@@ -1930,11 +1930,27 @@ async function registerMeal(){
   if(!supabase){alert('Supabase no está conectado');return false;}
   const {data:{user},error:userError}=await supabase.auth.getUser();
   if(userError||!user){alert('Debes iniciar sesión');return false;}
-  const rows=arr.map(x=>({fecha:x.date||$('foodDate').value,alimento:x.n,comida:x.meal||$('meal').value,gramos:x.g,calorias:x.k,proteina:x.p,carbohidratos:x.c,grasas:x.f,user_id:user.id}));
-  const {error}=await supabase.from('registros_nutricion').insert(rows);
-  if(error){console.error(error);alert('Error al registrar comida: '+error.message);return false;}
-  arr.forEach(x=>db.foods.push({...x,meal:x.meal||$('meal').value,date:x.date||$('foodDate').value,id:Date.now()+Math.random()}));
-  save();renderMealMiniSummary();window.mealDraft=[];renderMealDraft();return true;
+
+  // Guarda alimento por alimento y conserva en el borrador solo los que fallen.
+  const pending=[];
+  let savedCount=0;
+  for(const x of arr){
+    const row={fecha:x.date||$('foodDate').value,alimento:x.n,comida:x.meal||$('meal').value,gramos:x.g,calorias:x.k,proteina:x.p,carbohidratos:x.c,grasas:x.f,user_id:user.id};
+    try{
+      const {error}=await supabase.from('registros_nutricion').insert(row);
+      if(error){console.error('Error guardando alimento:',x.n,error);pending.push(x);continue;}
+      db.foods.push({...x,meal:x.meal||$('meal').value,date:x.date||$('foodDate').value,id:Date.now()+Math.random()});
+      savedCount++;
+    }catch(err){console.error('Error guardando alimento:',x.n,err);pending.push(x);}
+  }
+  window.mealDraft=pending;
+  save();renderMealMiniSummary();renderMealDraft();
+  if(pending.length){
+    const failedNames=pending.map(x=>x.n).join(', ');
+    alert(savedCount?`Se guardaron ${savedCount} alimento(s). No se pudieron guardar: ${failedNames}. Quedaron pendientes para reintentar.`:`No se pudo guardar: ${failedNames}. Quedaron pendientes para reintentar.`);
+    return 'partial';
+  }
+  return true;
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
@@ -2898,7 +2914,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElement
  function showToast(detail,isError=false){const toast=document.getElementById('nutritionMealToast'),detailEl=document.getElementById('nutritionMealToastDetail'),title=toast?.querySelector('.nmt-title'),icon=toast?.querySelector('.nmt-icon');if(!toast)return;if(detailEl)detailEl.textContent=detail|| (isError?'No se pudo guardar la comida':'Comida guardada correctamente');if(title)title.textContent=isError?'ERROR AL REGISTRAR':'COMIDA REGISTRADA';if(icon)icon.textContent=isError?'!':'✓';toast.classList.toggle('is-error',isError);toast.classList.add('is-visible');clearTimeout(window.__nutritionMealToastTimer);window.__nutritionMealToastTimer=setTimeout(()=>toast.classList.remove('is-visible','is-error'),3200);}
  async function finish(){if(busy)return;busy=true;dragging=false;pointerId=null;track.classList.remove('is-dragging');setLeft(maxLeft());track.classList.add('is-unlocked');knob.style.transition='left .18s ease-out,transform .16s ease,background .18s ease,color .18s ease,box-shadow .18s ease';
   const snapshot=(window.mealDraft||[]).slice(),mealName=snapshot[0]?.meal||document.getElementById('meal')?.value||'Comida',totals=snapshot.reduce((a,x)=>({k:a.k+(Number(x.k)||0),p:a.p+(Number(x.p)||0)}),{k:0,p:0}),detail=`${mealName} · ${totals.k.toFixed(0)} kcal · ${totals.p.toFixed(1)} g proteína`;
-  try{const result=await registerMeal();if(result===true){showToast(detail,false);track.classList.add('is-completed');if(copy)copy.innerHTML='<span class="nutrition-meal-swipe-title">✓ COMIDA REGISTRADA</span><span class="nutrition-meal-swipe-subtitle">Registro guardado correctamente</span>';knob.setAttribute('aria-label','Comida registrada correctamente');await new Promise(r=>setTimeout(r,850));if(copy)copy.innerHTML='<span class="nutrition-meal-swipe-title">DESLIZA PARA REGISTRAR</span><span class="nutrition-meal-swipe-subtitle">Desliza a la derecha para guardar la comida</span>';knob.setAttribute('aria-label','Desliza a la derecha para registrar la comida');track.classList.remove('is-completed');}else showToast('No se confirmó el guardado. Intenta nuevamente.',true);
+  try{const result=await registerMeal();if(result===true){showToast(detail,false);track.classList.add('is-completed');if(copy)copy.innerHTML='<span class="nutrition-meal-swipe-title">✓ COMIDA REGISTRADA</span><span class="nutrition-meal-swipe-subtitle">Registro guardado correctamente</span>';knob.setAttribute('aria-label','Comida registrada correctamente');await new Promise(r=>setTimeout(r,850));if(copy)copy.innerHTML='<span class="nutrition-meal-swipe-title">DESLIZA PARA REGISTRAR</span><span class="nutrition-meal-swipe-subtitle">Desliza a la derecha para guardar la comida</span>';knob.setAttribute('aria-label','Desliza a la derecha para registrar la comida');track.classList.remove('is-completed');}else if(result==='partial'){showToast('Algunos alimentos quedaron pendientes. Revisa el borrador e intenta nuevamente.',true);}else showToast('No se confirmó el guardado. Intenta nuevamente.',true);
   }catch(err){console.error('Error en registerMeal:',err);showToast('No se pudo guardar. Revisa tu conexión e intenta nuevamente.',true)}finally{reset();busy=false;}}
  function down(e){if(busy||dragging||track.classList.contains('is-completed'))return;if(e.pointerType==='mouse'&&e.button!==0)return;dragging=true;pointerId=e.pointerId;startX=e.clientX;startLeft=parseFloat(knob.style.left)||edge;track.classList.add('is-dragging');knob.style.transition='none';if(e.cancelable)e.preventDefault();}
  function move(e){if(!dragging|| (pointerId!==null&&e.pointerId!==pointerId))return;setLeft(startLeft+e.clientX-startX);if(e.cancelable)e.preventDefault();}
