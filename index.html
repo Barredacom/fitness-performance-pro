@@ -2983,22 +2983,7 @@ const _nutritionQtyUnitObserver=setInterval(()=>{if(typeof nutritionUnit!=='unde
  .nutrition-date-swipe-copy span{font-size:10px}
 }
 </style>
-<script id="nutrition-date-swipe-v23-5">
-(()=>{
- const box=document.getElementById('nutritionDateSwipe'),thumb=document.getElementById('nutritionDateSwipeThumb'),input=document.getElementById('foodDate');
- if(!box||!thumb||!input)return;
- let startX=0,lastX=0,active=false,pointerId=null,swiped=false;
- const reset=()=>{active=false;pointerId=null;thumb.style.transform='';};
- const openPicker=()=>{try{input.focus({preventScroll:true});if(input.showPicker)input.showPicker();else input.click();}catch(err){try{input.click();}catch(e){}}};
- thumb.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;e.preventDefault();active=true;swiped=false;pointerId=e.pointerId;startX=lastX=e.clientX;try{thumb.setPointerCapture(pointerId);}catch(err){} });
- thumb.addEventListener('pointermove',e=>{if(!active||e.pointerId!==pointerId)return;e.preventDefault();lastX=e.clientX;const dx=Math.max(0,lastX-startX);const max=Math.max(0,box.clientWidth-thumb.offsetWidth-14);thumb.style.transform=`translateX(${Math.min(dx,max)}px)`;});
- const finish=e=>{if(!active||(e&&e.pointerId!==pointerId))return;const dx=(e?.clientX??lastX)-startX;swiped=dx>Math.max(40,box.clientWidth*.12);reset();if(swiped){openPicker();setTimeout(()=>swiped=false,450);}};
- thumb.addEventListener('pointerup',finish);thumb.addEventListener('pointercancel',()=>reset());thumb.addEventListener('lostpointercapture',()=>{if(active)reset();});
- thumb.addEventListener('click',e=>{if(swiped){e.preventDefault();return;}openPicker();});
- box.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openPicker();}});
- input.addEventListener('change',()=>{updateDateDisplay();renderMealMiniSummary();const chosen=document.getElementById('dateDisplayText');if(chosen)chosen.style.display='block';});
-})();
-</script>
+<script id="nutrition-date-swipe-v23-6">(()=>{const box=document.getElementById('nutritionDateSwipe'),thumb=document.getElementById('nutritionDateSwipeThumb'),input=document.getElementById('foodDate');if(!box||!thumb||!input)return;let x0=0,drag=false,pid=null;const reset=()=>{drag=false;pid=null;thumb.style.transform='';};const picker=()=>{try{input.focus({preventScroll:true});input.click();}catch(e){input.click();}};thumb.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;drag=true;pid=e.pointerId;x0=e.clientX;try{thumb.setPointerCapture(pid);}catch(_){}});thumb.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==pid)return;const dx=Math.max(0,e.clientX-x0),max=Math.max(0,box.clientWidth-thumb.offsetWidth-12);thumb.style.transform=`translateX(${Math.min(dx,max)}px)`;});thumb.addEventListener('pointerup',e=>{if(!drag||e.pointerId!==pid)return;const dx=e.clientX-x0;reset();if(dx>Math.min(45,box.clientWidth*.14))picker();});thumb.addEventListener('pointercancel',reset);thumb.addEventListener('lostpointercapture',()=>{if(drag)reset();});thumb.addEventListener('click',e=>{e.preventDefault();picker();});box.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();picker();}});input.addEventListener('change',()=>{updateDateDisplay();renderMealMiniSummary();});})();</script>
 
 <style id="nutrition-full-width-fields-v23-4">
 /* V23.4: alimento, fecha y comida en ancho completo, orden vertical */
@@ -3032,12 +3017,5 @@ const _nutritionQtyUnitObserver=setInterval(()=>{if(typeof nutritionUnit!=='unde
 }
 #nutricion .nutrition-date-swipe,
 .nutrition-date-swipe{width:100%!important;max-width:100%!important;box-sizing:border-box!important}
-</style>
-<style id="nutrition-date-swipe-functional-v23-5">
-#nutritionDateSwipeThumb{touch-action:none!important;user-select:none;-webkit-user-select:none;cursor:grab!important;position:relative!important;z-index:5!important}
-#nutritionDateSwipeThumb:active{cursor:grabbing!important}
-#nutritionDateSwipe{touch-action:pan-y!important}
-#nutritionDateSwipe input[type=date]{pointer-events:none!important}
-#nutritionDateSwipeCopyDate{display:none}
 </style>
 </body></html>
