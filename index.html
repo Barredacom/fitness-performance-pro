@@ -2997,4 +2997,38 @@ const _nutritionQtyUnitObserver=setInterval(()=>{if(typeof nutritionUnit!=='unde
  box.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openPicker();}});
 })();
 </script>
+
+<style id="nutrition-full-width-fields-v23-4">
+/* V23.4: alimento, fecha y comida en ancho completo, orden vertical */
+#nutricion .nutrition-form-grid,
+.nutrition-form-grid{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-auto-flow:row!important;
+  gap:10px!important;
+  width:100%!important;
+}
+#nutricion .nutrition-form-grid > label.nutrition-field-wide,
+#nutricion .nutrition-form-grid > .nutrition-quantity-field,
+.nutrition-form-grid > label.nutrition-field-wide,
+.nutrition-form-grid > .nutrition-quantity-field{
+  grid-column:1/-1!important;
+  width:100%!important;
+  max-width:100%!important;
+}
+#nutricion .nutrition-form-grid > label.nutrition-field-wide:first-child,
+.nutrition-form-grid > label.nutrition-field-wide:first-child{order:1!important}
+#nutricion .nutrition-form-grid > .nutrition-date-field,
+.nutrition-form-grid > .nutrition-date-field{order:2!important}
+#nutricion .nutrition-form-grid > .nutrition-meal-field,
+.nutrition-form-grid > .nutrition-meal-field{order:3!important}
+#nutricion .nutrition-form-grid > .nutrition-quantity-field,
+.nutrition-form-grid > .nutrition-quantity-field{order:4!important}
+#nutricion .nutrition-field-wide select,
+.nutrition-field-wide select{
+  display:block!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important
+}
+#nutricion .nutrition-date-swipe,
+.nutrition-date-swipe{width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+</style>
 </body></html>
