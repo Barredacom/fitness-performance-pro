@@ -254,7 +254,7 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 
 /* Modal alimento personalizado */
 .fp-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);z-index:99999;display:none;align-items:center;justify-content:center;padding:18px}
-.fp-modal-backdrop.open{display:flex}.fp-modal{width:min(560px,100%);max-height:82dvh;overflow-y:auto;overscroll-behavior:contain;background:#101511;border:1px solid #53ff55;border-radius:18px;padding:15px;box-shadow:0 0 35px rgba(83,255,85,.18)}
+.fp-modal-backdrop.open{display:flex}.fp-modal{width:min(560px,100%);max-height:90vh;overflow:auto;background:#101511;border:1px solid #53ff55;border-radius:18px;padding:22px;box-shadow:0 0 35px rgba(83,255,85,.18)}
 .fp-modal h2{margin:0 0 8px;color:#53ff55}.fp-modal .muted{color:#91a397}.fp-modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
 
 /* TRAINING PRO visual reconstruction */
@@ -277,7 +277,7 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 .fp-custom-units{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 0}.fp-custom-units button{padding:9px 5px;border-radius:10px}.fp-custom-units button.active{background:#1a2a17;border-color:#A4FF28;color:#A4FF28}
 .fp-custom-qty{background:#0b0e0b;border:1px solid #29372a;border-radius:12px;padding:10px;margin:8px 0 12px}.fp-custom-qty-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.fp-custom-qty input[type=range]{width:100%;accent-color:#A4FF28;margin:10px 0}.fp-custom-qty input[type=number]{width:90px}
 .fp-custom-macros{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}.fp-custom-macro{background:#171d17;border:1px solid #2b3a2c;border-radius:10px;padding:10px;min-width:0}.fp-custom-macro label{display:block;font-size:.82rem;color:#91a397;margin-bottom:5px}.fp-custom-macro input{width:100%;min-width:0;box-sizing:border-box}
-.fp-custom-results{display:grid;gap:5px;max-height:126px;overflow-y:auto;overscroll-behavior:contain;margin:6px 0}.fp-custom-result{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#172017;border:1px solid #344334;border-radius:9px;padding:7px;color:#edf7ef}.fp-custom-result-info{min-width:0}.fp-custom-result small{display:block;color:#91a397;margin-top:2px;font-size:.72rem}.fp-custom-result-actions{display:flex;align-items:center;gap:5px;flex-shrink:0}.fp-custom-result-actions a,.fp-custom-result-actions button{font-size:.72rem;padding:7px 8px;border-radius:8px;white-space:nowrap}.fp-custom-result-actions a{color:#b7ff72;border:1px solid #405b35;text-decoration:none}.fp-custom-result-actions button{background:#a4ff28;color:#081006;border:0;font-weight:800}.fp-custom-status{font-size:.78rem;line-height:1.35;color:#91a397;margin:5px 0}
+.fp-custom-results{display:grid;gap:6px;max-height:145px;overflow:auto;margin:6px 0}.fp-custom-result{width:100%;text-align:left;background:#172017;border:1px solid #344334;border-radius:9px;padding:9px;color:#edf7ef}.fp-custom-result small{display:block;color:#91a397;margin-top:3px}.fp-custom-status{font-size:.82rem;color:#91a397;margin:5px 0}
 
 /* FIX slider cantidad modal: control táctil visible y arrastrable */
 .fp-custom-qty input[type="range"]{
@@ -1830,20 +1830,44 @@ let customFoodUnit='g';
 let editingCustomFoodKey=null;
 function setCustomFoodUnit(unit){customFoodUnit=unit==='ml'?'ml':'g';const label=$('catalogUnitWeight');if(label)label.placeholder=customFoodUnit==='ml'?'Ej. 591 ml por botella':'Ej. 30 g por unidad';}
 function escCatalog(x){return String(x||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-const CHILE_SUPERMARKETS=[{name:'Líder',domain:'lider.cl'},{name:'Jumbo',domain:'jumbo.cl'},{name:'Santa Isabel',domain:'santaisabel.cl'},{name:'Tottus',domain:'tottus.com'},{name:'Unimarc',domain:'unimarc.cl'}];
-function searchChileFoods(){
+function chileFoodNutrient(n,keys){for(const key of keys){const v=n?.[key];if(v!==undefined&&v!==null&&v!==''&&Number.isFinite(Number(v)))return Number(v);}return null;}
+function chileFoodKcal(n){const kcal=chileFoodNutrient(n,['energy-kcal_100g','energy-kcal_value']);if(kcal!==null)return kcal;const kj=chileFoodNutrient(n,['energy_100g','energy_value']);return kj!==null?kj/4.184:null;}
+function chileFoodHasChile(x){return (x.countries_tags||[]).some(t=>String(t).toLowerCase().includes('chile'));}
+function chileFoodCompleteness(x){const n=x.nutriments||{};return [chileFoodKcal(n),chileFoodNutrient(n,['proteins_100g']),chileFoodNutrient(n,['carbohydrates_100g']),chileFoodNutrient(n,['fat_100g'])].filter(v=>v!==null).length;}
+async function searchChileFoods(){
  const q=$('catalogSearch').value.trim(),st=$('catalogSearchStatus'),box=$('catalogSearchResults');
- if(!q){st.textContent='Escribe el nombre, marca o tipo de producto.';return;}
- st.textContent='Selecciona una tienda para abrir sus productos. Cuando identifiques el producto, vuelve aquí y pulsa “Usar producto” para completar sus datos nutricionales.';
- box.innerHTML=CHILE_SUPERMARKETS.map((store,i)=>{const url='https://www.google.com/search?q='+encodeURIComponent('site:'+store.domain+' '+q);return `<div class="fp-custom-result"><div class="fp-custom-result-info"><b>${store.name}</b><small>Buscar “${escCatalog(q)}” en ${store.domain}</small></div><div class="fp-custom-result-actions"><a href="${url}" target="_blank" rel="noopener noreferrer">Ver productos ↗</a><button type="button" onclick="useChileFoodSearch(${i})">Usar producto</button></div></div>`;}).join('');
+ if(!q){st.textContent='Escribe un alimento o marca.';return;}
+ st.textContent='Buscando más marcas y productos registrados en Chile…';box.innerHTML='';
+ try{
+  const params=new URLSearchParams({search_terms:q,search_simple:'1',action:'process',json:'1',page_size:'100',page:'1',tagtype_0:'countries',tag_contains_0:'contains',tag_0:'chile',fields:'code,product_name,product_name_es,generic_name_es,brands,quantity,serving_size,nutriments,countries_tags,image_front_small_url'});
+  const res=await fetch('https://world.openfoodfacts.org/cgi/search.pl?'+params.toString(),{headers:{Accept:'application/json'}});
+  if(!res.ok)throw Error('HTTP '+res.status);
+  const data=await res.json();
+  const seen=new Set();
+  const items=(data.products||[]).filter(x=>{
+   const name=x.product_name_es||x.product_name||x.generic_name_es;
+   if(!name||!x.nutriments||!chileFoodHasChile(x))return false;
+   const key=String(x.code||'')+'|'+String(name).toLowerCase()+'|'+String(x.brands||'').toLowerCase();
+   if(seen.has(key))return false;seen.add(key);return true;
+  }).sort((a,b)=>chileFoodCompleteness(b)-chileFoodCompleteness(a));
+  window.chileFoodResults=items;
+  if(!items.length){st.textContent='No encontramos productos con datos nutricionales registrados para Chile. Prueba otra palabra o ingresa la etiqueta manualmente.';return;}
+  st.textContent=items.length+' alternativas encontradas. Selecciona la marca y presentación que consumes. Los datos incompletos se dejarán vacíos.';
+  box.innerHTML=items.map((x,i)=>{
+   const n=x.nutriments||{},k=chileFoodKcal(n),p=chileFoodNutrient(n,['proteins_100g']),c=chileFoodNutrient(n,['carbohydrates_100g']),f=chileFoodNutrient(n,['fat_100g']);
+   const title=x.product_name_es||x.product_name||x.generic_name_es||'Producto sin nombre';
+   const macros=[k!==null?Math.round(k)+' kcal':'kcal s/d',p!==null?'P '+p+' g':'P s/d',c!==null?'C '+c+' g':'C s/d',f!==null?'G '+f+' g':'G s/d'].join(' · ');
+   return `<button type="button" class="fp-custom-result" onclick="selectChileFood(${i})"><b>${escCatalog(title)}</b><small>${escCatalog(x.brands||'Marca no indicada')} · ${escCatalog(x.quantity||'Presentación no indicada')}</small><small>${escCatalog(macros)} por 100 g</small></button>`;
+  }).join('');
+ }catch(e){st.textContent='No se pudo consultar el catálogo chileno. Revisa tu conexión o ingresa los datos de la etiqueta.';console.warn('Catálogo de alimentos Chile',e);}
 }
-function useChileFoodSearch(i){
- const store=CHILE_SUPERMARKETS[i],q=$('catalogSearch').value.trim();if(!store||!q)return;
- $('catalogName').value=q;
- $('catalogSearchStatus').textContent=`Borrador seleccionado para ${store.name}. Confirma el nombre exacto del envase y completa los nutrientes según su etiqueta.`;
- $('catalogK').focus();
+function selectChileFood(i){
+ const x=window.chileFoodResults?.[i];if(!x)return;const n=x.nutriments||{};
+ $('catalogName').value=[x.product_name_es||x.product_name||x.generic_name_es,x.brands,x.quantity].filter(Boolean).join(' · ');
+ const k=chileFoodKcal(n),p=chileFoodNutrient(n,['proteins_100g']),c=chileFoodNutrient(n,['carbohydrates_100g']),f=chileFoodNutrient(n,['fat_100g']);
+ $('catalogK').value=k===null?'':Number(k.toFixed(2));$('catalogP').value=p===null?'':Number(p.toFixed(2));$('catalogC').value=c===null?'':Number(c.toFixed(2));$('catalogF').value=f===null?'':Number(f.toFixed(2));
+ setCustomFoodUnit('g');$('catalogSearchStatus').textContent='Producto seleccionado. Valores importados por 100 g; los datos no disponibles quedan vacíos. Verifica la etiqueta antes de guardar.';$('catalogSearchResults').innerHTML='';
 }
-function selectChileFood(i){const x=window.chileFoodResults?.[i];if(!x)return;const n=x.nutriments||{};$('catalogName').value=[x.product_name,x.brands].filter(Boolean).join(' · ');$('catalogK').value=Number(n['energy-kcal_100g']??n['energy-kcal_value']??0);$('catalogP').value=Number(n.proteins_100g||0);$('catalogC').value=Number(n.carbohydrates_100g||0);$('catalogF').value=Number(n.fat_100g||0);setCustomFoodUnit('g');$('catalogSearchStatus').textContent='Importado por 100 g. Confirma los datos con la etiqueta.';$('catalogSearchResults').innerHTML='';}
 function loadCustomFoods(){try{const arr=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');arr.forEach((f,i)=>{foods[f.key||('custom_'+i)]={n:f.n,k:+f.k,p:+f.p,c:+f.c,f:+f.f,unit:f.unit||'g',unitWeight:Number(f.unitWeight)||0};});}catch(e){console.warn('No se pudo cargar catálogo personal',e)}}
 function toggleFoodCatalog(show,mode='create'){
  const modal=$('customFoodModal');if(!modal)return;
@@ -1943,34 +1967,26 @@ async function registerMeal(){
   const {data:{user},error:userError}=await supabase.auth.getUser();
   if(userError||!user){alert('Debes iniciar sesión');return false;}
 
-  // Guarda cada alimento por separado. Un fallo de refresco local nunca debe
-  // convertir un INSERT confirmado por Supabase en un falso error de registro.
+  // Guarda alimento por alimento y conserva en el borrador solo los que fallen.
   const pending=[];
   let savedCount=0;
-  if(!Array.isArray(db.foods))db.foods=[];
   for(const x of arr){
-    const fecha=x.date||$('foodDate').value;
-    const comida=x.meal||$('meal').value;
-    const row={fecha,alimento:x.n,comida,gramos:x.g,calorias:x.k,proteina:x.p,carbohidratos:x.c,grasas:x.f,user_id:user.id};
+    const row={fecha:x.date||$('foodDate').value,alimento:x.n,comida:x.meal||$('meal').value,gramos:x.g,calorias:x.k,proteina:x.p,carbohidratos:x.c,grasas:x.f,user_id:user.id};
     try{
-      const response=await supabase.from('registros_nutricion').insert(row);
-      if(response?.error){console.error('Error guardando alimento:',x.n,response.error);pending.push(x);continue;}
-      db.foods.push({...x,meal:comida,date:fecha,id:Date.now()+Math.random()});
+      const {error}=await supabase.from('registros_nutricion').insert(row);
+      if(error){console.error('Error guardando alimento:',x.n,error);pending.push(x);continue;}
+      db.foods.push({...x,meal:x.meal||$('meal').value,date:x.date||$('foodDate').value,id:Date.now()+Math.random()});
       savedCount++;
     }catch(err){console.error('Error guardando alimento:',x.n,err);pending.push(x);}
   }
   window.mealDraft=pending;
-  // Persistencia y renderizado local son secundarios: si fallan, se informa en
-  // consola pero se respeta el resultado real confirmado por Supabase.
-  try{localStorage.setItem(DBKEY,JSON.stringify(db));}catch(err){console.error('Alimento guardado en Supabase; no se pudo actualizar la copia local:',err);}
-  try{renderMealMiniSummary();}catch(err){console.error('Error refrescando resumen nutricional:',err);}
-  try{renderMealDraft();}catch(err){console.error('Error refrescando borrador nutricional:',err);}
+  save();renderMealMiniSummary();renderMealDraft();
   if(pending.length){
     const failedNames=pending.map(x=>x.n).join(', ');
     alert(savedCount?`Se guardaron ${savedCount} alimento(s). No se pudieron guardar: ${failedNames}. Quedaron pendientes para reintentar.`:`No se pudo guardar: ${failedNames}. Quedaron pendientes para reintentar.`);
     return 'partial';
   }
-  return savedCount>0;
+  return true;
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
@@ -2692,8 +2708,8 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
  <div class="fp-modal">
   <h2 id="customFoodTitle">＋ Crear alimento personalizado</h2>
   <div id="catalogEditPickerWrap" hidden><label>Selecciona alimento para editar</label><select id="catalogEditPicker" onchange="loadCustomFoodForEdit(this.value)"></select></div>
-  <div id="catalogSearchWrap">  <p class="muted">Busca en Líder, Jumbo, Santa Isabel, Tottus y Unimarc. Abre la tienda, identifica el producto y selecciónalo aquí para completar sus datos.</p>
-  <label>Buscar producto en supermercados de Chile</label><div class="fp-custom-search"><input id="catalogSearch" placeholder="Ej. Yogur Protein Soprole, avena, pan integral" maxlength="120" onkeydown="if(event.key==='Enter'){event.preventDefault();searchChileFoods();}"><button type="button" onclick="searchChileFoods()">Buscar en 5 tiendas</button></div>
+  <div id="catalogSearchWrap">  <p class="muted">Busca productos comercializados en Chile o ingresa los datos de su etiqueta.</p>
+  <label>Buscar producto / marca</label><div class="fp-custom-search"><input id="catalogSearch" placeholder="Ej. Atún, yogurt protein, pan integral" maxlength="90" onkeydown="if(event.key==='Enter'){event.preventDefault();searchChileFoods();}"><button type="button" onclick="searchChileFoods()">Buscar en Chile</button></div>
   <div id="catalogSearchStatus" class="fp-custom-status" aria-live="polite"></div><div id="catalogSearchResults" class="fp-custom-results"></div>
   </div>
   <label>Nombre del alimento</label><input id="catalogName" placeholder="Nombre / marca" maxlength="90"><label style="display:block;margin-top:10px">Base nutricional del alimento</label><select id="catalogUnit" onchange="setCustomFoodUnit(this.value)"><option value="g">Por 100 g</option><option value="ml">Por 100 ml</option></select><label style="display:block;margin-top:10px">Contenido por unidad (g/ml) · opcional</label><input id="catalogUnitWeight" type="number" min="0.1" step="0.1" placeholder="Ej. 591 ml por botella">
