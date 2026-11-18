@@ -1419,10 +1419,12 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
       </details>
     </div>
     <div class="nutrition-preview-title">VALORES NUTRICIONALES ESTIMADOS</div>
-    <div class="nutrition-macro-grid">
-      <div class="nutrition-macro nutrition-macro-k"><small>CALORÍAS</small><b id="previewK">0 kcal</b></div>
-      <div class="nutrition-macro nutrition-macro-p"><small>PROTEÍNA</small><b id="previewP">0 g</b></div>
-      <div class="nutrition-macro nutrition-macro-cf"><small>CARBOHIDRATOS / GRASAS</small><b id="previewCF">0 / 0 g</b></div>
+    <div class="nutrition-macro-grid nutrition-macro-grid-v23">
+      <div class="nutrition-macro nutrition-macro-v23"><small>CALORÍAS</small><b id="previewK">0 kcal</b></div>
+      <div class="nutrition-macro nutrition-macro-v23"><small>PROTEÍNA</small><b id="previewP">0 g</b></div>
+      <div class="nutrition-macro nutrition-macro-v23"><small>CARBOHIDRATOS</small><b id="previewC">0 g</b></div>
+      <div class="nutrition-macro nutrition-macro-v23"><small>GRASAS</small><b id="previewF">0 g</b></div>
+      <b id="previewCF" style="display:none">0 / 0 g</b>
     </div>
     <div class="nutrition-actions nutrition-actions-v22">
       <button class="nutrition-primary-action" type="button" onclick="addFoodToMeal()">＋ AGREGAR ALIMENTO</button>
@@ -1864,7 +1866,7 @@ $('grams').oninput=()=>{syncQuantityRange();preview();};
 $('quantityRange').oninput=()=>{const value=$('quantityRange').value;$('grams').value=value;syncQuantityRange();preview();};
 $('quantityRange').onchange=()=>{const value=$('quantityRange').value;$('grams').value=value;syncQuantityRange();preview();};
 $('grams').oninput=()=>{syncQuantityRange();preview();};
-function preview(){let x=foodVals();if(nutritionUnit==='unit'&&!Number(foods[$('food').value]?.unitWeight)){$('previewK').textContent='— kcal';$('previewP').textContent='— g';$('previewCF').textContent='Configura peso/unidad';return;}$('previewK').textContent=x.k.toFixed(1)+' kcal';$('previewP').textContent=x.p.toFixed(1)+' g';$('previewCF').textContent=x.c.toFixed(1)+' / '+x.f.toFixed(1)+' g'}
+function preview(){let x=foodVals();if(nutritionUnit==='unit'&&!Number(foods[$('food').value]?.unitWeight)){$('previewK').textContent='— kcal';$('previewP').textContent='— g';$('previewCF').textContent='Configura peso/unidad';if($('previewC'))$('previewC').textContent='— g';if($('previewF'))$('previewF').textContent='— g';return;}$('previewK').textContent=x.k.toFixed(1)+' kcal';$('previewP').textContent=x.p.toFixed(1)+' g';$('previewCF').textContent=x.c.toFixed(1)+' / '+x.f.toFixed(1)+' g';if($('previewC'))$('previewC').textContent=x.c.toFixed(1)+' g';if($('previewF'))$('previewF').textContent=x.f.toFixed(1)+' g'}
 setNutritionUnit(foods[$('food').value]?.unit||'g');
 renderMealMiniSummary();
 
@@ -2873,4 +2875,34 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElement
  window.addEventListener('resize',()=>{if(!dragging&&!busy)setLeft(edge)});setLeft(edge);
 })();
 </script>
+
+<style id="nutrition-v23-green-gradient-redesign">
+/* V23 visual refresh: green-only nutrition cards, compact mobile layout */
+#nutricion .nutrition-intel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:10px 0 14px}
+#nutricion .nutrition-intel-title h2{letter-spacing:1.1px}
+#nutricion .nutrition-intel-card{background:linear-gradient(145deg,#080d0a,#0b130e 55%,#060908);border:1px solid #263a2d;border-radius:24px;padding:clamp(14px,3.5vw,22px);box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 12px 32px rgba(0,0,0,.2)}
+#nutricion .nutrition-card-kicker{font-size:clamp(15px,3.6vw,20px);letter-spacing:1px;font-weight:900;color:#e9f2eb;margin:0 0 18px}
+#nutricion .nutrition-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px;align-items:start}
+#nutricion .nutrition-field-wide{grid-column:1/-1}
+#nutricion .nutrition-field{font-size:11px;letter-spacing:1.5px;font-weight:850;color:#a4ff28;display:flex;flex-direction:column;gap:8px;min-width:0}
+#nutricion #food,#nutricion #grams,#nutricion #meal{min-height:58px;border-radius:16px!important;background:linear-gradient(145deg,#111b14,#0b120e)!important;border:1px solid #314637!important;color:#eef5ee!important;font-size:16px!important;font-weight:750;padding:12px 15px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+#nutricion .nutrition-quantity-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+#nutricion .nutrition-unit-switch{border-radius:999px;padding:4px;background:#101a13;border:1px solid #293b2e}
+#nutricion .nutrition-unit-switch button{border-radius:999px;min-width:32px;min-height:32px;color:#93a196}
+#nutricion .nutrition-unit-switch button.active{background:linear-gradient(145deg,#c5ff70,#8cff16 60%,#56d900);color:#091107;box-shadow:0 0 12px rgba(164,255,40,.16)}
+#nutricion .nutrition-quantity-range{accent-color:#a4ff28;margin:10px 4px 0;width:calc(100% - 8px)}
+#nutricion .nutrition-range-labels{color:#89968c;font-weight:700}
+#nutricion .date-display-card{min-height:58px;border-radius:16px!important;background:linear-gradient(145deg,#111b14,#0b120e)!important;border:1px solid #314637!important;padding:10px 12px!important}
+#nutricion .nutrition-preview-title{margin:20px 0 12px;color:#9aa69d;font-size:11px;letter-spacing:1.2px;font-weight:900}
+#nutricion .nutrition-macro-grid-v23{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#nutricion .nutrition-macro-v23{min-height:106px;border-radius:18px!important;padding:14px!important;background:linear-gradient(160deg,#122018 0%,#101a13 55%,#07100a 100%)!important;border:1px solid #3b6042!important;box-shadow:inset 0 1px 0 rgba(201,255,175,.08),inset 0 -4px 16px rgba(125,255,30,.1),0 0 12px rgba(100,255,20,.035);display:flex;flex-direction:column;justify-content:space-between;gap:8px;overflow:hidden}
+#nutricion .nutrition-macro-v23::after{content:'';height:4px;border-radius:999px;background:linear-gradient(90deg,#23532d,#6dce29,#a4ff28);box-shadow:0 0 12px rgba(164,255,40,.25);margin-top:2px}
+#nutricion .nutrition-macro-v23 small{font-size:10px;letter-spacing:1.1px;font-weight:850;color:#b5c2b7}
+#nutricion .nutrition-macro-v23 b{font-size:clamp(19px,5vw,26px);font-weight:950;color:#f4f8f4;line-height:1.1}
+#nutricion .nutrition-actions-v22 .nutrition-primary-action{min-height:60px;border-radius:18px!important;background:linear-gradient(110deg,#baff66,#8cff16 50%,#6ee900)!important;color:#071006!important;font-size:clamp(15px,4vw,19px)!important;font-weight:950;box-shadow:0 0 20px rgba(164,255,40,.18),inset 0 1px 0 rgba(255,255,255,.4);border:1px solid #c7ff83!important}
+#nutricion .nutrition-draft-card-v22{background:linear-gradient(145deg,#080d0a,#0c150f)!important;border-color:#263a2d!important}
+#nutricion .nutrition-draft-total-v22{border:1px solid #31533a;border-radius:14px;padding:12px;background:linear-gradient(120deg,#122018,#08100a)}
+#nutricion .nutrition-draft-total-v22 strong{color:#f3f7f3!important}
+@media(max-width:420px){#nutricion .nutrition-form-grid{gap:11px 9px}#nutricion .nutrition-macro-v23{min-height:96px;padding:12px!important}#nutricion .nutrition-macro-v23 b{font-size:20px}#nutricion .nutrition-field{font-size:10px}}
+</style>
 </body></html>
