@@ -2831,25 +2831,42 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElement
 #nutricion .nutrition-catalog-actions-v22{grid-template-columns:1fr 1fr;margin-top:12px}
 #nutricion .nutrition-catalog-actions-v22 .nutrition-catalog-action{grid-column:auto;min-height:48px}
 @media(max-width:650px){#nutricion .nutrition-catalog-actions-v22{grid-template-columns:1fr}}
+
+
+/* Nutrition V22.2 Toast confirmation */
+#nutritionMealToast{position:fixed;z-index:99999;top:calc(env(safe-area-inset-top,0px) + 16px);left:50%;width:min(92vw,460px);transform:translate(-50%,-18px) scale(.96);opacity:0;pointer-events:none;background:linear-gradient(145deg,#111a13,#0a0d0b);border:1px solid rgba(164,255,40,.55);border-radius:18px;padding:14px 16px;box-shadow:0 10px 32px rgba(0,0,0,.48),0 0 22px rgba(164,255,40,.13);display:flex;align-items:center;gap:12px;color:#f4f7f2;transition:opacity .24s ease,transform .35s cubic-bezier(.2,.8,.25,1)}
+#nutritionMealToast.is-visible{opacity:1;transform:translate(-50%,0) scale(1)}
+#nutritionMealToast .nmt-icon{width:42px;height:42px;flex:0 0 42px;border-radius:50%;display:grid;place-items:center;background:#173722;color:#a4ff28;font-size:22px;font-weight:900;border:1px solid #3c8a43}
+#nutritionMealToast .nmt-title{font-weight:800;letter-spacing:.7px;color:#a4ff28;font-size:13px}
+#nutritionMealToast .nmt-detail{font-size:12px;color:#c1cbc2;margin-top:3px;line-height:1.4}
+@media(prefers-reduced-motion:reduce){#nutritionMealToast{transition:none}}
+
+/* Swipe Nutricion V22.1: drag is immediate and release/reset is smooth */
+#nutritionMealSwipeTrack.is-dragging #nutritionMealSwipe{transition:none!important;will-change:left}
+#nutritionMealSwipeTrack:not(.is-dragging) #nutritionMealSwipe{transition:left .22s cubic-bezier(.22,.75,.25,1),transform .16s ease,background .18s ease,color .18s ease,box-shadow .18s ease!important}
+#nutritionMealSwipeTrack{touch-action:pan-y}
 </style>
-<script id="nutrition-meal-swipe-handler-v22">
+<div id="nutritionMealToast" role="status" aria-live="polite" aria-atomic="true"><span class="nmt-icon">✓</span><div><div class="nmt-title">COMIDA REGISTRADA</div><div class="nmt-detail" id="nutritionMealToastDetail">Comida guardada correctamente</div></div></div>
+<script id="nutrition-meal-swipe-handler-v22-1">
 (function(){
  const knob=document.getElementById('nutritionMealSwipe'),track=document.getElementById('nutritionMealSwipeTrack'),copy=document.getElementById('nutritionMealSwipeCopy');
  if(!knob||!track||knob.dataset.ready==='1')return;knob.dataset.ready='1';
  let dragging=false,startX=0,startLeft=7,pointerId=null;const edge=7,knobWidth=58;
  function maxLeft(){return Math.max(edge,track.clientWidth-knobWidth-edge)}
- function setLeft(left){const max=maxLeft(),x=Math.max(edge,Math.min(max,left));knob.style.left=x+'px';const pct=max===edge?0:(x-edge)/(max-edge)*100;track.style.setProperty('--swipe-progress',pct+'%');return pct}
- function reset(){dragging=false;pointerId=null;knob.style.left=edge+'px';track.style.setProperty('--swipe-progress','0%');track.classList.remove('is-unlocked')}
- async function finish(){dragging=false;pointerId=null;const pct=setLeft(maxLeft());if(pct<94){reset();return}track.classList.add('is-unlocked');knob.style.left=maxLeft()+'px';
+ function setLeft(left){const max=maxLeft(),x=Math.max(edge,Math.min(max,left));knob.style.left=x+'px';const pct=max===edge?0:(x-edge)/(max-edge)*100;track.style.setProperty('--swipe-progress',pct+'%');knob.setAttribute('aria-valuenow',String(Math.round(pct)));return pct}
+ function reset(smooth=true){dragging=false;pointerId=null;track.classList.remove('is-dragging','is-unlocked');if(!smooth)knob.style.transition='none';knob.style.left=edge+'px';track.style.setProperty('--swipe-progress','0%');knob.setAttribute('aria-valuenow','0');if(!smooth){knob.offsetHeight;knob.style.transition=''} }
+ function showNutritionMealToast(detail){const toast=document.getElementById('nutritionMealToast'),detailEl=document.getElementById('nutritionMealToastDetail');if(!toast)return;if(detailEl)detailEl.textContent=detail||'Comida guardada correctamente';toast.classList.add('is-visible');clearTimeout(window.__nutritionMealToastTimer);window.__nutritionMealToastTimer=setTimeout(()=>toast.classList.remove('is-visible'),3200);}
+ async function finish(){dragging=false;pointerId=null;track.classList.remove('is-dragging');setLeft(maxLeft());track.classList.add('is-unlocked');knob.style.transition='left .18s ease-out,transform .16s ease,background .18s ease,color .18s ease,box-shadow .18s ease';
+  const draftSnapshot=(window.mealDraft||[]).slice();const mealName=draftSnapshot[0]?.meal||$('meal')?.value||'Comida';const mealTotals=draftSnapshot.reduce((a,x)=>({k:a.k+(Number(x.k)||0),p:a.p+(Number(x.p)||0)}),{k:0,p:0});const toastDetail=`${mealName} · ${mealTotals.k.toFixed(0)} kcal · ${mealTotals.p.toFixed(1)} g proteína`;
   const result=await registerMeal();
-  if(result===true){track.classList.add('is-completed');if(copy)copy.innerHTML='<span class="nutrition-meal-swipe-title">✓ COMIDA REGISTRADA</span><span class="nutrition-meal-swipe-subtitle">Registro guardado correctamente</span>';knob.setAttribute('aria-label','Comida registrada correctamente');knob.style.left=maxLeft()+'px';
-    setTimeout(()=>{track.classList.remove('is-completed','is-unlocked');if(copy)copy.innerHTML='<span class="nutrition-meal-swipe-title">DESLIZA PARA REGISTRAR</span><span class="nutrition-meal-swipe-subtitle">Desliza a la derecha para guardar la comida</span>';knob.setAttribute('aria-label','Desliza a la derecha para registrar la comida');reset()},1700);
-  }else reset();
+  if(result===true){showNutritionMealToast(toastDetail);track.classList.add('is-completed');if(copy)copy.innerHTML='<span class="nutrition-meal-swipe-title">✓ COMIDA REGISTRADA</span><span class="nutrition-meal-swipe-subtitle">Registro guardado correctamente</span>';knob.setAttribute('aria-label','Comida registrada correctamente');
+    await new Promise(resolve=>setTimeout(resolve,900));if(copy)copy.innerHTML='<span class="nutrition-meal-swipe-title">DESLIZA PARA REGISTRAR</span><span class="nutrition-meal-swipe-subtitle">Desliza a la derecha para guardar la comida</span>';knob.setAttribute('aria-label','Desliza a la derecha para registrar la comida');track.classList.remove('is-completed');reset(true);
+  }else reset(true);
  }
- knob.addEventListener('pointerdown',e=>{if(track.classList.contains('is-completed'))return;dragging=true;startX=e.clientX;startLeft=parseFloat(getComputedStyle(knob).left)||edge;pointerId=e.pointerId;try{knob.setPointerCapture(pointerId)}catch(_){}e.preventDefault()});
- knob.addEventListener('pointermove',e=>{if(!dragging||e.pointerId!==pointerId)return;const pct=setLeft(startLeft+e.clientX-startX);if(pct>=94){try{knob.releasePointerCapture(pointerId)}catch(_){}finish()}e.preventDefault()});
- function end(e){if(!dragging)return;reset();if(e&&e.cancelable)e.preventDefault()}
- knob.addEventListener('pointerup',end);knob.addEventListener('pointercancel',end);knob.addEventListener('lostpointercapture',()=>{if(dragging)reset()});
+ knob.addEventListener('pointerdown',e=>{if(track.classList.contains('is-completed')||dragging)return;dragging=true;startX=e.clientX;startLeft=parseFloat(getComputedStyle(knob).left)||edge;pointerId=e.pointerId;track.classList.add('is-dragging');knob.style.transition='none';try{knob.setPointerCapture(pointerId)}catch(_){}e.preventDefault()});
+ knob.addEventListener('pointermove',e=>{if(!dragging||e.pointerId!==pointerId)return;setLeft(startLeft+e.clientX-startX);e.preventDefault()});
+ function end(e){if(!dragging||e.pointerId!==pointerId)return;const pct=setLeft(parseFloat(getComputedStyle(knob).left)||edge);if(e&&e.cancelable)e.preventDefault();if(pct>=94)finish();else reset(true)}
+ knob.addEventListener('pointerup',end);knob.addEventListener('pointercancel',e=>{if(dragging&&e.pointerId===pointerId)reset(true)});knob.addEventListener('lostpointercapture',()=>{if(dragging)reset(true)});
  knob.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='End'){e.preventDefault();if(!track.classList.contains('is-completed'))finish()}});
 })();
 </script>
