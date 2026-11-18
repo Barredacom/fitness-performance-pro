@@ -1424,15 +1424,21 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
       <div class="nutrition-macro nutrition-macro-p"><small>PROTEÍNA</small><b id="previewP">0 g</b></div>
       <div class="nutrition-macro nutrition-macro-cf"><small>CARBOHIDRATOS / GRASAS</small><b id="previewCF">0 / 0 g</b></div>
     </div>
-    <div class="nutrition-actions">
+    <div class="nutrition-actions nutrition-actions-v22">
       <button class="nutrition-primary-action" type="button" onclick="addFoodToMeal()">＋ AGREGAR ALIMENTO</button>
-      <button class="nutrition-secondary-action" type="button" onclick="registerMeal()">✓ REGISTRAR COMIDA</button>
+    </div>
+    <section class="nutrition-draft-card-v22" aria-label="Alimentos agregados a la comida">
+      <div class="nutrition-draft-heading-v22"><span>ALIMENTOS AGREGADOS</span><span class="nutrition-draft-count-v22" id="nutritionDraftCount">0</span></div>
+      <div id="mealDraftList" class="nutrition-draft-list-v22" aria-live="polite"></div>
+      <div class="nutrition-draft-total-v22"><span>TOTAL DE LA COMIDA</span><strong id="mealDraftTotals">0 kcal · P 0 · C 0 · G 0</strong></div>
+      <button class="nutrition-secondary-action nutrition-register-v22" type="button" onclick="registerMeal()">✓ REGISTRAR COMIDA</button>
+    </section>
+    <div class="nutrition-actions nutrition-catalog-actions-v22">
       <button class="nutrition-catalog-action" type="button" onclick="toggleFoodCatalog()">＋ Crear alimento personalizado</button>
       <button class="nutrition-catalog-action" type="button" onclick="openEditFoodCatalog()"><svg class="solid-neon-edit-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L18.81 8.94l-3.75-3.75L3 17.25Z"/><path d="m17.06 3.69 1.25-1.25a1.77 1.77 0 0 1 2.5 0l.75.75a1.77 1.77 0 0 1 0 2.5l-1.25 1.25-3.25-3.25Z"/></svg><span>Editar alimento</span></button>
     </div>
   </div>
 
-  <div hidden aria-hidden="true"><div id="mealDraftList"></div><span id="mealDraftTotals">0 kcal · P 0 · C 0 · G 0</span></div>
   <div hidden aria-hidden="true"><div id="foodList"></div><span id="foodTotals">0 kcal · P 0 · C 0 · G 0</span></div>
 
 </section>
@@ -1853,6 +1859,7 @@ function addFoodToMeal(){
 function renderMealDraft(){
   const list=$('mealDraftList'); if(!list)return;
   const arr=window.mealDraft||[];
+  const countEl=$('nutritionDraftCount');if(countEl)countEl.textContent=String(arr.length);
   if(!arr.length){list.innerHTML='<p class="muted">Aún no agregas alimentos.</p>';}
   else list.innerHTML=arr.map((x,i)=>`<div class="item"><span><b>${escapeHtml(x.n)}</b><br><small>${x.g} ${x.unit||'g'} · ${x.k.toFixed(0)} kcal · P ${x.p.toFixed(1)} g</small></span><button type="button" onclick="removeMealDraft(${i})">✕</button></div>`).join('');
   const t=arr.reduce((a,x)=>({k:a.k+x.k,p:a.p+x.p,c:a.c+x.c,f:a.f+x.f}),{k:0,p:0,c:0,f:0});
@@ -2782,4 +2789,25 @@ function closeHistoryDataModal(){
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('historyDataModal')?.classList.contains('is-open'))closeHistoryDataModal()});
 </script>
 
+
+<style id="nutrition-v22-reorganization">
+/* Nutrición V22: reordenamiento visual aislado, conservando funciones */
+#nutricion .nutrition-actions-v22{grid-template-columns:1fr;margin-top:14px}
+#nutricion .nutrition-draft-card-v22{margin-top:16px;background:linear-gradient(145deg,#0e1510,#080b09);border:1px solid #29372c;border-radius:20px;padding:clamp(14px,3vw,20px);box-shadow:0 8px 22px #0003}
+#nutricion .nutrition-draft-heading-v22{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#a4ff28;font-size:11px;font-weight:900;letter-spacing:1.1px;margin-bottom:12px}
+#nutricion .nutrition-draft-count-v22{display:grid;place-items:center;min-width:28px;height:28px;border-radius:999px;background:#172119;border:1px solid #354a32;color:#a4ff28;padding:0 8px}
+#nutricion .nutrition-draft-list-v22{display:grid;gap:8px}
+#nutricion .nutrition-draft-list-v22 .item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;background:#111813;border:1px solid #26342a;border-radius:13px;color:#eef4ee}
+#nutricion .nutrition-draft-list-v22 .item small{display:block;margin-top:4px;color:#9eaaa1;line-height:1.5}
+#nutricion .nutrition-draft-list-v22>p{margin:0;color:#87938a;background:#111813;border:1px dashed #2d3b30;border-radius:12px;padding:15px;font-size:13px}
+#nutricion .nutrition-draft-list-v22 .item button{flex:0 0 auto;min-width:36px;min-height:36px;border-radius:10px;background:#1a241c;border:1px solid #354535;color:#a4ff28}
+#nutricion .nutrition-draft-list-v22:empty::before{content:'Aún no agregas alimentos.';display:block;color:#87938a;background:#111813;border:1px dashed #2d3b30;border-radius:12px;padding:15px;font-size:13px}
+#nutricion .nutrition-draft-total-v22{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid #29352c;margin-top:14px;padding-top:14px}
+#nutricion .nutrition-draft-total-v22 span{font-size:10px;font-weight:850;letter-spacing:.8px;color:#98a59b}
+#nutricion .nutrition-draft-total-v22 strong{font-size:clamp(13px,3vw,17px);font-weight:900;color:#a4ff28;text-align:right}
+#nutricion .nutrition-register-v22{display:block;width:100%;margin-top:14px;min-height:54px;border-radius:14px!important}
+#nutricion .nutrition-catalog-actions-v22{grid-template-columns:1fr 1fr;margin-top:12px}
+#nutricion .nutrition-catalog-actions-v22 .nutrition-catalog-action{grid-column:auto;min-height:48px}
+@media(max-width:650px){#nutricion .nutrition-catalog-actions-v22{grid-template-columns:1fr}}
+</style>
 </body></html>
