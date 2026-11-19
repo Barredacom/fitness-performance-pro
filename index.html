@@ -2,8 +2,8 @@
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FITNESS PERFORMANCE PRO · Dark Athletic Clinical</title>
 <style>
-:root{--bg:#050706;--panel:#101511;--panel2:#151d17;--line:#26352a;--text:#edf7ef;--muted:#91a397;--green:#53ff55;--lime:#b7ff39;--blue:#25d9ff;--orange:#ffad36;--pink:#ff4eaa;--purple:#bd85ff}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#142018 0,#050706 55%);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+:root{--bg:#858F89;--panel:#626D68;--panel2:#505B56;--line:#505B56;--text:#FFFFFF;--muted:#D0D8D1;--green:#C7FF00;--lime:#D8FF32;--blue:#B9E9DC;--orange:#C7FF00;--pink:#B9E9DC;--purple:#B9E9DC;--palette-bg:#858F89;--palette-card:#626D68;--palette-surface:#505B56;--palette-lime:#C7FF00;--palette-lime-soft:#D8FF32;--palette-ice:#B9E9DC}
+*{box-sizing:border-box}body{margin:0;background:var(--palette-bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
 button,input,select{font:inherit}button{cursor:pointer;border:1px solid #31513a;background:#16231a;color:#dfffe3;border-radius:10px;padding:9px 12px}button:hover{border-color:var(--green);color:var(--green)}input,select{background:#0b100d;color:#eaffed;border:1px solid #2a3b2e;border-radius:8px;padding:9px;width:100%}
 .shell{display:grid;grid-template-columns:220px 1fr;min-height:100vh}.side{padding:20px 12px;border-right:1px solid #1c2b20;background:#070b08;position:sticky;top:0;height:100vh}.brand{font-size:20px;font-weight:900;letter-spacing:1px;margin:5px 8px 24px;color:white}.brand span{color:var(--green)}.nav{display:grid;gap:7px}.nav button{display:flex;align-items:center;gap:9px}.nav-icon{width:20px;height:20px;flex:0 0 20px;fill:currentColor;stroke:none}.nav button{text-align:left;background:transparent;border-color:transparent;color:#b8c7ba}.nav button.active{background:#17321b;border-color:#2b7134;color:var(--green);box-shadow:0 0 15px #2aff4920}
 main{padding:24px;max-width:1600px;width:100%;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}.eyebrow{color:var(--green);letter-spacing:2px;font-size:11px;font-weight:700}.top h1{margin:4px 0;font-size:clamp(22px,3vw,34px)}.muted{color:var(--muted)}.hero{display:grid;grid-template-columns:1.5fr .8fr;gap:14px;margin-bottom:14px}.heroimg{min-height:190px;border-radius:18px;border:1px solid #25362a;background:linear-gradient(90deg,#050806e8,#05080655),url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80') center/cover;padding:24px;display:flex;flex-direction:column;justify-content:center}.heroimg h2{font-size:clamp(22px,3vw,36px);margin:5px 0}.heroimg p{max-width:480px;color:#c5d5c8}.heroStat{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:linear-gradient(145deg,#121a14,#0b100d);border:1px solid var(--line);border-radius:15px;padding:15px;box-shadow:0 8px 25px #0004}.metric small{color:var(--muted)}.metric strong{display:block;font-size:26px;margin:5px 0}.green{color:var(--green)}.blue{color:var(--blue)}.orange{color:var(--orange)}.pink{color:var(--pink)}.purple{color:var(--purple)}
@@ -3123,5 +3123,26 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElement
 #nutricion .nutrition-draft-total-v22{border:1px solid #31533a;border-radius:14px;padding:12px;background:linear-gradient(120deg,#122018,#08100a)}
 #nutricion .nutrition-draft-total-v22 strong{color:#f3f7f3!important}
 @media(max-width:420px){#nutricion .nutrition-form-grid{gap:11px 9px}#nutricion .nutrition-macro-v23{min-height:96px;padding:12px!important}#nutricion .nutrition-macro-v23 b{font-size:20px}#nutricion .nutrition-field{font-size:10px}}
+
+/* V23.16 PALETA GLOBAL OFICIAL: sin colores complementarios ni efectos neon */
+:root{color-scheme:dark;--bg:#858F89;--panel:#626D68;--panel2:#505B56;--line:#505B56;--text:#FFFFFF;--muted:#D0D8D1;--green:#C7FF00;--lime:#D8FF32;--blue:#B9E9DC}
+html,body{background:#858F89!important;color:#FFFFFF!important}
+.shell,main{background:#858F89!important}
+.side{background:#505B56!important;border-color:#626D68!important}
+/* Superficies comunes de la aplicación; se excluyen banners e imágenes */
+.card,.metric,.item,.kpi,.panel,.section-card,.shift-selected,.shift-next,.history-kpi,.history-event-card,.history-timeline-wrap,.history-datebar,.history-monthbar,.calendar-cell,.day,.view-switch,.chart{background:#626D68!important;border-color:#505B56!important;color:#FFFFFF!important;box-shadow:none!important}
+/* Campos y controles */
+button,input,select,textarea{border-color:#505B56!important}
+input,select,textarea{background:#505B56!important;color:#FFFFFF!important}
+button{background:#626D68!important;color:#FFFFFF!important;box-shadow:none!important}
+button:hover,.nav button.active,.view-switch .view-btn.active{background:#505B56!important;border-color:#C7FF00!important;color:#C7FF00!important;box-shadow:none!important}
+/* Tipografía y estados */
+small,.muted,.subtitle,.description,.item small{color:#D0D8D1!important}
+strong,b,.brand span,.metric-value,.kpi-value{color:#FFFFFF}
+.progress,.bar,.body-goal-track,.supp-progress-track{background:#505B56!important;box-shadow:none!important}
+.progress i,.bar i,.body-goal-fill,.supp-progress-fill{background:#C7FF00!important;box-shadow:none!important}
+/* Acentos secundarios de la paleta permitida */
+svg .accent,[data-accent="ice"]{color:#B9E9DC}
+/* Preservar imágenes, banner principal y sus proporciones originales. */
 </style>
 </body></html>
