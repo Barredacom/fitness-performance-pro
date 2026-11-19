@@ -1354,7 +1354,26 @@ function updateNutritionQtyPreset(){const input=document.getElementById('grams')
 /* V23.17 · PALETA OFICIAL UNIFICADA EN TODA LA APP */
 :root{--bg:#858F89;--panel:#626D68;--panel2:#505B56;--line:#505B56;--text:#FFFFFF;--muted:#D0D8D1;--green:#C7FF00;--lime:#D8FF32;--blue:#B9E9DC;--orange:#C7FF00;--pink:#B9E9DC;--purple:#B9E9DC;--palette-bg:#858F89;--palette-card:#626D68;--palette-surface:#505B56;--palette-lime:#C7FF00;--palette-lime-soft:#D8FF32;--palette-ice:#B9E9DC}
 html,body{background:#858F89!important;color:#FFFFFF!important}
-</style></head><body>
+</style>
+<style id="peso-kpis-inicio-glass-v2328">
+/* V23.28: Peso actual y cintura actual con el acabado de las tarjetas de Inicio. */
+#peso .body-kpis-live > .body-kpi:not(.body-chart-kpi){
+  background:linear-gradient(145deg,#626D68,#626D68)!important;
+  border:1px solid rgba(208,216,209,.22)!important;
+  border-radius:15px!important;
+  box-shadow:0 8px 25px rgba(0,0,0,.12)!important;
+  outline:0!important;
+}
+#peso .body-kpis-live > .body-kpi:not(.body-chart-kpi)::before,
+#peso .body-kpis-live > .body-kpi:not(.body-chart-kpi)::after{
+  box-shadow:none!important;
+  outline:0!important;
+}
+#peso .body-kpis-live > .body-kpi:not(.body-chart-kpi) small{color:#FFFFFF!important}
+#peso .body-kpis-live > .body-kpi:not(.body-chart-kpi) strong{color:#FFFFFF!important;text-shadow:none!important}
+#peso .body-kpis-live > .body-kpi:not(.body-chart-kpi) em{color:#D0D8D1!important}
+</style>
+</head><body>
 
 
 <!-- SUPABASE AUTH INTEGRATION -->
@@ -3273,4 +3292,65 @@ img,video,canvas,svg{filter:none}
 #nutricion .nutrition-intel-chip,
 #nutricion .nutrition-unit-switch button.active,
 #nutricion .nutrition-chip{background:rgba(185,233,220,.16)!important;color:#B9E9DC!important}
-#nutricion .nutrition-catalog-action .solid-neon-edit-icon{fill:#C7FF00!important;stroke:#C7FF00!important;filter:n
+#nutricion .nutrition-catalog-action .solid-neon-edit-icon{fill:#C7FF00!important;stroke:#C7FF00!important;filter:none!important}
+#nutricion .nutrition-card *,
+#nutricion .nutrition-intel-card *{text-shadow:none!important}
+</style>
+
+
+<style id="nutrition-categories-v2323">
+#nutricion .nutrition-intel-card{
+  display:block; width:100%; box-sizing:border-box; margin:0 0 14px;
+  padding:clamp(16px,3vw,23px);
+  background:rgba(98,109,104,.76)!important;
+  border:1px solid rgba(208,216,209,.28)!important;
+  border-radius:20px!important;
+  -webkit-backdrop-filter:blur(5px) saturate(105%);
+  backdrop-filter:blur(5px) saturate(105%);
+  box-shadow:0 6px 16px rgba(35,45,40,.10),inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+#nutricion .nutrition-summary-card-v2323 .nutrition-preview-title{margin-top:2px}
+#nutricion .nutrition-draft-shell-v2323 .nutrition-draft-card-v22{margin-top:0}
+#nutricion .nutrition-catalog-shell-v2323{margin-bottom:0}
+#nutricion .nutrition-catalog-shell-v2323 .nutrition-catalog-actions-v22{margin-top:0}
+#nutricion .nutrition-card-kicker{color:#FFFFFF}
+@media(max-width:650px){#nutricion .nutrition-intel-card{margin-bottom:12px;padding:15px;border-radius:18px!important}}
+</style>
+
+<style id="nutrition-gap-background-v2324">
+/* V23.24 · El espacio entre tarjetas deja ver el fondo general */
+#nutricion{background:transparent!important}
+#nutricion>.training-pro-shell,
+#nutricion .training-pro-shell{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+#nutricion .nutrition-intel-card{
+  background:rgba(98,109,104,.76)!important;
+}
+#nutricion .nutrition-intel-card + .nutrition-intel-card{
+  margin-top:0!important;
+}
+</style>
+
+<style id="body-measures-visual-fix-v2326">
+/* V23.26 · Ajustes solicitados en Peso y Medidas */
+/* Banner: eliminar contornos CSS duplicados y conservar la imagen original */
+#peso .body-start-hero{border:0!important;outline:0!important;box-shadow:none!important;padding:0!important;background:transparent!important;border-radius:18px!important;overflow:hidden!important}
+#peso .body-start-hero img{border:0!important;outline:0!important;box-shadow:none!important;border-radius:18px!important;display:block!important}
+/* KPIs: estilo de tarjeta Inicio, sin bordes ni resplandor neón */
+#peso .body-kpis-live>.body-kpi:nth-child(1),
+#peso .body-kpis-live>.body-kpi:nth-child(2){background:linear-gradient(145deg,#626D68,#626D68)!important;border:1px solid rgba(208,216,209,.22)!important;box-shadow:0 6px 16px rgba(35,45,40,.10),inset 0 1px 0 rgba(255,255,255,.08)!important}
+#peso .body-kpis-live>.body-kpi:nth-child(1) strong,
+#peso .body-kpis-live>.body-kpi:nth-child(2) strong{color:#FFFFFF!important;text-shadow:none!important}
+#peso .body-kpis-live>.body-kpi:nth-child(1) small,
+#peso .body-kpis-live>.body-kpi:nth-child(2) small{color:#FFFFFF!important}
+/* Textos de progreso y ayuda solicitados en blanco */
+#peso .body-goal-remaining,
+#peso #bodyTo75,
+#peso .body-swipe-copy span,
+#peso .body-swipe-track-copy .history-swipe-subtitle,
+#peso .body-swipe-track-copy .history-swipe-title{color:#FFFFFF!important;opacity:1!important}
+</style>
+</body></html>
