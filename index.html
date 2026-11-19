@@ -1038,7 +1038,7 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
 .body-kpis-live>.body-kpi:nth-child(2) strong{color:#B9E9DC;text-shadow:0 0 12px #B9E9DC66}
 .body-kpis-live>.body-kpi:nth-child(2) small{color:#B9E9DC}
 .body-chart-detail{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:7px 2px 2px;padding:9px 11px;background:#505B56;border:1px solid #626D68;border-radius:10px;color:#D0D8D1;font-size:12px}
-.body-chart-point{cursor:pointer;transition:r .15s ease,filter .15s ease;outline:none}
+.body-chart-point{cursor:pointer;pointer-events:all;touch-action:manipulation;transition:r .15s ease,filter .15s ease;outline:none}
 .body-chart-point:focus{stroke:#FFFFFF;stroke-width:3}
 .body-history-chart{height:210px}
 @media(max-width:600px){.body-history-chart{height:190px}.body-chart-detail{font-size:11px}}
@@ -2277,17 +2277,17 @@ function renderBodyHistoryLineChart(weights,waists){
    if(si===0){const area=line+` L ${points[points.length-1].x.toFixed(1)} ${(T+ih).toFixed(1)} L ${points[0].x.toFixed(1)} ${(T+ih).toFixed(1)} Z`;paths+=`<path d="${area}" fill="url(#bodyHistoryFill)"/>`;}
    paths+=`<path d="${line}" fill="none" stroke="${s.color}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
   }
-  dots+=points.map((p,i)=>`<circle class="body-chart-point" data-series="${si}" data-index="${i}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="5.5" fill="${si===0?'#B9E9DC':'#C7FF00'}" stroke="#505B56" stroke-width="2.5" tabindex="0" role="button" aria-label="${p.name}: ${p.v.toFixed(1)} ${p.unit}, ${fmtDate(p.date)}"><title>${fmtDate(p.date)}: ${p.v.toFixed(1)} ${p.unit} · Toca para ver detalle</title></circle>`).join('');
+  dots+=points.map((p,i)=>`<circle class="body-chart-point" data-series="${si}" data-index="${i}" data-value="${p.v.toFixed(1)}" data-date="${p.date}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="5.5" fill="${si===0?'#B9E9DC':'#C7FF00'}" stroke="#505B56" stroke-width="2.5" tabindex="0" role="button" aria-label="${p.name}: ${p.v.toFixed(1)} ${p.unit}, ${fmtDate(p.date)}"><title>${fmtDate(p.date)}: ${p.v.toFixed(1)} ${p.unit} · Toca para ver detalle</title></circle>`).join('');
   if(si===0&&points.length){firstWeight=`<text x="${points[0].x.toFixed(1)}" y="${Math.max(18,points[0].y-13).toFixed(1)}" text-anchor="start" fill="#D0D8D1" font-size="13" font-weight="600">${points[0].v.toFixed(1)} kg</text>`;const last=points[points.length-1];lastWeight=`<text x="${last.x.toFixed(1)}" y="${Math.max(18,last.y-13).toFixed(1)}" text-anchor="end" fill="#C7FF00" font-size="15" font-weight="800">${last.v.toFixed(1)} kg</text>`;}
  });
  const first=dates[0]||'',last=dates[dates.length-1]||'';
  host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" aria-label="Gráfico de evolución corporal con el diseño de Inicio"><defs><linearGradient id="bodyHistoryFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#C7FF00" stop-opacity=".25"/><stop offset="1" stop-color="#C7FF00" stop-opacity="0"/></linearGradient></defs>${grid}${paths}${dots}${firstWeight}${lastWeight}<text x="${L}" y="${H-10}" fill="#D0D8D1" font-size="11">${fmtDate(first)}</text><text x="${W-R}" y="${H-10}" text-anchor="end" fill="#D0D8D1" font-size="11">${fmtDate(last)}</text></svg><div class="body-chart-detail" aria-live="polite">Toca un punto del gráfico para ver el detalle del registro.</div><div class="body-chart-legend">${series.map(s=>`<span><i style="background:${s.color}"></i>${s.name} (${s.unit})</span>`).join('')}</div>`;
  const detail=host.querySelector('.body-chart-detail');
  const selectPoint=el=>{
-  const si=Number(el.dataset.series),idx=Number(el.dataset.index),ser=series[si],row=ser&&ser.data[idx];if(!row)return;
-  host.querySelectorAll('.body-chart-point').forEach(n=>{n.setAttribute('r','5.5');n.style.filter='none'});
-  el.setAttribute('r','8');
-  detail.innerHTML=`<strong style="color:${ser.color}">${ser.name}: ${Number(row[ser.field]).toFixed(1)} ${ser.unit}</strong><span>${fmtDate(row.date)}</span>`;
+  const si=Number(el.dataset.series),ser=series[si],value=Number(el.dataset.value),date=String(el.dataset.date||'');if(!ser||!Number.isFinite(value)||!date)return;
+  host.querySelectorAll('.body-chart-point').forEach(n=>{n.setAttribute('r','5.5');n.style.filter='none';n.setAttribute('aria-pressed','false')});
+  el.setAttribute('r','8');el.setAttribute('aria-pressed','true');
+  detail.innerHTML=`<strong style="color:${ser.color}">${ser.name}: ${value.toFixed(1)} ${ser.unit}</strong><span>${fmtDate(date)}</span>`;
  };
  host.querySelectorAll('.body-chart-point').forEach(el=>{
   el.addEventListener('click',()=>selectPoint(el));
@@ -3089,272 +3089,4 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElement
 </script>
 
 
-<style id="nutrition-v22-reorganization">
-/* Nutrición V22: reordenamiento visual aislado, conservando funciones */
-#nutricion .nutrition-actions-v22{grid-template-columns:1fr;margin-top:14px}
-#nutricion .nutrition-draft-card-v22{margin-top:16px;background:linear-gradient(145deg,#505B56,#505B56);border:1px solid #505B56;border-radius:20px;padding:clamp(14px,3vw,20px);box-shadow:0 8px 22px #0003}
-#nutricion .nutrition-draft-heading-v22{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#C7FF00;font-size:11px;font-weight:900;letter-spacing:1.1px;margin-bottom:12px}
-#nutricion .nutrition-draft-count-v22{display:grid;place-items:center;min-width:28px;height:28px;border-radius:999px;background:#505B56;border:1px solid #626D68;color:#C7FF00;padding:0 8px}
-#nutricion .nutrition-draft-list-v22{display:grid;gap:8px}
-#nutricion .nutrition-draft-list-v22 .item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;background:#505B56;border:1px solid #505B56;border-radius:13px;color:#C7FF00}
-#nutricion .nutrition-draft-list-v22 .item small{display:block;margin-top:4px;color:#626D68;line-height:1.5}
-#nutricion .nutrition-draft-list-v22>p{margin:0;color:#626D68;background:#505B56;border:1px dashed #626D68;border-radius:12px;padding:15px;font-size:13px}
-#nutricion .nutrition-draft-list-v22 .item button{flex:0 0 auto;min-width:36px;min-height:36px;border-radius:10px;background:#505B56;border:1px solid #626D68;color:#C7FF00}
-#nutricion .nutrition-draft-list-v22:empty::before{content:'Aún no agregas alimentos.';display:block;color:#626D68;background:#505B56;border:1px dashed #626D68;border-radius:12px;padding:15px;font-size:13px}
-#nutricion .nutrition-draft-total-v22{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid #505B56;margin-top:14px;padding-top:14px}
-#nutricion .nutrition-draft-total-v22 span{font-size:10px;font-weight:850;letter-spacing:.8px;color:#626D68}
-#nutricion .nutrition-draft-total-v22 strong{font-size:clamp(13px,3vw,17px);font-weight:900;color:#C7FF00;text-align:right}
-#nutricion .nutrition-register-v22{display:block;width:100%;margin-top:14px;min-height:54px;border-radius:14px!important}
-#nutricion .nutrition-catalog-actions-v22{grid-template-columns:1fr 1fr;margin-top:12px}
-#nutricion .nutrition-catalog-actions-v22 .nutrition-catalog-action{grid-column:auto;min-height:48px}
-@media(max-width:650px){#nutricion .nutrition-catalog-actions-v22{grid-template-columns:1fr}}
-
-
-/* Nutrition V22.2 Toast confirmation */
-#nutritionMealToast{position:fixed;z-index:99999;top:calc(env(safe-area-inset-top,0px) + 16px);left:50%;width:min(92vw,460px);transform:translate(-50%,-18px) scale(.96);opacity:0;pointer-events:none;background:linear-gradient(145deg,#505B56,#505B56);border:1px solid rgba(164,255,40,.55);border-radius:18px;padding:14px 16px;box-shadow:0 10px 32px rgba(0,0,0,.48),0 0 22px rgba(164,255,40,.13);display:flex;align-items:center;gap:12px;color:#C7FF00;transition:opacity .24s ease,transform .35s cubic-bezier(.2,.8,.25,1)}
-#nutritionMealToast.is-visible{opacity:1;transform:translate(-50%,0) scale(1)}
-#nutritionMealToast .nmt-icon{width:42px;height:42px;flex:0 0 42px;border-radius:50%;display:grid;place-items:center;background:#505B56;color:#C7FF00;font-size:22px;font-weight:900;border:1px solid #626D68}
-#nutritionMealToast .nmt-title{font-weight:800;letter-spacing:.7px;color:#C7FF00;font-size:13px}
-#nutritionMealToast .nmt-detail{font-size:12px;color:#D0D8D1;margin-top:3px;line-height:1.4}
-@media(prefers-reduced-motion:reduce){#nutritionMealToast{transition:none}}
-
-/* Swipe Nutricion V22.1: drag is immediate and release/reset is smooth */
-#nutritionMealSwipeTrack.is-dragging #nutritionMealSwipe{transition:none!important;will-change:left}
-#nutritionMealSwipeTrack:not(.is-dragging) #nutritionMealSwipe{transition:left .22s cubic-bezier(.22,.75,.25,1),transform .16s ease,background .18s ease,color .18s ease,box-shadow .18s ease!important}
-#nutritionMealSwipeTrack{touch-action:pan-y}
-#nutritionMealSwipe{touch-action:none!important;user-select:none;-webkit-user-select:none}
-
-#nutritionMealToast.is-error{border-color:rgba(255,70,70,.65);box-shadow:0 10px 32px rgba(0,0,0,.48),0 0 22px rgba(255,70,70,.12)}
-#nutritionMealToast.is-error .nmt-icon{background:#505B56;color:#C7FF00;border-color:#626D68}
-#nutritionMealToast.is-error .nmt-title{color:#C7FF00}
-</style>
-<div id="nutritionMealToast" role="status" aria-live="polite" aria-atomic="true"><span class="nmt-icon">✓</span><div><div class="nmt-title">COMIDA REGISTRADA</div><div class="nmt-detail" id="nutritionMealToastDetail">Comida guardada correctamente</div></div></div>
-<script id="nutrition-meal-swipe-handler-v22-3-document-events">
-(function(){
- const knob=document.getElementById('nutritionMealSwipe'),track=document.getElementById('nutritionMealSwipeTrack'),copy=document.getElementById('nutritionMealSwipeCopy');
- if(!knob||!track||knob.dataset.ready==='1')return;knob.dataset.ready='1';
- let dragging=false,startX=0,startLeft=7,pointerId=null,busy=false;const edge=7,knobWidth=58;
- function maxLeft(){return Math.max(edge,track.clientWidth-knobWidth-edge)}
- function setLeft(left){const max=maxLeft(),x=Math.max(edge,Math.min(max,left));knob.style.left=x+'px';const pct=max===edge?0:(x-edge)/(max-edge)*100;track.style.setProperty('--swipe-progress',pct+'%');knob.setAttribute('aria-valuenow',String(Math.round(pct)));return pct}
- function reset(){dragging=false;pointerId=null;track.classList.remove('is-dragging','is-unlocked');knob.style.left=edge+'px';track.style.setProperty('--swipe-progress','0%');knob.setAttribute('aria-valuenow','0');}
- function showToast(detail,isError=false){const toast=document.getElementById('nutritionMealToast'),detailEl=document.getElementById('nutritionMealToastDetail'),title=toast?.querySelector('.nmt-title'),icon=toast?.querySelector('.nmt-icon');if(!toast)return;if(detailEl)detailEl.textContent=detail|| (isError?'No se pudo guardar la comida':'Comida guardada correctamente');if(title)title.textContent=isError?'ERROR AL REGISTRAR':'COMIDA REGISTRADA';if(icon)icon.textContent=isError?'!':'✓';toast.classList.toggle('is-error',isError);toast.classList.add('is-visible');clearTimeout(window.__nutritionMealToastTimer);window.__nutritionMealToastTimer=setTimeout(()=>toast.classList.remove('is-visible','is-error'),3200);}
- async function finish(){if(busy)return;busy=true;dragging=false;pointerId=null;track.classList.remove('is-dragging');setLeft(maxLeft());track.classList.add('is-unlocked');knob.style.transition='left .18s ease-out,transform .16s ease,background .18s ease,color .18s ease,box-shadow .18s ease';
-  const snapshot=(window.mealDraft||[]).slice(),mealName=snapshot[0]?.meal||document.getElementById('meal')?.value||'Comida',totals=snapshot.reduce((a,x)=>({k:a.k+(Number(x.k)||0),p:a.p+(Number(x.p)||0)}),{k:0,p:0}),detail=`${mealName} · ${totals.k.toFixed(0)} kcal · ${totals.p.toFixed(1)} g proteína`;
-  try{const result=await registerMeal();if(result===true){showToast(detail,false);track.classList.add('is-completed');if(copy)copy.innerHTML='<span class="nutrition-meal-swipe-title">✓ COMIDA REGISTRADA</span><span class="nutrition-meal-swipe-subtitle">Registro guardado correctamente</span>';knob.setAttribute('aria-label','Comida registrada correctamente');await new Promise(r=>setTimeout(r,850));if(copy)copy.innerHTML='<span class="nutrition-meal-swipe-title">DESLIZA PARA REGISTRAR</span><span class="nutrition-meal-swipe-subtitle">Desliza a la derecha para guardar la comida</span>';knob.setAttribute('aria-label','Desliza a la derecha para registrar la comida');track.classList.remove('is-completed');}else if(result==='partial'){showToast('Algunos alimentos quedaron pendientes. Revisa el borrador e intenta nuevamente.',true);}else showToast('No se confirmó el guardado. Intenta nuevamente.',true);
-  }catch(err){console.error('Error en registerMeal:',err);showToast('No se pudo guardar. Revisa tu conexión e intenta nuevamente.',true)}finally{reset();busy=false;}}
- function down(e){if(busy||dragging||track.classList.contains('is-completed'))return;if(e.pointerType==='mouse'&&e.button!==0)return;dragging=true;pointerId=e.pointerId;startX=e.clientX;startLeft=parseFloat(knob.style.left)||edge;track.classList.add('is-dragging');knob.style.transition='none';if(e.cancelable)e.preventDefault();}
- function move(e){if(!dragging|| (pointerId!==null&&e.pointerId!==pointerId))return;setLeft(startLeft+e.clientX-startX);if(e.cancelable)e.preventDefault();}
- function end(e){if(!dragging||(pointerId!==null&&e.pointerId!==pointerId))return;const pct=setLeft(parseFloat(knob.style.left)||edge);if(e&&e.cancelable)e.preventDefault();if(pct>=94)finish();else reset();}
- knob.addEventListener('pointerdown',down);document.addEventListener('pointermove',move,{passive:false});document.addEventListener('pointerup',end);document.addEventListener('pointercancel',e=>{if(dragging&&(pointerId===null||e.pointerId===pointerId))reset()});
- knob.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='End'){e.preventDefault();if(!busy&&!track.classList.contains('is-completed'))finish();}});
- window.addEventListener('resize',()=>{if(!dragging&&!busy)setLeft(edge)});setLeft(edge);
-})();
-</script>
-
-<style id="v23-20-glass-cristal-suave">
-/* V23.20 · Glass Premium suave global. No modifica estructura ni lógica. */
-:root{
- --bg:#858F89;--panel:#626D68;--panel2:#505B56;
- --glass-card:rgba(98,109,104,.72);
- --glass-surface:rgba(80,91,86,.62);
- --glass-border:rgba(208,216,209,.24);
- --glass-highlight:rgba(255,255,255,.08);
-}
-html,body{background:#858F89!important;color:#FFFFFF!important}
-/* Contenedores visuales de todas las secciones */
-.card,[class*="-card"],[class*="_card"],[class*="-panel"],[class*="_panel"],
-[class*="-tile"],[class*="_tile"],.item,.chart,.day,.view-switch,
-.metric,.kpi,.summary-card,.stat-card,.section-box{
- background:var(--glass-card)!important;
- border:1px solid var(--glass-border)!important;
- box-shadow:inset 0 1px 0 var(--glass-highlight),0 3px 12px rgba(24,32,28,.06)!important;
- -webkit-backdrop-filter:blur(4px) saturate(103%);
- backdrop-filter:blur(4px) saturate(103%);
-}
-/* Superficies anidadas, listas y elementos internos */
-.item,.day,.chart,[class*="-tile"],[class*="_tile"],
-.card .inner,.card .row,.card .list-row,[class*="-card"] .inner{
- background:var(--glass-surface)!important;
-}
-/* Separadores transparentes y finos */
-hr,.card hr,[class*="-card"] hr,[class*="-panel"] hr,
-.divider,[class*="divider"]{
- border-color:rgba(208,216,209,.22)!important;
-}
-/* Controles legibles, sin desenfoque */
-input,select,textarea,button{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-/* Respeta el banner y las imágenes originales */
-img,video,canvas,svg{filter:none}
-</style>
-
-<style id="nutrition-palette-v2321">
-/* V23.21 · Paleta oficial y cristal suave SOLO para Nutrición */
-#nutricion{
-  --nutri-bg:#858F89;
-  --nutri-card:rgba(98,109,104,.68);
-  --nutri-surface:rgba(80,91,86,.72);
-  --nutri-line:rgba(255,255,255,.22);
-  --nutri-text:#FFFFFF;
-  --nutri-muted:#D0D8D1;
-  --nutri-lime:#C7FF00;
-  --nutri-lime-soft:#D8FF32;
-  --nutri-ice:#B9E9DC;
-  color:var(--nutri-text);
-}
-#nutricion .training-pro-shell,
-#nutricion .nutrition-intel-head,
-#nutricion .nutrition-intel-card,
-#nutricion .nutrition-goal-card,
-#nutricion .nutrition-summary-card,
-#nutricion .nutrition-meal-card,
-#nutricion .nutrition-history-card,
-#nutricion .nutrition-panel,
-#nutricion .nutrition-card,
-#nutricion .nutrition-food-card,
-#nutricion .nutrition-stat-card,
-#nutricion .nutrition-intel-card,
-#nutricion .nutrition-goal-card{
-  background:var(--nutri-card)!important;
-  color:var(--nutri-text)!important;
-  border:1px solid var(--nutri-line)!important;
-  border-radius:18px!important;
-  -webkit-backdrop-filter:blur(4px) saturate(104%);
-  backdrop-filter:blur(4px) saturate(104%);
-  box-shadow:0 5px 14px rgba(35,45,40,.09),inset 0 1px 0 rgba(255,255,255,.08)!important;
-}
-#nutricion .nutrition-intel-title h2,
-#nutricion h1,#nutricion h2,#nutricion h3,
-#nutricion .nutrition-card-kicker,
-#nutricion .nutrition-field,
-#nutricion label,
-#nutricion strong{color:var(--nutri-text)}
-#nutricion p,#nutricion small,
-#nutricion .nutrition-intel-title p,
-#nutricion .nutrition-field small,
-#nutricion .nutrition-help,
-#nutricion .muted{color:var(--nutri-muted)!important}
-#nutricion input:not([type=range]),
-#nutricion select,#nutricion textarea,
-#nutricion .nutrition-input,
-#nutricion .nutrition-select{
-  background:rgba(80,91,86,.72)!important;
-  color:#FFFFFF!important;
-  border:1px solid var(--nutri-line)!important;
-  border-radius:12px!important;
-  -webkit-backdrop-filter:blur(4px);
-  backdrop-filter:blur(4px);
-}
-#nutricion input::placeholder,#nutricion textarea::placeholder{color:#D0D8D1!important;opacity:.85}
-#nutricion button:not(.active),
-#nutricion .nutrition-unit-switch button,
-#nutricion .nutrition-tab,
-#nutricion .nutrition-chip{
-  border-color:var(--nutri-line)!important;
-}
-#nutricion button.active,
-#nutricion .nutrition-primary-btn,
-#nutricion .nutrition-submit,
-#nutricion .nutrition-action-primary{
-  background:#C7FF00!important;color:#505B56!important;border-color:#C7FF00!important;
-  box-shadow:none!important;
-}
-#nutricion .nutrition-intel-icon,
-#nutricion .nutrition-card-kicker>span,
-#nutricion .nutrition-goal-value,
-#nutricion .nutrition-goal-remaining,
-#nutricion .nutrition-goal-card>strong,
-#nutricion .nutrition-date-icon{color:#C7FF00!important}
-#nutricion .nutrition-goal-ring .ring-progress,
-#nutricion .nutrition-3d-ring .ring-top-green{stroke:#C7FF00!important;fill:#C7FF00!important;filter:none!important}
-#nutricion .nutrition-goal-ring .ring-bg,
-#nutricion .nutrition-3d-ring .ring-top-gray{stroke:#505B56!important;fill:#505B56!important}
-#nutricion .nutrition-3d-ring .ring-side-green{fill:#C7FF00!important;stroke:#C7FF00!important}
-#nutricion .nutrition-3d-ring .ring-side-gray{fill:#626D68!important;stroke:#505B56!important}
-#nutricion .nutrition-goal-card>small,
-#nutricion .nutrition-goal-ring .ring-percent{color:#FFFFFF!important;fill:#FFFFFF!important}
-#nutricion .nutrition-macro,
-#nutricion .fp-custom-macro,
-#nutricion .fp-custom-result,
-#nutricion .date-display-card,
-#nutricion .nutrition-date-card{
-  background:var(--nutri-surface)!important;color:#FFFFFF!important;
-  border:1px solid var(--nutri-line)!important;
-  -webkit-backdrop-filter:blur(4px) saturate(104%);
-  backdrop-filter:blur(4px) saturate(104%);
-}
-#nutricion .fp-custom-macro label,
-#nutricion .fp-custom-result small,
-#nutricion .fp-custom-status{color:#D0D8D1!important}
-#nutricion .nutrition-progress,
-#nutricion .nutrition-progress-track,
-#nutricion .nutrition-goal-track{background:#505B56!important}
-#nutricion .nutrition-progress>i,
-#nutricion .nutrition-progress-fill,
-#nutricion .nutrition-goal-track i{background:#C7FF00!important}
-#nutricion hr,
-#nutricion .nutrition-divider{border-color:var(--nutri-line)!important;background:var(--nutri-line)!important}
-#nutricion .nutrition-intel-chip,
-#nutricion .nutrition-unit-switch button.active,
-#nutricion .nutrition-chip{background:rgba(185,233,220,.16)!important;color:#B9E9DC!important}
-#nutricion .nutrition-catalog-action .solid-neon-edit-icon{fill:#C7FF00!important;stroke:#C7FF00!important;filter:none!important}
-#nutricion .nutrition-card *,
-#nutricion .nutrition-intel-card *{text-shadow:none!important}
-</style>
-
-
-<style id="nutrition-categories-v2323">
-#nutricion .nutrition-intel-card{
-  display:block; width:100%; box-sizing:border-box; margin:0 0 14px;
-  padding:clamp(16px,3vw,23px);
-  background:rgba(98,109,104,.76)!important;
-  border:1px solid rgba(208,216,209,.28)!important;
-  border-radius:20px!important;
-  -webkit-backdrop-filter:blur(5px) saturate(105%);
-  backdrop-filter:blur(5px) saturate(105%);
-  box-shadow:0 6px 16px rgba(35,45,40,.10),inset 0 1px 0 rgba(255,255,255,.08)!important;
-}
-#nutricion .nutrition-summary-card-v2323 .nutrition-preview-title{margin-top:2px}
-#nutricion .nutrition-draft-shell-v2323 .nutrition-draft-card-v22{margin-top:0}
-#nutricion .nutrition-catalog-shell-v2323{margin-bottom:0}
-#nutricion .nutrition-catalog-shell-v2323 .nutrition-catalog-actions-v22{margin-top:0}
-#nutricion .nutrition-card-kicker{color:#FFFFFF}
-@media(max-width:650px){#nutricion .nutrition-intel-card{margin-bottom:12px;padding:15px;border-radius:18px!important}}
-</style>
-
-<style id="nutrition-gap-background-v2324">
-/* V23.24 · El espacio entre tarjetas deja ver el fondo general */
-#nutricion{background:transparent!important}
-#nutricion>.training-pro-shell,
-#nutricion .training-pro-shell{
-  background:transparent!important;
-  border:0!important;
-  box-shadow:none!important;
-}
-#nutricion .nutrition-intel-card{
-  background:rgba(98,109,104,.76)!important;
-}
-#nutricion .nutrition-intel-card + .nutrition-intel-card{
-  margin-top:0!important;
-}
-</style>
-
-<style id="body-measures-visual-fix-v2326">
-/* V23.26 · Ajustes solicitados en Peso y Medidas */
-/* Banner: eliminar contornos CSS duplicados y conservar la imagen original */
-#peso .body-start-hero{border:0!important;outline:0!important;box-shadow:none!important;padding:0!important;background:transparent!important;border-radius:18px!important;overflow:hidden!important}
-#peso .body-start-hero img{border:0!important;outline:0!important;box-shadow:none!important;border-radius:18px!important;display:block!important}
-/* KPIs: estilo de tarjeta Inicio, sin bordes ni resplandor neón */
-#peso .body-kpis-live>.body-kpi:nth-child(1),
-#peso .body-kpis-live>.body-kpi:nth-child(2){background:linear-gradient(145deg,#626D68,#626D68)!important;border:1px solid rgba(208,216,209,.22)!important;box-shadow:0 6px 16px rgba(35,45,40,.10),inset 0 1px 0 rgba(255,255,255,.08)!important}
-#peso .body-kpis-live>.body-kpi:nth-child(1) strong,
-#peso .body-kpis-live>.body-kpi:nth-child(2) strong{color:#FFFFFF!important;text-shadow:none!important}
-#peso .body-kpis-live>.body-kpi:nth-child(1) small,
-#peso .body-kpis-live>.body-kpi:nth-child(2) small{color:#FFFFFF!important}
-/* Textos de progreso y ayuda solicitados en blanco */
-#peso .body-goal-remaining,
-#peso #bodyTo75,
-#peso .body-swipe-copy span,
-#peso .body-swipe-track-copy .history-swipe-subtitle,
-#peso .body-swipe-track-copy .history-swipe-title{color:#FFFFFF!important;opacity:1!important}
-</style>
-</body></html>
+<style id="nutritio
