@@ -2257,32 +2257,36 @@ function chart(id){let data=db.measures.filter(x=>x.weight).sort((a,b)=>a.date.l
 function renderBodyHistoryLineChart(weights,waists){
  const host=$('bodyHistoryLineChart');if(!host)return;
  const series=[
-  {name:'Peso',unit:'kg',field:'weight',data:Array.isArray(weights)?weights:[],color:'#A4FF28'},
-  {name:'Cintura',unit:'cm',field:'waist',data:Array.isArray(waists)?waists:[],color:'#C58BFF'}
+  {name:'Peso',unit:'kg',field:'weight',data:Array.isArray(weights)?weights:[],color:'#C7FF00'},
+  {name:'Cintura',unit:'cm',field:'waist',data:Array.isArray(waists)?waists:[],color:'#B9E9DC'}
  ].filter(s=>s.data.length);
  if(!series.length){host.innerHTML='<div class="muted" style="padding:18px 4px">Aún no hay datos válidos para graficar. Revisa el historial de mediciones.</div>';return;}
  const dates=[...new Set(series.flatMap(s=>s.data.map(x=>String(x.date||''))))].filter(Boolean).sort();
- const W=680,H=210,L=42,R=18,T=28,B=34,iw=W-L-R,ih=H-T-B;
+ const W=680,H=250,L=34,R=28,T=40,B=38,iw=W-L-R,ih=H-T-B;
  const xFor=d=>L+(dates.length>1?dates.indexOf(d)/(dates.length-1):.5)*iw;
  const fmtDate=d=>{const a=String(d).split('-');return a.length===3?a[2]+'/'+a[1]+'/'+a[0]:d};
- let grid=[0,.5,1].map(t=>`<line x1="${L}" y1="${T+t*ih}" x2="${W-R}" y2="${T+t*ih}" stroke="#263b2d" stroke-width="1" stroke-dasharray="4 5"/>`).join('');
- let paths='',dots='',labels='';
+ let grid=[0,.5,1].map(t=>`<line x1="${L}" y1="${T+t*ih}" x2="${W-R}" y2="${T+t*ih}" stroke="#505B56" stroke-width="1" stroke-dasharray="3 6" opacity=".7"/>`).join('');
+ let paths='',dots='',labels='',firstWeight='',lastWeight='';
  series.forEach((s,si)=>{
-  const vals=s.data.map(x=>Number(x[s.field])).filter(Number.isFinite);
+  const vals=s.data.map(x=>Number(x[s.field])).filter(v=>Number.isFinite(v)&&v>0);
   const min=Math.min(...vals),max=Math.max(...vals),span=Math.max(max-min,1);
-  const yFor=v=>T+ih-((v-min)/span)*ih;
-  const points=s.data.map(x=>({x:xFor(String(x.date||'')),y:yFor(Number(x[s.field])),v:Number(x[s.field]),date:String(x.date||''),series:si,unit:s.unit,name:s.name})).filter(p=>Number.isFinite(p.v));
-  if(points.length>1)paths+=`<polyline points="${points.map(p=>p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ')}" fill="none" stroke="${s.color}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 5px ${s.color}99)"/>`;
-  dots+=points.map((p,i)=>`<circle class="body-chart-point" data-series="${si}" data-index="${i}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="6" fill="${s.color}" stroke="#07100b" stroke-width="2.5" tabindex="0" role="button" aria-label="${p.name}: ${p.v.toFixed(1)} ${p.unit}, ${fmtDate(p.date)}"><title>${fmtDate(p.date)}: ${p.v.toFixed(1)} ${p.unit} · Toca para ver detalle</title></circle>`).join('');
-  labels+=points.map(p=>`<text x="${p.x.toFixed(1)}" y="${Math.max(13,p.y-11).toFixed(1)}" text-anchor="middle" fill="${s.color}" font-size="11" font-weight="800">${p.v.toFixed(1)}</text>`).join('');
+  const yFor=v=>T+ih-((v-min)/span)*(ih-10);
+  const points=s.data.map(x=>({x:xFor(String(x.date||'')),y:yFor(Number(x[s.field])),v:Number(x[s.field]),date:String(x.date||''),series:si,unit:s.unit,name:s.name})).filter(p=>Number.isFinite(p.v)&&p.v>0);
+  const line=points.map((p,i)=>(i?'L':'M')+p.x.toFixed(1)+' '+p.y.toFixed(1)).join(' ');
+  if(points.length>1){
+   if(si===0){const area=line+` L ${points[points.length-1].x.toFixed(1)} ${(T+ih).toFixed(1)} L ${points[0].x.toFixed(1)} ${(T+ih).toFixed(1)} Z`;paths+=`<path d="${area}" fill="url(#bodyHistoryFill)"/>`;}
+   paths+=`<path d="${line}" fill="none" stroke="${s.color}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  }
+  dots+=points.map((p,i)=>`<circle class="body-chart-point" data-series="${si}" data-index="${i}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="5.5" fill="${si===0?'#B9E9DC':'#C7FF00'}" stroke="#505B56" stroke-width="2.5" tabindex="0" role="button" aria-label="${p.name}: ${p.v.toFixed(1)} ${p.unit}, ${fmtDate(p.date)}"><title>${fmtDate(p.date)}: ${p.v.toFixed(1)} ${p.unit} · Toca para ver detalle</title></circle>`).join('');
+  if(si===0&&points.length){firstWeight=`<text x="${points[0].x.toFixed(1)}" y="${Math.max(18,points[0].y-13).toFixed(1)}" text-anchor="start" fill="#D0D8D1" font-size="13" font-weight="600">${points[0].v.toFixed(1)} kg</text>`;const last=points[points.length-1];lastWeight=`<text x="${last.x.toFixed(1)}" y="${Math.max(18,last.y-13).toFixed(1)}" text-anchor="end" fill="#C7FF00" font-size="15" font-weight="800">${last.v.toFixed(1)} kg</text>`;}
  });
  const first=dates[0]||'',last=dates[dates.length-1]||'';
- host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" aria-label="Gráfico interactivo de pesajes y cintura">${grid}${paths}${dots}${labels}<text x="${L}" y="${H-8}" fill="#AABCB0" font-size="11">${fmtDate(first)}</text><text x="${W-R}" y="${H-8}" text-anchor="end" fill="#AABCB0" font-size="11">${fmtDate(last)}</text></svg><div class="body-chart-detail" aria-live="polite">Toca un punto del gráfico para ver el detalle del registro.</div><div class="body-chart-legend">${series.map(s=>`<span><i style="background:${s.color};box-shadow:0 0 9px ${s.color}"></i>${s.name} (${s.unit})</span>`).join('')}</div>`;
+ host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" aria-label="Gráfico de evolución corporal con el diseño de Inicio"><defs><linearGradient id="bodyHistoryFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#C7FF00" stop-opacity=".25"/><stop offset="1" stop-color="#C7FF00" stop-opacity="0"/></linearGradient></defs>${grid}${paths}${dots}${firstWeight}${lastWeight}<text x="${L}" y="${H-10}" fill="#D0D8D1" font-size="11">${fmtDate(first)}</text><text x="${W-R}" y="${H-10}" text-anchor="end" fill="#D0D8D1" font-size="11">${fmtDate(last)}</text></svg><div class="body-chart-detail" aria-live="polite">Toca un punto del gráfico para ver el detalle del registro.</div><div class="body-chart-legend">${series.map(s=>`<span><i style="background:${s.color}"></i>${s.name} (${s.unit})</span>`).join('')}</div>`;
  const detail=host.querySelector('.body-chart-detail');
  const selectPoint=el=>{
   const si=Number(el.dataset.series),idx=Number(el.dataset.index),ser=series[si],row=ser&&ser.data[idx];if(!row)return;
-  host.querySelectorAll('.body-chart-point').forEach(n=>{n.setAttribute('r','6');n.style.filter='none'});
-  el.setAttribute('r','9');el.style.filter=`drop-shadow(0 0 8px ${ser.color})`;
+  host.querySelectorAll('.body-chart-point').forEach(n=>{n.setAttribute('r','5.5');n.style.filter='none'});
+  el.setAttribute('r','8');
   detail.innerHTML=`<strong style="color:${ser.color}">${ser.name}: ${Number(row[ser.field]).toFixed(1)} ${ser.unit}</strong><span>${fmtDate(row.date)}</span>`;
  };
  host.querySelectorAll('.body-chart-point').forEach(el=>{
