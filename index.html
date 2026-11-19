@@ -1479,6 +1479,8 @@ html,body{background:#858F89!important;color:#FFFFFF!important}
 <div class="tp-hero nutrition-tp-hero"><div class="tp-hero-copy"><h2>Nutrición</h2><div class="tp-shift-reco"><div class="tp-shift-kicker">RECOMENDACIÓN SEGÚN TURNO</div><div class="tp-shift-title">Alimentación equilibrada y sostenida</div><div class="tp-shift-desc">Organiza tus comidas según tu jornada y prioriza energía, saciedad y recuperación.</div><div class="tp-shift-tags"><span class="tp-shift-tag">Objetivo: 1.800–2.000 kcal</span><span class="tp-shift-tag">Proteína: 120–130 g/día</span></div><div class="tp-shift-note">Hidratación constante y comidas de buena calidad durante el día.</div></div></div>
 </div>
 
+  <section class="nutrition-category-group nutrition-category-entry" aria-label="Registro y cálculo nutricional">
+    <div class="nutrition-category-heading"><span class="nutrition-category-index">01</span><div><h3>Registro y cálculo</h3><p>Selecciona alimentos, cantidades y comida</p></div></div>
   <div class="nutrition-intel-head">
     <div class="nutrition-intel-title"><span class="nutrition-intel-icon">✦</span><div><h2>NUTRICIÓN INTELIGENTE</h2><p>Registro y cálculo nutricional en tiempo real</p></div></div>
     <span class="nutrition-intel-chip">ALIMENTO + GRAMOS → MACROS</span>
@@ -1543,6 +1545,9 @@ html,body{background:#858F89!important;color:#FFFFFF!important}
 @media(max-width:520px){.nutrition-meal-swipe-track{min-height:72px}.nutrition-meal-swipe-copy{padding:0 64px}.nutrition-meal-swipe-title{font-size:9px;letter-spacing:1.1px}.nutrition-meal-swipe-subtitle{font-size:10px}.nutrition-meal-swipe-thumb{width:56px}}
 @media(prefers-reduced-motion:reduce){.nutrition-meal-swipe-thumb,.nutrition-meal-swipe-copy,.nutrition-meal-swipe-progress{transition:none!important}}
 </style>
+  </section>
+  <section class="nutrition-category-group nutrition-category-draft" aria-label="Alimentos agregados e historial de la comida">
+    <div class="nutrition-category-heading"><span class="nutrition-category-index">02</span><div><h3>Comidas y registros</h3><p>Revisa los alimentos antes de guardar tu comida</p></div></div>
 <section class="nutrition-draft-card-v22" aria-label="Alimentos agregados a la comida">
       <div class="nutrition-draft-heading-v22"><span>ALIMENTOS AGREGADOS</span><span class="nutrition-draft-count-v22" id="nutritionDraftCount">0</span></div>
       <div id="mealDraftList" class="nutrition-draft-list-v22" aria-live="polite"></div>
@@ -1561,6 +1566,7 @@ html,body{background:#858F89!important;color:#FFFFFF!important}
     </div>
   </div>
 
+  </section>
   <div hidden aria-hidden="true"><div id="foodList"></div><span id="foodTotals">0 kcal · P 0 · C 0 · G 0</span></div>
 
 </section>
@@ -3247,6 +3253,62 @@ img,video,canvas,svg{filter:none}
 #nutricion .nutrition-catalog-action .solid-neon-edit-icon{fill:#C7FF00!important;stroke:#C7FF00!important;filter:none!important}
 #nutricion .nutrition-card *,
 #nutricion .nutrition-intel-card *{text-shadow:none!important}
+
+
+/* V23.22 · Categorías independientes en Nutrición; conserva IDs y lógica existentes */
+#nutricion .nutrition-category-group{
+  display:grid;
+  gap:12px;
+  margin:18px 0;
+  min-width:0;
+}
+#nutricion .nutrition-category-heading{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:2px 3px 0;
+}
+#nutricion .nutrition-category-heading h3{
+  margin:0;
+  color:#FFFFFF!important;
+  font-size:clamp(16px,2.1vw,19px);
+  font-weight:750;
+  letter-spacing:.01em;
+}
+#nutricion .nutrition-category-heading p{
+  margin:3px 0 0;
+  color:#D0D8D1!important;
+  font-size:12px;
+  line-height:1.4;
+}
+#nutricion .nutrition-category-index{
+  display:grid;
+  place-items:center;
+  flex:0 0 34px;
+  width:34px;
+  height:34px;
+  border-radius:11px;
+  color:#C7FF00;
+  background:rgba(80,91,86,.62);
+  border:1px solid rgba(255,255,255,.2);
+  font-size:12px;
+  font-weight:800;
+}
+#nutricion .nutrition-category-group .nutrition-intel-head{margin:0 0 2px}
+#nutricion .nutrition-category-group .nutrition-intel-card,
+#nutricion .nutrition-category-group .nutrition-draft-card-v22{
+  background:rgba(98,109,104,.48)!important;
+  border:1px solid rgba(255,255,255,.22)!important;
+  -webkit-backdrop-filter:blur(4px) saturate(104%);
+  backdrop-filter:blur(4px) saturate(104%);
+  box-shadow:0 5px 14px rgba(35,45,40,.08),inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+#nutricion .nutrition-category-draft .nutrition-draft-card-v22{margin-top:0}
+#nutricion .nutrition-category-draft .nutrition-catalog-actions-v22{margin-top:10px}
+@media(max-width:520px){
+  #nutricion .nutrition-category-group{gap:10px;margin:15px 0}
+  #nutricion .nutrition-category-heading{gap:9px}
+}
 </style>
 
 </body></html>
