@@ -2,7 +2,7 @@
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FITNESS PERFORMANCE PRO · Dark Athletic Clinical</title>
 <style>
-:root{--bg:#626D68;--panel:#626D68;--panel2:#626D68;--line:#626D68;--text:#FFFFFF;--muted:#D0D8D1;--green:#C7FF00;--lime:#C7FF00;--blue:#B9E9DC;--orange:#C7FF00;--pink:#B9E9DC;--purple:#B9E9DC;--palette-bg:#626D68;--palette-card:#626D68;--palette-surface:#626D68;--palette-lime:#C7FF00;--palette-lime-soft:#C7FF00;--palette-ice:#B9E9DC}
+:root{--bg:#858F89;--panel:#626D68;--panel2:#505B56;--line:rgba(208,216,209,.28);--text:#FFFFFF;--muted:#D0D8D1;--green:#C7FF00;--lime:#D8FF32;--blue:#B9E9DC;--orange:#C7FF00;--pink:#B9E9DC;--purple:#B9E9DC;--palette-bg:#858F89;--palette-card:#626D68;--palette-surface:#505B56;--palette-lime:#C7FF00;--palette-lime-soft:#D8FF32;--palette-ice:#B9E9DC}
 *{box-sizing:border-box}body{margin:0;background:var(--palette-bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
 button,input,select{font:inherit}button{cursor:pointer;border:1px solid #626D68;background:#505B56;color:#C7FF00;border-radius:10px;padding:9px 12px}button:hover{border-color:var(--green);color:var(--green)}input,select{background:#505B56;color:#C7FF00;border:1px solid #505B56;border-radius:8px;padding:9px;width:100%}
 .shell{display:grid;grid-template-columns:220px 1fr;min-height:100vh}.side{padding:20px 12px;border-right:1px solid #505B56;background:#505B56;position:sticky;top:0;height:100vh}.brand{font-size:20px;font-weight:900;letter-spacing:1px;margin:5px 8px 24px;color:white}.brand span{color:var(--green)}.nav{display:grid;gap:7px}.nav button{display:flex;align-items:center;gap:9px}.nav-icon{width:20px;height:20px;flex:0 0 20px;fill:currentColor;stroke:none}.nav button{text-align:left;background:transparent;border-color:transparent;color:#D0D8D1}.nav button.active{background:#505B56;border-color:#626D68;color:var(--green);box-shadow:0 0 15px #C7FF0020}
@@ -3099,54 +3099,39 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElement
 })();
 </script>
 
-<style id="nutrition-v23-green-gradient-redesign">
-/* V23 visual refresh: green-only nutrition cards, compact mobile layout */
-#nutricion .nutrition-intel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:10px 0 14px}
-#nutricion .nutrition-intel-title h2{letter-spacing:1.1px}
-#nutricion .nutrition-intel-card{background:linear-gradient(145deg,#505B56,#505B56 55%,#505B56);border:1px solid #505B56;border-radius:24px;padding:clamp(14px,3.5vw,22px);box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 12px 32px rgba(0,0,0,.2)}
-#nutricion .nutrition-card-kicker{font-size:clamp(15px,3.6vw,20px);letter-spacing:1px;font-weight:900;color:#C7FF00;margin:0 0 18px}
-#nutricion .nutrition-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px;align-items:start}
-#nutricion .nutrition-field-wide{grid-column:1/-1}
-#nutricion .nutrition-field{font-size:11px;letter-spacing:1.5px;font-weight:850;color:#C7FF00;display:flex;flex-direction:column;gap:8px;min-width:0}
-#nutricion #food,#nutricion #grams,#nutricion #meal{min-height:58px;border-radius:16px!important;background:linear-gradient(145deg,#505B56,#505B56)!important;border:1px solid #626D68!important;color:#C7FF00!important;font-size:16px!important;font-weight:750;padding:12px 15px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
-#nutricion .nutrition-quantity-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-#nutricion .nutrition-unit-switch{border-radius:999px;padding:4px;background:#505B56;border:1px solid #505B56}
-#nutricion .nutrition-unit-switch button{border-radius:999px;min-width:32px;min-height:32px;color:#626D68}
-#nutricion .nutrition-unit-switch button.active{background:linear-gradient(145deg,#C7FF00,#C7FF00 60%,#C7FF00);color:#505B56;box-shadow:0 0 12px rgba(164,255,40,.16)}
-#nutricion .nutrition-quantity-range{accent-color:#C7FF00;margin:10px 4px 0;width:calc(100% - 8px)}
-#nutricion .nutrition-range-labels{color:#626D68;font-weight:700}
-#nutricion .date-display-card{min-height:58px;border-radius:16px!important;background:linear-gradient(145deg,#505B56,#505B56)!important;border:1px solid #626D68!important;padding:10px 12px!important}
-#nutricion .nutrition-preview-title{margin:20px 0 12px;color:#626D68;font-size:11px;letter-spacing:1.2px;font-weight:900}
-#nutricion .nutrition-macro-grid-v23{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-#nutricion .nutrition-macro-v23{min-height:106px;border-radius:18px!important;padding:14px!important;background:linear-gradient(160deg,#505B56 0%,#505B56 55%,#505B56 100%)!important;border:1px solid #626D68!important;box-shadow:inset 0 1px 0 rgba(201,255,175,.08),inset 0 -4px 16px rgba(125,255,30,.1),0 0 12px rgba(100,255,20,.035);display:flex;flex-direction:column;justify-content:space-between;gap:8px;overflow:hidden}
-#nutricion .nutrition-macro-v23::after{content:'';height:4px;border-radius:999px;background:linear-gradient(90deg,#626D68,#C7FF00,#C7FF00);box-shadow:0 0 12px rgba(164,255,40,.25);margin-top:2px}
-#nutricion .nutrition-macro-v23 small{font-size:10px;letter-spacing:1.1px;font-weight:850;color:#D0D8D1}
-#nutricion .nutrition-macro-v23 b{font-size:clamp(19px,5vw,26px);font-weight:950;color:#C7FF00;line-height:1.1}
-#nutricion .nutrition-actions-v22 .nutrition-primary-action{min-height:60px;border-radius:18px!important;background:linear-gradient(110deg,#C7FF00,#C7FF00 50%,#C7FF00)!important;color:#505B56!important;font-size:clamp(15px,4vw,19px)!important;font-weight:950;box-shadow:0 0 20px rgba(164,255,40,.18),inset 0 1px 0 rgba(255,255,255,.4);border:1px solid #C7FF00!important}
-#nutricion .nutrition-draft-card-v22{background:linear-gradient(145deg,#505B56,#505B56)!important;border-color:#505B56!important}
-#nutricion .nutrition-draft-total-v22{border:1px solid #626D68;border-radius:14px;padding:12px;background:linear-gradient(120deg,#505B56,#505B56)}
-#nutricion .nutrition-draft-total-v22 strong{color:#C7FF00!important}
-@media(max-width:420px){#nutricion .nutrition-form-grid{gap:11px 9px}#nutricion .nutrition-macro-v23{min-height:96px;padding:12px!important}#nutricion .nutrition-macro-v23 b{font-size:20px}#nutricion .nutrition-field{font-size:10px}}
-
-/* V23.16 PALETA GLOBAL OFICIAL: sin colores complementarios ni efectos neon */
-:root{color-scheme:dark;--bg:#626D68;--panel:#626D68;--panel2:#626D68;--line:#626D68;--text:#FFFFFF;--muted:#D0D8D1;--green:#C7FF00;--lime:#C7FF00;--blue:#B9E9DC}
-html,body{background:#626D68!important;color:#FFFFFF!important}
-.shell,main{background:#626D68!important}
-.side{background:#626D68!important;border-color:#626D68!important}
-/* Superficies comunes de la aplicación; se excluyen banners e imágenes */
-.card,.metric,.item,.kpi,.panel,.section-card,.shift-selected,.shift-next,.history-kpi,.history-event-card,.history-timeline-wrap,.history-datebar,.history-monthbar,.calendar-cell,.day,.view-switch,.chart{background:#626D68!important;border-color:#626D68!important;color:#FFFFFF!important;box-shadow:none!important}
-/* Campos y controles */
-button,input,select,textarea{border-color:#626D68!important}
-input,select,textarea{background:#626D68!important;color:#FFFFFF!important}
-button{background:#626D68!important;color:#FFFFFF!important;box-shadow:none!important}
-button:hover,.nav button.active,.view-switch .view-btn.active{background:#626D68!important;border-color:#C7FF00!important;color:#C7FF00!important;box-shadow:none!important}
-/* Tipografía y estados */
-small,.muted,.subtitle,.description,.item small{color:#D0D8D1!important}
-strong,b,.brand span,.metric-value,.kpi-value{color:#FFFFFF}
-.progress,.bar,.body-goal-track,.supp-progress-track{background:#626D68!important;box-shadow:none!important}
-.progress i,.bar i,.body-goal-fill,.supp-progress-fill{background:#C7FF00!important;box-shadow:none!important}
-/* Acentos secundarios de la paleta permitida */
-svg .accent,[data-accent="ice"]{color:#B9E9DC}
-/* Preservar imágenes, banner principal y sus proporciones originales. */
+<style id="v23-20-glass-cristal-suave">
+/* V23.20 · Glass Premium suave global. No modifica estructura ni lógica. */
+:root{
+ --bg:#858F89;--panel:#626D68;--panel2:#505B56;
+ --glass-card:rgba(98,109,104,.72);
+ --glass-surface:rgba(80,91,86,.62);
+ --glass-border:rgba(208,216,209,.24);
+ --glass-highlight:rgba(255,255,255,.08);
+}
+html,body{background:#858F89!important;color:#FFFFFF!important}
+/* Contenedores visuales de todas las secciones */
+.card,[class*="-card"],[class*="_card"],[class*="-panel"],[class*="_panel"],
+[class*="-tile"],[class*="_tile"],.item,.chart,.day,.view-switch,
+.metric,.kpi,.summary-card,.stat-card,.section-box{
+ background:var(--glass-card)!important;
+ border:1px solid var(--glass-border)!important;
+ box-shadow:inset 0 1px 0 var(--glass-highlight),0 3px 12px rgba(24,32,28,.06)!important;
+ -webkit-backdrop-filter:blur(4px) saturate(103%);
+ backdrop-filter:blur(4px) saturate(103%);
+}
+/* Superficies anidadas, listas y elementos internos */
+.item,.day,.chart,[class*="-tile"],[class*="_tile"],
+.card .inner,.card .row,.card .list-row,[class*="-card"] .inner{
+ background:var(--glass-surface)!important;
+}
+/* Separadores transparentes y finos */
+hr,.card hr,[class*="-card"] hr,[class*="-panel"] hr,
+.divider,[class*="divider"]{
+ border-color:rgba(208,216,209,.22)!important;
+}
+/* Controles legibles, sin desenfoque */
+input,select,textarea,button{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+/* Respeta el banner y las imágenes originales */
+img,video,canvas,svg{filter:none}
 </style>
 </body></html>
