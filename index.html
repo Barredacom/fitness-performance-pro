@@ -1424,6 +1424,15 @@ function updateNutritionQtyPreset(){const input=document.getElementById('grams')
 #inicio .pc-card{padding:14px;min-width:0}
 #inicio .pc-card-title{font-size:15px;font-weight:800;margin-bottom:4px}
 #inicio .pc-card-sub{font-size:11px;color:#D0D8D1;margin-bottom:12px}
+#inicio .pc-live-chart{min-height:112px;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#inicio .pc-live-chart svg{width:100%;height:auto;display:block;max-height:190px}
+#inicio .pc-macro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}
+#inicio .pc-macro{background:rgba(80,91,86,.32);border:1px solid rgba(185,233,220,.24);border-radius:10px;padding:7px 5px;text-align:center;min-width:0}
+#inicio .pc-macro b{display:block;font-size:14px;color:#fff}
+#inicio .pc-macro small{display:block;font-size:9px;color:#D0D8D1}
+#inicio .pc-macro em{display:block;font-size:10px;font-style:normal;color:#B9E9DC}
+#inicio .pc-goal-value{font-size:10px;color:#D0D8D1;text-align:right}
+#inicio .pc-goal-track i{transition:width .25s ease}
 #inicio .pc-chart-empty{height:112px;border:1px dashed #AAB4AE;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;color:#D0D8D1;font-size:11px;background:rgba(80,91,86,.28)}
 #inicio .pc-ring-wrap{display:flex;align-items:center;justify-content:center;gap:15px;min-height:112px}
 #inicio .pc-ring{width:94px;height:94px;border-radius:50%;background:conic-gradient(#C7FF00 0 25%,#858F89 25% 100%);display:grid;place-items:center;position:relative;flex:none}
@@ -1438,7 +1447,7 @@ function updateNutritionQtyPreset(){const input=document.getElementById('grams')
 #inicio .pc-habit strong{display:block;font-size:13px}
 #inicio .pc-habit small{font-size:10px;color:#D0D8D1}
 #inicio .pc-goals{display:grid;gap:11px}
-#inicio .pc-goal{display:grid;grid-template-columns:95px 1fr;gap:9px;align-items:center;font-size:12px}
+#inicio .pc-goal{display:grid;grid-template-columns:82px auto minmax(55px,1fr) 34px;gap:8px;align-items:center;font-size:12px}
 #inicio .pc-goal-track{height:9px;border-radius:99px;background:#414B46;overflow:hidden}
 #inicio .pc-goal-track i{height:100%;display:block;background:#C7FF00;width:0;border-radius:99px}
 #inicio .pc-note{font-size:10px;color:#D0D8D1;margin-top:9px}
@@ -1446,16 +1455,16 @@ function updateNutritionQtyPreset(){const input=document.getElementById('grams')
 </style>
 
 <div class="pc-dashboard" aria-label="Panel avanzado de rendimiento">
- <div class="pc-section-head"><div><div class="pc-kicker">PREMIUM CLINICAL ANALYTICS</div><div class="pc-title">Resumen de rendimiento</div><div class="pc-sub">Indicadores y seguimiento de tus registros</div></div><span class="pc-chip">PANEL PERSONAL</span></div>
+ <div class="pc-section-head"><div><div class="pc-kicker">PREMIUM CLINICAL ANALYTICS</div><div class="pc-title">Resumen de rendimiento</div><div class="pc-sub">Indicadores conectados a tus registros</div></div><span class="pc-chip">DATOS PERSONALES</span></div>
  <div class="pc-grid2">
-  <div class="pc-card"><div class="pc-card-title">Evolución corporal</div><div class="pc-card-sub">Peso y medidas · historial registrado</div><div class="pc-chart-empty">El gráfico de evolución se completará con tus mediciones guardadas.</div><div class="pc-legend"><span class="pc-chip">Meta intermedia: 80 kg</span><span class="pc-chip">Meta final: 75 kg</span></div></div>
-  <div class="pc-card"><div class="pc-card-title">Nutrición diaria</div><div class="pc-card-sub">Consumo frente a objetivos configurados</div><div class="pc-ring-wrap"><div class="pc-ring"><span>—</span></div><div class="pc-ring-note">Aún no hay un resumen calculado.<br>Registra tus comidas para visualizar el progreso.</div></div><div class="pc-legend"><span class="pc-chip">Proteína: 120–130 g</span><span class="pc-chip">Energía: 1.800–2.000 kcal</span></div></div>
+  <div class="pc-card"><div class="pc-card-title">Evolución corporal</div><div class="pc-card-sub">Peso y medidas · historial registrado</div><div id="pcBodyChart" class="pc-live-chart" aria-live="polite"></div><div class="pc-legend"><span class="pc-chip">Meta intermedia: 80 kg</span><span class="pc-chip">Meta final: 75 kg</span></div></div>
+  <div class="pc-card"><div class="pc-card-title">Nutrición diaria</div><div class="pc-card-sub">Consumo frente a objetivos configurados</div><div class="pc-ring-wrap"><div id="pcNutritionRing" class="pc-ring"><span id="pcNutritionPct">—</span></div><div class="pc-ring-note" id="pcNutritionSummary">Calculando registros de hoy…</div></div><div class="pc-macro-grid" id="pcMacroGrid"></div></div>
  </div>
  <div class="pc-grid2">
-  <div class="pc-card"><div class="pc-card-title">Entrenamiento semanal</div><div class="pc-card-sub">Duración y frecuencia de sesiones registradas</div><div class="pc-chart-empty">Las barras semanales aparecerán cuando existan sesiones registradas.</div></div>
-  <div class="pc-card"><div class="pc-card-title">Hábitos y recuperación</div><div class="pc-card-sub">Acceso a tus registros diarios</div><div class="pc-habit"><span class="pc-habit-icon">◌</span><div><strong>Hidratación</strong><small>Consulta el registro de agua en su sección.</small></div></div><div class="pc-habit"><span class="pc-habit-icon">◇</span><div><strong>Suplementos</strong><small>Creatina · Magnesio · Omega 3 · Proteína</small></div></div></div>
+  <div class="pc-card"><div class="pc-card-title">Entrenamiento semanal</div><div class="pc-card-sub">Minutos registrados · últimos 7 días</div><div id="pcWorkoutChart" class="pc-live-chart" aria-live="polite"></div></div>
+  <div class="pc-card"><div class="pc-card-title">Hábitos y recuperación</div><div class="pc-card-sub">Estado de los registros disponibles</div><div class="pc-habit"><span class="pc-habit-icon">◌</span><div><strong>Hidratación</strong><small id="pcHydrationStatus">No hay registros de agua guardados en esta versión.</small></div></div><div class="pc-habit"><span class="pc-habit-icon">◇</span><div><strong>Suplementos</strong><small id="pcSupplementStatus">Consultando consumos registrados…</small></div></div></div>
  </div>
- <div class="pc-card"><div class="pc-card-title">Objetivos y constancia</div><div class="pc-card-sub">Metas configuradas · sin porcentajes estimados</div><div class="pc-goals"><div class="pc-goal"><b>Calorías</b><span class="pc-goal-track"><i></i></span></div><div class="pc-goal"><b>Proteína</b><span class="pc-goal-track"><i></i></span></div><div class="pc-goal"><b>Peso</b><span class="pc-goal-track"><i></i></span></div></div><div class="pc-note">Los indicadores se mostrarán cuando estén disponibles los datos correspondientes.</div></div>
+ <div class="pc-card"><div class="pc-card-title">Objetivos y constancia</div><div class="pc-card-sub">Progreso calculado desde tus datos disponibles</div><div class="pc-goals" id="pcGoals"></div><div class="pc-note" id="pcDataNote">Los indicadores se actualizan al guardar cambios en cada sección.</div></div>
 </div>
 
 </section>
@@ -2130,7 +2139,50 @@ function renderMeasureHistory(){const list=$('measureList'),count=$('measureCoun
 function deleteMeasure(id){if(!Array.isArray(db.measures))return;const before=db.measures.length;db.measures=db.measures.filter(x=>String(x.id)!==String(id));if(db.measures.length===before)return;try{localStorage.setItem(DBKEY,JSON.stringify(db));}catch(e){alert('No se pudo actualizar el historial en el almacenamiento del navegador.');return;}renderMeasureHistory();try{renderAll();}catch(e){console.error('Medición eliminada; hubo un error al actualizar otros módulos:',e);renderMeasureHistory();}}
 function addMeasure(){const w=Number($('weight').value),wa=Number($('waist').value),date=$('measureDate').value;if(!w&&!wa)return alert('Ingresa peso o cintura');if((w&&w<=0)||(wa&&wa<=0))return alert('Peso y cintura deben ser valores positivos');if(!date)return alert('Selecciona una fecha');if(!Array.isArray(db.measures))db.measures=[];db.measures.push({date,weight:w||null,waist:wa||null,id:Date.now()});try{localStorage.setItem(DBKEY,JSON.stringify(db));}catch(e){alert('No se pudo guardar en el almacenamiento del navegador.');return;} $('weight').value='';$('waist').value='';renderMeasureHistory();try{renderAll();}catch(e){console.error('Registro guardado; hubo un error al actualizar otros módulos:',e);renderMeasureHistory();}closeBodyMeasureModal();}
 function del(arr,id){db[arr]=db[arr].filter(x=>x.id!==id);save()}
-function renderAll(){let m=macros();$('kCal').textContent=Math.round(m.k)+' kcal';renderSupplements();
+function renderPremiumClinicalDashboard(){
+ const hostBody=$('pcBodyChart'),hostWorkout=$('pcWorkoutChart');
+ const validMeasures=(Array.isArray(db.measures)?db.measures:[]).filter(x=>x&&x.date);
+ const sortedMeasures=validMeasures.slice().sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+ const weights=sortedMeasures.filter(x=>Number(x.weight)>0);
+ const latest=weights[weights.length-1]||null,first=weights[0]||null;
+ const waistRows=sortedMeasures.filter(x=>Number(x.waist)>0),latestWaist=waistRows[waistRows.length-1]||null;
+ if(hostBody){
+  if(weights.length<2){
+   hostBody.innerHTML=latest?`<div class="pc-chart-empty">Último peso registrado: <b>${Number(latest.weight).toFixed(1)} kg</b><br>Se necesitan al menos dos mediciones para mostrar la tendencia.</div>`:'<div class="pc-chart-empty">Todavía no hay mediciones de peso registradas.</div>';
+  }else{
+   const vals=weights.map(x=>Number(x.weight)),min=Math.min(...vals,75),max=Math.max(...vals,80),span=Math.max(1,max-min),w=320,h=132,pad=18;
+   const pts=vals.map((v,i)=>({x:pad+i*(w-2*pad)/(vals.length-1),y:h-pad-(v-min)/span*(h-2*pad),v,date:weights[i].date}));
+   const line=pts.map((p,i)=>(i?'L':'M')+p.x.toFixed(1)+' '+p.y.toFixed(1)).join(' ');
+   const area=line+` L ${pts[pts.length-1].x} ${h-pad} L ${pts[0].x} ${h-pad} Z`;
+   hostBody.innerHTML=`<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Evolución de peso, desde ${vals[0]} hasta ${vals[vals.length-1]} kilogramos"><defs><linearGradient id="pcBodyFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#C7FF00" stop-opacity=".28"/><stop offset="1" stop-color="#C7FF00" stop-opacity="0"/></linearGradient></defs><path d="${area}" fill="url(#pcBodyFill)"/><path d="${line}" fill="none" stroke="#C7FF00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>${pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="3.5" fill="#B9E9DC" stroke="#505B56" stroke-width="1.5"/>`).join('')}<text x="${pad}" y="12" fill="#D0D8D1" font-size="10">${max.toFixed(1)} kg</text><text x="${pad}" y="${h-2}" fill="#D0D8D1" font-size="10">${min.toFixed(1)} kg</text><text x="${w-pad}" y="12" text-anchor="end" fill="#C7FF00" font-size="11" font-weight="700">${vals[vals.length-1].toFixed(1)} kg</text></svg>`;
+  }
+ }
+ const dayFoods=(Array.isArray(db.foods)?db.foods:[]).filter(x=>String(x.date||'')===today);
+ const totals=dayFoods.reduce((a,x)=>({k:a.k+(Number(x.k)||0),p:a.p+(Number(x.p)||0),c:a.c+(Number(x.c)||0),f:a.f+(Number(x.f)||0)}),{k:0,p:0,c:0,f:0});
+ const kcalGoal=1900,proteinGoal=125,kcalPct=Math.min(100,Math.round(totals.k/kcalGoal*100)),proteinPct=Math.min(100,Math.round(totals.p/proteinGoal*100));
+ const ring=$('pcNutritionRing'),pct=$('pcNutritionPct'),summary=$('pcNutritionSummary');
+ if(ring)ring.style.background=`conic-gradient(#C7FF00 0 ${kcalPct}%,#858F89 ${kcalPct}% 100%)`;
+ if(pct)pct.textContent=dayFoods.length?kcalPct+'%':'—';
+ if(summary)summary.textContent=dayFoods.length?`${Math.round(totals.k)} / ${kcalGoal} kcal · Proteína ${totals.p.toFixed(1)} / ${proteinGoal} g`:'No hay alimentos registrados para hoy.';
+ const macroHost=$('pcMacroGrid');
+ if(macroHost)macroHost.innerHTML=[['Proteína',totals.p,'g',proteinPct],['Carbohidratos',totals.c,'g',Math.min(100,Math.round(totals.c/220*100))],['Grasas',totals.f,'g',Math.min(100,Math.round(totals.f/60*100))]].map(x=>`<div class="pc-macro"><small>${x[0]}</small><b>${x[1].toFixed(1)} ${x[2]}</b><em>${dayFoods.length?x[3]+'%':'—'}</em></div>`).join('');
+ const now=new Date(),weekStart=new Date(now);weekStart.setDate(now.getDate()-6);weekStart.setHours(0,0,0,0);
+ const workoutRows=(Array.isArray(db.workouts)?db.workouts:[]).filter(x=>x&&x.date&&new Date(x.date+'T12:00:00')>=weekStart&&new Date(x.date+'T12:00:00')<=now);
+ const days=Array.from({length:7},(_,i)=>{const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);const iso=localDateISO(d);return {iso,label:['D','L','M','X','J','V','S'][d.getDay()],minutes:workoutRows.filter(x=>x.date===iso).reduce((n,x)=>n+(Number(x.minutes)||0),0)}});
+ const totalMinutes=days.reduce((n,x)=>n+x.minutes,0),maxMinutes=Math.max(60,...days.map(x=>x.minutes));
+ if(hostWorkout)hostWorkout.innerHTML=totalMinutes?`<svg viewBox="0 0 320 130" role="img" aria-label="Entrenamiento semanal: ${totalMinutes} minutos"><line x1="12" y1="100" x2="308" y2="100" stroke="#858F89" stroke-opacity=".5"/>${days.map((d,i)=>{const bh=d.minutes/maxMinutes*78,x=20+i*43;return `<rect x="${x}" y="${100-bh}" width="25" height="${bh}" rx="5" fill="${d.minutes?'#C7FF00':'#858F89'}" opacity="${d.minutes?'.9':'.45'}"/><text x="${x+12}" y="116" text-anchor="middle" fill="#D0D8D1" font-size="10">${d.label}</text><text x="${x+12}" y="${Math.max(10,94-bh)}" text-anchor="middle" fill="#fff" font-size="9">${d.minutes||''}</text>`}).join('')}<text x="308" y="12" text-anchor="end" fill="#B9E9DC" font-size="10">${totalMinutes} min</text></svg>`:'<div class="pc-chart-empty">No hay sesiones registradas en los últimos 7 días.</div>';
+ const suppToday=(Array.isArray(db.supplements)?db.supplements:[]).filter(x=>x&&x.done&&String(x.date||'')===today);
+ const suppStatus=$('pcSupplementStatus');if(suppStatus)suppStatus.textContent=suppToday.length?`${suppToday.length} de ${(db.supplements||[]).length} suplementos confirmados hoy.`:'Sin consumos confirmados hoy.';
+ const hydration=$('pcHydrationStatus');if(hydration)hydration.textContent='No hay un registro de hidratación almacenado; no se estima consumo.';
+ const goals=$('pcGoals');
+ if(goals){
+  const current=latest?Number(latest.weight):null,weightPct=current?Math.max(0,Math.min(100,Math.round((first?((Number(first.weight)-current)/(Number(first.weight)-80||1))*100:0)))):0;
+  const rows=[['Calorías',Math.round(totals.k),kcalGoal,'kcal',kcalPct,!!dayFoods.length],['Proteína',Number(totals.p.toFixed(1)),proteinGoal,'g',proteinPct,!!dayFoods.length],['Peso',current,80,'kg',weightPct,!!latest]];
+  goals.innerHTML=rows.map(x=>`<div class="pc-goal"><b>${x[0]}</b><span>${x[5]?`${x[1]} / ${x[2]} ${x[3]}`:'Sin datos'}</span><span class="pc-goal-track"><i style="width:${x[5]?x[4]:0}%"></i></span><span class="pc-goal-value">${x[5]?x[4]+'%':'—'}</span></div>`).join('');
+ }
+ const note=$('pcDataNote');if(note)note.textContent=`Actualizado desde registros guardados · ${weights.length} mediciones · ${dayFoods.length} alimentos hoy · ${workoutRows.length} sesiones esta semana${latestWaist?' · última cintura '+Number(latestWaist.waist).toFixed(1)+' cm':''}.`;
+}
+function renderAll(){renderPremiumClinicalDashboard();let m=macros();$('kCal').textContent=Math.round(m.k)+' kcal';renderSupplements();
 let last=[...db.measures].reverse().find(x=>x.weight);if(last)$('kWeight').textContent=last.weight+' kg';let lw=[...db.measures].reverse().find(x=>x.waist);if(lw)$('kWaist').textContent=lw.waist+' cm';
 $('foodTotals').textContent=`${Math.round(m.k)} kcal · P ${m.p.toFixed(1)} · C ${m.c.toFixed(1)} · G ${m.f.toFixed(1)}`;
 $('foodList').innerHTML=db.foods.filter(x=>x.date===$('foodDate').value).map(x=>`<div class="item"><span>${x.n}<small>${x.meal} · ${x.g} g</small></span><b>${Math.round(x.k)} kcal <button onclick="del('foods',${x.id})">×</button></b></div>`).join('')||'<p class="muted">Sin alimentos registrados para esta fecha.</p>';
