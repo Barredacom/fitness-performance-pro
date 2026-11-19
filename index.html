@@ -2589,8 +2589,26 @@ try{renderBodyEvolution();}catch(e){console.error('Error al cargar el panel corp
       return;
     }
 
-    if (!key.startsWith('sb_publishable_')) {
-      message('La clave debe comenzar con sb_publishable_.', true);
+    // Acepta las dos claves públicas oficiales de Supabase:
+    // 1) Publishable key moderna: sb_publishable_...
+    // 2) anon legacy: JWT público cuyo payload declara role=anon.
+    // Nunca acepta service_role ni claves secret.
+    const isPublishableKey = key.startsWith('sb_publishable_');
+    let isLegacyAnonKey = false;
+    if (!isPublishableKey && key.startsWith('eyJ')) {
+      try {
+        const payloadPart = key.split('.')[1];
+        if (payloadPart) {
+          const normalized = payloadPart.replace(/-/g, '+').replace(/_/g, '/');
+          const decoded = JSON.parse(atob(normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=')));
+          isLegacyAnonKey = decoded?.role === 'anon';
+        }
+      } catch (_) {
+        isLegacyAnonKey = false;
+      }
+    }
+    if (!isPublishableKey && !isLegacyAnonKey) {
+      message('Clave pública inválida. Usa sb_publishable_... o la clave anon antigua (role=anon). No uses service_role ni una clave secreta.', true);
       return;
     }
 
@@ -2622,7 +2640,7 @@ window.fpSupabaseClient = client;
         (_event, session) => setAuthUI(session)
       ).data.subscription;
 
-      message('Proyecto conectado correctamente. Puedes iniciar sesión.');
+      message('Proyecto conectado correctamente. Clave pública validada. Ahora inicia sesión con tu correo y contraseña.');
     } catch (error) {
       client = null;
       setAuthUI(null);
@@ -2754,7 +2772,7 @@ window.fpSupabaseClient = client;
   if (saved.url && saved.key && window.supabase?.createClient) {
     connect();
   } else {
-    status('Configura Supabase para comenzar');
+    status('Sin configurar');
   }
 })();
 document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
@@ -3255,76 +3273,4 @@ img,video,canvas,svg{filter:none}
 #nutricion .nutrition-intel-chip,
 #nutricion .nutrition-unit-switch button.active,
 #nutricion .nutrition-chip{background:rgba(185,233,220,.16)!important;color:#B9E9DC!important}
-#nutricion .nutrition-catalog-action .solid-neon-edit-icon{fill:#C7FF00!important;stroke:#C7FF00!important;filter:none!important}
-#nutricion .nutrition-card *,
-#nutricion .nutrition-intel-card *{text-shadow:none!important}
-</style>
-
-
-<style id="nutrition-categories-v2323">
-#nutricion .nutrition-intel-card{
-  display:block; width:100%; box-sizing:border-box; margin:0 0 14px;
-  padding:clamp(16px,3vw,23px);
-  background:rgba(98,109,104,.76)!important;
-  border:1px solid rgba(208,216,209,.28)!important;
-  border-radius:20px!important;
-  -webkit-backdrop-filter:blur(5px) saturate(105%);
-  backdrop-filter:blur(5px) saturate(105%);
-  box-shadow:0 6px 16px rgba(35,45,40,.10),inset 0 1px 0 rgba(255,255,255,.08)!important;
-}
-#nutricion .nutrition-summary-card-v2323 .nutrition-preview-title{margin-top:2px}
-#nutricion .nutrition-draft-shell-v2323 .nutrition-draft-card-v22{margin-top:0}
-#nutricion .nutrition-catalog-shell-v2323{margin-bottom:0}
-#nutricion .nutrition-catalog-shell-v2323 .nutrition-catalog-actions-v22{margin-top:0}
-#nutricion .nutrition-card-kicker{color:#FFFFFF}
-@media(max-width:650px){#nutricion .nutrition-intel-card{margin-bottom:12px;padding:15px;border-radius:18px!important}}
-</style>
-
-<style id="nutrition-gap-background-v2324">
-/* V23.24 · El espacio entre tarjetas deja ver el fondo general */
-#nutricion{background:transparent!important}
-#nutricion>.training-pro-shell,
-#nutricion .training-pro-shell{
-  background:transparent!important;
-  border:0!important;
-  box-shadow:none!important;
-}
-#nutricion .nutrition-intel-card{
-  background:rgba(98,109,104,.76)!important;
-}
-#nutricion .nutrition-intel-card + .nutrition-intel-card{
-  margin-top:0!important;
-}
-</style>
-</body></html>
-
-
-<style id="body-measures-sage-glass-v2325">
-/* V23.25 · Peso y medidas: paleta salvia y tarjetas al estilo Inicio */
-#peso .body-start-hero,
-#peso .body-start-hero img{
-  border:0!important;outline:0!important;box-shadow:none!important;
-}
-#peso .body-start-hero{
-  background:transparent!important;
-}
-#peso .body-kpis-live>.body-kpi:nth-child(1),
-#peso .body-kpis-live>.body-kpi:nth-child(2){
-  background:#626D68!important;
-  border:1px solid rgba(208,216,209,.22)!important;
-  border-radius:15px!important;
-  box-shadow:0 8px 22px rgba(0,0,0,.14)!important;
-}
-#peso .body-kpis-live>.body-kpi:nth-child(1) *,
-#peso .body-kpis-live>.body-kpi:nth-child(2) *{
-  text-shadow:none!important;
-}
-#peso .body-kpis-live>.body-kpi:nth-child(1) small,
-#peso .body-kpis-live>.body-kpi:nth-child(2) small{color:#D0D8D1!important}
-#peso .body-kpis-live>.body-kpi:nth-child(1) strong,
-#peso .body-kpis-live>.body-kpi:nth-child(2) strong{
-  color:#FFFFFF!important;font-weight:800!important;
-}
-#peso .body-kpis-live>.body-kpi:nth-child(1) em,
-#peso .body-kpis-live>.body-kpi:nth-child(2) em{color:#B9E9DC!important}
-</style>
+#nutricion .nutrition-catalog-action .solid-neon-edit-icon{fill:#C7FF00!important;stroke:#C7FF00!important;filter:n
