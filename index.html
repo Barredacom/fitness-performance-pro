@@ -1890,51 +1890,38 @@ function toggleFoodCatalog(show,mode='create'){
  }
 }
 function openEditFoodCatalog(){
- // V23.11: construir el selector desde el catálogo real y desde las opciones visibles de Nutrición.
- try{loadCustomFoods();}catch(e){console.warn('No se pudo recargar el catálogo personal',e);}
- const byKey=new Map();
- // Fuente primaria: objeto nutricional de la aplicación.
- try{
-   if(typeof foods!=='undefined'&&foods&&typeof foods==='object'){
-     Object.entries(foods).forEach(([key,v])=>{
-       if(!v)return;
-       byKey.set(String(key),{key:String(key),n:String(v.n||v.name||key),k:Number(v.k)||0,p:Number(v.p)||0,c:Number(v.c)||0,f:Number(v.f)||0,unit:v.unit||'g',unitWeight:Number(v.unitWeight)||0});
-     });
-   }
- }catch(e){console.warn('Lectura directa del catálogo no disponible',e);}
- // Respaldo: opciones del selector de alimentos que ya ve el usuario en Nutrición.
+ // V23.12: el editor reutiliza exactamente las opciones del selector principal de Nutrición.
+ // Así, cualquier alimento visible en "Registrar alimentación" también queda disponible para editar.
  const mainPicker=$('food');
+ const picker=$('catalogEditPicker');
+ if(!picker){console.error('No existe #catalogEditPicker');return;}
+ try{loadCustomFoods();}catch(e){console.warn('No se pudo recargar el catálogo personal',e);}
+ // Refrescar el selector principal desde el catálogo vigente antes de copiar sus opciones.
+ try{if(typeof loadFoodCatalog==='function')loadFoodCatalog();}catch(e){console.warn('No se pudo actualizar el selector principal',e);}
+ picker.replaceChildren(new Option('Selecciona un alimento…',''));
+ const seen=new Set();
  if(mainPicker&&mainPicker.options){
    Array.from(mainPicker.options).forEach(opt=>{
      const key=String(opt.value||'').trim();
      const name=String(opt.textContent||'').trim();
-     if(!key||!name||byKey.has(key))return;
-     let v={};
-     try{if(typeof foods!=='undefined'&&foods&&foods[key])v=foods[key];}catch(e){}
-     byKey.set(key,{key,n:String(v.n||v.name||name),k:Number(v.k)||0,p:Number(v.p)||0,c:Number(v.c)||0,f:Number(v.f)||0,unit:v.unit||'g',unitWeight:Number(v.unitWeight)||0});
+     if(!key||!name||seen.has(key))return;
+     seen.add(key);
+     picker.add(new Option(name,key));
    });
  }
- // Alimentos personalizados persistidos en este navegador.
- try{
-   const raw=JSON.parse(localStorage.getItem(CUSTOM_FOODS_KEY)||'[]');
-   if(Array.isArray(raw))raw.forEach((f,i)=>{
-     if(!f)return;const key=String(f.key||('custom_'+i));
-     byKey.set(key,{key,n:String(f.n||f.name||key),k:Number(f.k)||0,p:Number(f.p)||0,c:Number(f.c)||0,f:Number(f.f)||0,unit:f.unit||'g',unitWeight:Number(f.unitWeight)||0});
-   });
- }catch(e){console.warn('No se pudo leer el catálogo personal guardado',e);}
- const list=[...byKey.values()].sort((a,b)=>a.n.localeCompare(b.n,'es'));
- toggleFoodCatalog(true,'edit');editingCustomFoodKey=null;clearCatalogForm();
- const picker=$('catalogEditPicker');
- if(!picker){console.error('No existe #catalogEditPicker en el formulario');return;}
- picker.replaceChildren(new Option('Selecciona un alimento…',''));
- list.forEach(f=>picker.add(new Option(f.n,f.key)));
+ // Respaldo directo desde el objeto nutricional por si algún alimento no quedó en el select.
+ try{Object.entries(foods||{}).forEach(([key,v])=>{
+   if(!key||seen.has(String(key))||!v)return;
+   seen.add(String(key));picker.add(new Option(String(v.n||v.name||key),String(key)));
+ });}catch(e){console.warn('No se pudo completar el catálogo del editor',e);}
+ toggleFoodCatalog(true,'edit');
+ editingCustomFoodKey=null;clearCatalogForm();
  picker.disabled=false;
  const label=$('catalogEditPickerWrap')?.querySelector('label');
- if(label)label.textContent=list.length?`Selecciona alimento para editar (${list.length})`:'No hay alimentos en el catálogo de este navegador';
- if(!list.length){
-   const status=$('catalogSearchStatus');
-   if(status)status.textContent='No hay alimentos disponibles en este navegador. Primero registra un alimento o verifica que estés usando el mismo navegador donde guardaste tu catálogo.';
- }
+ const count=Math.max(0,picker.options.length-1);
+ if(label)label.textContent=count?`Selecciona alimento para editar (${count})`:'No hay alimentos disponibles';
+ const status=$('catalogSearchStatus');
+ if(status)status.textContent=count?'Selecciona un alimento de la misma lista que utilizas para registrar tu alimentación.':'El selector de Nutrición no contiene alimentos disponibles.';
 }
 
 function clearCatalogForm(){['catalogName','catalogK','catalogP','catalogC','catalogF','catalogUnitWeight'].forEach(id=>$(id).value='');$('catalogUnit').value='g';setCustomFoodUnit('g');}
