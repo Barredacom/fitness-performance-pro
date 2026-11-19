@@ -1406,6 +1406,58 @@ function updateNutritionQtyPreset(){const input=document.getElementById('grams')
 <section id="inicio" class="section active">
 <div><div class="eyebrow">DARK ATHLETIC CLINICAL</div><h1>Tu rendimiento, bajo control.</h1><div class="muted">Seguimiento de nutrición · entrenamiento · composición corporal</div></div>
 <div class="hero"><div class="heroimg"><div class="eyebrow">FITNESS PERFORMANCE PRO</div><h2>Disciplina, datos<br><span class="green">y constancia.</span></h2><p>Registra tus hábitos y observa cómo avanzas hacia tus objetivos.</p></div><div class="heroStat"><div class="card metric"><small>Peso actual</small><strong id="kWeight">82,3 kg</strong><span class="green">−7,5 kg desde inicio</span></div><div class="card metric"><small>Cintura</small><strong id="kWaist">95 cm</strong><span class="green">Seguimiento</span></div><div class="card metric"><small>Meta final</small><strong>75 kg</strong><span class="green">Meta intermedia 80</span></div><div class="card metric"><small>Calorías hoy</small><strong id="kCal">0</strong><span class="orange">Objetivo 1.800–2.000</span></div></div></div>
+
+<style id="premium-clinical-home-v2314">
+/* V23.14: estilos exclusivos de Inicio. El banner original .heroimg se conserva intacto. */
+#inicio{--pc-sage:#858F89;--pc-card:#626D68;--pc-deep:#505B56;--pc-lime:#C7FF00;--pc-lime-soft:#D8FF32;--pc-ice:#B9E9DC;--pc-white:#FFFFFF;--pc-muted:#D0D8D1;--pc-orange:#FFC56C;--pc-pink:#FF8D9A;--pc-purple:#D3C5FF;color:var(--pc-white)}
+#inicio .heroimg{border-color:#626D68;box-shadow:none;background-image:linear-gradient(90deg,rgba(5,8,6,.88),rgba(5,8,6,.35)),url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80')}
+#inicio .heroStat .card,#inicio .pc-card{background:#505B56;border:1px solid #858F89;box-shadow:none;border-radius:17px;color:#fff}
+#inicio .heroStat .metric small,#inicio .pc-muted{color:#D0D8D1}
+#inicio .heroStat .green,#inicio .pc-lime{color:#C7FF00}
+#inicio .heroStat .orange,#inicio .pc-orange{color:#FFC56C}
+#inicio .pc-dashboard{display:grid;gap:13px;margin-top:14px}
+#inicio .pc-section-head{display:flex;justify-content:space-between;align-items:end;gap:10px;flex-wrap:wrap}
+#inicio .pc-kicker{font-size:10px;letter-spacing:2px;font-weight:800;color:#B9E9DC}
+#inicio .pc-title{font-size:21px;font-weight:800;margin:3px 0 2px}
+#inicio .pc-sub{font-size:12px;color:#D0D8D1}
+#inicio .pc-grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#inicio .pc-card{padding:14px;min-width:0}
+#inicio .pc-card-title{font-size:15px;font-weight:800;margin-bottom:4px}
+#inicio .pc-card-sub{font-size:11px;color:#D0D8D1;margin-bottom:12px}
+#inicio .pc-chart-empty{height:112px;border:1px dashed #AAB4AE;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;color:#D0D8D1;font-size:11px;background:rgba(80,91,86,.28)}
+#inicio .pc-ring-wrap{display:flex;align-items:center;justify-content:center;gap:15px;min-height:112px}
+#inicio .pc-ring{width:94px;height:94px;border-radius:50%;background:conic-gradient(#C7FF00 0 25%,#858F89 25% 100%);display:grid;place-items:center;position:relative;flex:none}
+#inicio .pc-ring:before{content:'';position:absolute;inset:9px;background:#505B56;border-radius:50%}
+#inicio .pc-ring span{position:relative;font-size:20px;font-weight:800}
+#inicio .pc-ring-note{font-size:11px;color:#D0D8D1;line-height:1.5}
+#inicio .pc-legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+#inicio .pc-chip{font-size:10px;padding:5px 8px;border-radius:99px;background:#505B56;border:1px solid #858F89;color:#fff}
+#inicio .pc-habit{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid rgba(208,216,209,.22)}
+#inicio .pc-habit:first-of-type{border-top:0}
+#inicio .pc-habit-icon{width:34px;height:34px;border-radius:10px;background:#505B56;display:grid;place-items:center;color:#B9E9DC;font-size:18px;flex:none}
+#inicio .pc-habit strong{display:block;font-size:13px}
+#inicio .pc-habit small{font-size:10px;color:#D0D8D1}
+#inicio .pc-goals{display:grid;gap:11px}
+#inicio .pc-goal{display:grid;grid-template-columns:95px 1fr;gap:9px;align-items:center;font-size:12px}
+#inicio .pc-goal-track{height:9px;border-radius:99px;background:#414B46;overflow:hidden}
+#inicio .pc-goal-track i{height:100%;display:block;background:#C7FF00;width:0;border-radius:99px}
+#inicio .pc-note{font-size:10px;color:#D0D8D1;margin-top:9px}
+@media(max-width:700px){#inicio .pc-grid2{grid-template-columns:1fr;gap:9px}#inicio .pc-card{padding:12px}#inicio .pc-title{font-size:19px}#inicio .pc-chart-empty{height:96px}}
+</style>
+
+<div class="pc-dashboard" aria-label="Panel avanzado de rendimiento">
+ <div class="pc-section-head"><div><div class="pc-kicker">PREMIUM CLINICAL ANALYTICS</div><div class="pc-title">Resumen de rendimiento</div><div class="pc-sub">Indicadores y seguimiento de tus registros</div></div><span class="pc-chip">PANEL PERSONAL</span></div>
+ <div class="pc-grid2">
+  <div class="pc-card"><div class="pc-card-title">Evolución corporal</div><div class="pc-card-sub">Peso y medidas · historial registrado</div><div class="pc-chart-empty">El gráfico de evolución se completará con tus mediciones guardadas.</div><div class="pc-legend"><span class="pc-chip">Meta intermedia: 80 kg</span><span class="pc-chip">Meta final: 75 kg</span></div></div>
+  <div class="pc-card"><div class="pc-card-title">Nutrición diaria</div><div class="pc-card-sub">Consumo frente a objetivos configurados</div><div class="pc-ring-wrap"><div class="pc-ring"><span>—</span></div><div class="pc-ring-note">Aún no hay un resumen calculado.<br>Registra tus comidas para visualizar el progreso.</div></div><div class="pc-legend"><span class="pc-chip">Proteína: 120–130 g</span><span class="pc-chip">Energía: 1.800–2.000 kcal</span></div></div>
+ </div>
+ <div class="pc-grid2">
+  <div class="pc-card"><div class="pc-card-title">Entrenamiento semanal</div><div class="pc-card-sub">Duración y frecuencia de sesiones registradas</div><div class="pc-chart-empty">Las barras semanales aparecerán cuando existan sesiones registradas.</div></div>
+  <div class="pc-card"><div class="pc-card-title">Hábitos y recuperación</div><div class="pc-card-sub">Acceso a tus registros diarios</div><div class="pc-habit"><span class="pc-habit-icon">◌</span><div><strong>Hidratación</strong><small>Consulta el registro de agua en su sección.</small></div></div><div class="pc-habit"><span class="pc-habit-icon">◇</span><div><strong>Suplementos</strong><small>Creatina · Magnesio · Omega 3 · Proteína</small></div></div></div>
+ </div>
+ <div class="pc-card"><div class="pc-card-title">Objetivos y constancia</div><div class="pc-card-sub">Metas configuradas · sin porcentajes estimados</div><div class="pc-goals"><div class="pc-goal"><b>Calorías</b><span class="pc-goal-track"><i></i></span></div><div class="pc-goal"><b>Proteína</b><span class="pc-goal-track"><i></i></span></div><div class="pc-goal"><b>Peso</b><span class="pc-goal-track"><i></i></span></div></div><div class="pc-note">Los indicadores se mostrarán cuando estén disponibles los datos correspondientes.</div></div>
+</div>
+
 </section>
 
 
