@@ -1911,7 +1911,7 @@ function renderMealMiniSummary(){
  const foodsForDay=(db.foods||[]).filter(x=>String(x.date||'')===String(date));
  const totalK=foodsForDay.reduce((a,x)=>a+(Number(x.k)||0),0),totalP=foodsForDay.reduce((a,x)=>a+(Number(x.p)||0),0);
  const kcalGoal=1900,proteinGoal=125;
- const circle=(label,value,goal,unit,color)=>{const percent=Math.round(value/goal*100),shown=unit==='kcal'?Math.round(value):value.toFixed(1),ratio=Math.max(0,Math.min(value/goal,1)),greenEnd=180,arc=(a,b,ro=39,ri=23,dy=0)=>{const pt=(ang,r,y)=>[50+r*Math.cos(ang*Math.PI/180),50+r*Math.sin(ang*Math.PI/180)+y],p1=pt(a,ro,dy),p2=pt(b,ro,dy),p3=pt(b,ri,dy),p4=pt(a,ri,dy),large=Math.abs(b-a)>180?1:0;return `M${p1[0]} ${p1[1]} A${ro} ${ro} 0 ${large} 1 ${p2[0]} ${p2[1]} L${p3[0]} ${p3[1]} A${ri} ${ri} 0 ${large} 0 ${p4[0]} ${p4[1]} Z`;},greenPath=arc(-90,greenEnd),grayPath=arc(greenEnd,270),greenSide=arc(-90,greenEnd,39,23,7),graySide=arc(greenEnd,270,39,23,7);return `<div class="nutrition-goal-card"><div class="nutrition-goal-ring nutrition-3d-ring" style="--ring-color:${color}"><svg viewBox="0 0 100 108" role="img" aria-label="${label}: ${percent}% del objetivo"><path class="ring-side-green" d="${greenSide}"/><path class="ring-side-gray" d="${graySide}"/><path class="ring-top-green" d="${greenPath}"/><path class="ring-top-gray" d="${grayPath}"/><text x="50" y="48" class="ring-percent">${percent}%</text><text x="50" y="63" class="ring-value">${shown}</text></svg></div><strong>${label}</strong><small>${unit==='kcal'?Math.round(value)+' / '+goal+' kcal':value.toFixed(1)+' / '+goal+' g'}</small><span class="nutrition-goal-remaining">${value>goal?'+'+(value-goal).toFixed(unit==='kcal'?0:1)+' '+unit:'Restan '+(goal-value).toFixed(unit==='kcal'?0:1)+' '+unit}</span></div>`;}
+ const circle=(label,value,goal,unit,color)=>{const percent=Math.round(value/goal*100),shown=unit==='kcal'?Math.round(value):value.toFixed(1),ratio=Math.max(0,Math.min(value/goal,1));return `<div class="nutrition-goal-card"><div class="nutrition-goal-ring nutrition-simple-ring" style="--ring-progress:${ratio*100}%" role="img" aria-label="${label}: ${percent}% del objetivo"><span>${percent}%</span></div><strong>${label}</strong><small>${unit==='kcal'?Math.round(value)+' / '+goal+' kcal':value.toFixed(1)+' / '+goal+' g'}</small><span class="nutrition-goal-remaining">${value>goal?'+'+(value-goal).toFixed(unit==='kcal'?0:1)+' '+unit:'Restan '+(goal-value).toFixed(unit==='kcal'?0:1)+' '+unit}</span></div>`;}
  const circles=$('nutritionGoalCircles'),list=$('nutritionMealsList');if(!circles||!list)return;
  circles.innerHTML=circle('CALORÍAS',totalK,kcalGoal,'kcal','#A4FF28')+circle('PROTEÍNAS',totalP,proteinGoal,'g','#A4FF28');
  list.innerHTML=names.map((name,i)=>{const mealFoods=foodsForDay.filter(x=>String(x.meal||'').toLowerCase()===name.toLowerCase()),mk=mealFoods.reduce((a,x)=>a+(Number(x.k)||0),0),mp=mealFoods.reduce((a,x)=>a+(Number(x.p)||0),0);return `<section class="nutrition-meal-group"><header><span class="nutrition-meal-icon">${icons[i]}</span><strong>${name.toUpperCase()}</strong><span class="nutrition-meal-total">${mk.toFixed(0)} kcal · P ${mp.toFixed(1)} g</span></header>${mealFoods.length?`<ul>${mealFoods.map(x=>`<li><span class="nutrition-food-name">${escapeHtml(x.n||'Alimento')}</span><span class="nutrition-food-values">${(Number(x.k)||0).toFixed(0)} kcal · ${(Number(x.p)||0).toFixed(1)} g P</span></li>`).join('')}</ul>`:'<p class="nutrition-meal-empty">Sin alimentos registrados</p>'}</section>`}).join('');
@@ -3495,6 +3495,52 @@ img,video,canvas,svg{filter:none}
 #customFoodModal .fp-custom-result{background:#505B56!important;border-color:#B9E9DC!important}
 #customFoodModal .fp-custom-result small{color:#D0D8D1!important}
 #customFoodModal .fp-modal-actions button{border-color:#B9E9DC!important}
+</style>
+
+
+<style id="nutrition-control-palette-v2348">
+/* V23.48 · Control nutricional: paleta oficial y gráfico circular como Inicio */
+#nutricion #nutritionControlPanel{
+  background:rgba(98,109,104,.78)!important;
+  border:1px solid rgba(185,233,220,.30)!important;
+  box-shadow:0 6px 16px rgba(35,45,40,.10),inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+#nutricion #nutritionControlPanel>summary{
+  color:#FFFFFF!important;
+  background:rgba(80,91,86,.72)!important;
+  border-bottom:1px solid rgba(185,233,220,.22)!important;
+}
+#nutricion #nutritionControlPanel .nutrition-control-content{color:#FFFFFF!important}
+#nutricion #nutritionControlPanel .nutrition-goal-card{
+  background:rgba(80,91,86,.68)!important;
+  border:1px solid rgba(185,233,220,.24)!important;
+}
+#nutricion #nutritionControlPanel .nutrition-simple-ring{
+  width:112px!important;height:112px!important;max-width:100%;aspect-ratio:1;
+  border-radius:50%;display:grid;place-items:center;position:relative;flex:none;
+  background:conic-gradient(#C7FF00 0 var(--ring-progress),#858F89 var(--ring-progress) 100%)!important;
+  box-shadow:none!important;filter:none!important;
+}
+#nutricion #nutritionControlPanel .nutrition-simple-ring:before{
+  content:"";position:absolute;inset:9px;border-radius:50%;background:#626D68!important;
+}
+#nutricion #nutritionControlPanel .nutrition-simple-ring>span{
+  position:relative;z-index:1;color:#FFFFFF!important;font-size:25px;font-weight:850;line-height:1;
+}
+#nutricion #nutritionControlPanel .nutrition-goal-card>strong{color:#C7FF00!important;font-size:12px!important}
+#nutricion #nutritionControlPanel .nutrition-goal-card>small{color:#FFFFFF!important;font-size:11px!important;line-height:1.4}
+#nutricion #nutritionControlPanel .nutrition-goal-remaining{color:#B9E9DC!important;font-size:11px!important}
+#nutricion #nutritionControlPanel .nutrition-meal-group{
+  background:rgba(80,91,86,.72)!important;border:1px solid rgba(185,233,220,.22)!important;
+}
+#nutricion #nutritionControlPanel .nutrition-meal-group>header{background:rgba(80,91,86,.72)!important}
+#nutricion #nutritionControlPanel .nutrition-meal-group>header strong{color:#FFFFFF!important}
+#nutricion #nutritionControlPanel .nutrition-meal-total{color:#B9E9DC!important}
+#nutricion #nutritionControlPanel .nutrition-food-name{color:#FFFFFF!important}
+#nutricion #nutritionControlPanel .nutrition-food-values{color:#B9E9DC!important}
+#nutricion #nutritionControlPanel .nutrition-meal-empty{color:#D0D8D1!important}
+#nutricion #nutritionControlPanel .nutrition-meal-group li{border-bottom-color:rgba(208,216,209,.18)!important}
+@media(max-width:380px){#nutricion #nutritionControlPanel .nutrition-simple-ring{width:94px!important;height:94px!important}#nutricion #nutritionControlPanel .nutrition-simple-ring>span{font-size:22px}}
 </style>
 
 </body></html>
