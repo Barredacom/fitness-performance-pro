@@ -2085,33 +2085,58 @@ function renderMealDraft(){
 }
 function removeMealDraft(i){window.mealDraft.splice(i,1);renderMealDraft();}
 async function registerMeal(){
-  const arr=window.mealDraft||[];
+  const arr=(window.mealDraft||[]).slice();
   if(!arr.length){alert('Agrega al menos un alimento a la comida');return false;}
   const supabase=window.fpSupabaseClient;
   if(!supabase){alert('Supabase no está conectado');return false;}
-  const {data:{user},error:userError}=await supabase.auth.getUser();
-  if(userError||!user){alert('Debes iniciar sesión');return false;}
+  const auth=await supabase.auth.getUser();
+  const user=auth?.data?.user,errorUser=auth?.error;
+  if(errorUser||!user){alert('Debes iniciar sesión');return false;}
 
-  // Guarda alimento por alimento y conserva en el borrador solo los que fallen.
+  // Cada alimento se confirma individualmente. Solo los que fallen permanecen en preparación.
   const pending=[];
   let savedCount=0;
   for(const x of arr){
-    const row={fecha:x.date||$('foodDate').value,alimento:x.n,comida:x.meal||$('meal').value,gramos:x.g,calorias:x.k,proteina:x.p,carbohidratos:x.c,grasas:x.f,user_id:user.id};
+    const fecha=x.date||$('foodDate').value;
+    const comida=x.meal||$('meal').value;
+    const row={fecha,alimento:x.n,comida,gramos:x.g,calorias:x.k,proteina:x.p,carbohidratos:x.c,grasas:x.f,user_id:user.id};
     try{
-      const {error}=await supabase.from('registros_nutricion').insert(row);
-      if(error){console.error('Error guardando alimento:',x.n,error);pending.push(x);continue;}
-      db.foods.push({...x,meal:x.meal||$('meal').value,date:x.date||$('foodDate').value,id:Date.now()+Math.random()});
+      const response=await supabase.from('registros_nutricion').insert(row);
+      if(response?.error){console.error('Error guardando alimento:',x.n,response.error);pending.push(x);continue;}
+      db.foods.push({...x,meal:comida,date:fecha,id:Date.now()+Math.random()});
       savedCount++;
     }catch(err){console.error('Error guardando alimento:',x.n,err);pending.push(x);}
   }
+
+  // Persistir primero. No usar save(), porque ejecuta renderAll() completo y un fallo
+  // de otro módulo puede mostrar un error aunque Supabase ya haya guardado la comida.
   window.mealDraft=pending;
-  save();renderMealMiniSummary();renderMealDraft();
+  try{
+    localStorage.setItem(DBKEY,JSON.stringify(db));
+  }catch(storageError){
+    console.error('La comida se guardó en el servidor, pero no se pudo actualizar la copia local:',storageError);
+    // El servidor confirmó el registro: evitar mostrar un falso error y no reinsertar.
+  }
+
+  // Actualizar por separado las vistas relacionadas; un fallo visual no revierte el registro.
+  const refreshSafely=(name,fn)=>{try{fn();}catch(err){console.error('Comida guardada; error actualizando '+name+':',err);}};
+  refreshSafely('resumen de Inicio',()=>renderPremiumClinicalDashboard());
+  refreshSafely('Control nutricional · Comidas del día',()=>renderMealMiniSummary());
+  refreshSafely('Historial',()=>renderHistory());
+  refreshSafely('lista de alimentos del día',()=>{
+    const m=macros();
+    if($('kCal'))$('kCal').textContent=Math.round(m.k)+' kcal';
+    if($('foodTotals'))$('foodTotals').textContent=`${Math.round(m.k)} kcal · P ${m.p.toFixed(1)} · C ${m.c.toFixed(1)} · G ${m.f.toFixed(1)}`;
+    if($('foodList'))$('foodList').innerHTML=db.foods.filter(x=>x.date===$('foodDate').value).map(x=>`<div class="item"><span>${escapeHtml(x.n||'Alimento')}<small>${escapeHtml(x.meal||'Comida')} · ${Number(x.g)||0} g</small></span><b>${Math.round(Number(x.k)||0)} kcal</b></div>`).join('')||'<p class="muted">Sin alimentos registrados para esta fecha.</p>';
+  });
+  refreshSafely('Comida en preparación',()=>renderMealDraft());
+
   if(pending.length){
     const failedNames=pending.map(x=>x.n).join(', ');
     alert(savedCount?`Se guardaron ${savedCount} alimento(s). No se pudieron guardar: ${failedNames}. Quedaron pendientes para reintentar.`:`No se pudo guardar: ${failedNames}. Quedaron pendientes para reintentar.`);
     return 'partial';
   }
-  return true;
+  return savedCount>0;
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
