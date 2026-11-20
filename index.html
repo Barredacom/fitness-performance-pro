@@ -1256,6 +1256,21 @@ svg[role="img"],.nutrition-goal-ring svg,svg.brand-logo,.brand-logo svg{filter:n
 .history-data-warning{display:flex;gap:13px;margin-top:18px;padding:14px;border:1px solid #626D68;border-radius:14px;background:#505B56}
 .history-data-warning-icon{flex:0 0 28px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid #C7FF00;border-radius:50%;color:#C7FF00;font-weight:900}
 .history-data-warning button{margin-top:12px;border:1px solid #626D68;border-radius:9px;background:#505B56;color:#C7FF00;padding:9px 12px;font-size:10px;font-weight:800;cursor:pointer}
+
+/* V23.78 · Contraste accesible para el panel Gestión de datos */
+.history-data-sheet .history-data-heading p,
+.history-data-sheet .history-data-action small,
+.history-data-sheet .history-data-warning small,
+.history-data-sheet .history-data-import input{
+  color:#FFFFFF !important;
+}
+.history-data-sheet .history-data-import input::file-selector-button{
+  color:#505B56 !important;
+}
+.history-data-sheet .history-data-handle{
+  background:#D0D8D1;
+}
+
 @media(min-width:700px){.history-data-modal{align-items:center;padding:20px}.history-data-sheet{border-bottom:1px solid #626D68;border-radius:23px;transform:translateY(35px) scale(.98);opacity:.7}.history-data-modal.is-open .history-data-sheet{transform:translateY(0) scale(1);opacity:1}}
 </style>
 
