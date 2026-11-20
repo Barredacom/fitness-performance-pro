@@ -1660,6 +1660,33 @@ html,body{background:#858F89!important;color:#FFFFFF!important}
 .supp-recent{display:grid;gap:8px}.supp-recent-day{padding:11px 12px;border-radius:13px;background:#505B56;border:1px solid #505B56}.supp-recent-day strong{display:block;color:#C7FF00;font-size:12px}.supp-recent-day small{display:block;color:#626D68;font-size:11px;margin-top:4px}
 @media(max-width:420px){.supp-overview-card strong{font-size:22px}.supp-item{padding:11px;gap:9px}.supp-copy strong{font-size:12px}}
 </style>
+<style id="supp-hydration-v2356">
+.supp-hydration-card{margin:16px 0;padding:18px;border:1px solid #B9E9DC;border-radius:22px;background:linear-gradient(145deg,rgba(98,109,104,.96),rgba(80,91,86,.96));box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.supp-hydration-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.supp-hydration-kicker{font-size:10px;font-weight:900;letter-spacing:.15em;color:#C7FF00}.supp-hydration-head h3{margin:5px 0;color:#fff;font-size:22px}.supp-hydration-head p{margin:0;color:#D0D8D1;font-size:13px;line-height:1.45}.supp-hydration-watermark{font-size:32px;color:#B9E9DC}
+.supp-hydration-entry{display:grid;grid-template-columns:minmax(0,1fr) 86px;gap:10px;margin-top:17px;align-items:end}.supp-hydration-entry label{display:grid;gap:7px;min-width:0}.supp-hydration-entry label span{font-size:10px;letter-spacing:.12em;font-weight:850;color:#D0D8D1}.supp-hydration-entry input,.supp-hydration-entry select{width:100%;min-height:48px;box-sizing:border-box;border:1px solid #B9E9DC;border-radius:13px;background:#505B56;color:#fff;padding:0 13px;font-size:17px;font-weight:700;font-family:inherit;outline:none}.supp-hydration-entry input:focus,.supp-hydration-entry select:focus{border-color:#C7FF00;box-shadow:0 0 0 2px rgba(199,255,0,.16)}.supp-hydration-add{grid-column:1/-1;min-height:49px;border:1px solid #C7FF00;border-radius:14px;background:#C7FF00;color:#505B56;font-weight:900;font-size:14px;letter-spacing:.03em}
+.supp-hydration-total{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:17px;padding:13px 14px;border-radius:14px;background:rgba(80,91,86,.75)}.supp-hydration-total span{font-size:10px;letter-spacing:.1em;font-weight:850;color:#D0D8D1}.supp-hydration-total strong{font-size:20px;color:#B9E9DC}.supp-hydration-history{display:grid;gap:7px;margin-top:10px}.supp-hydration-row{display:flex;justify-content:space-between;gap:12px;padding:9px 2px;border-bottom:1px solid rgba(185,233,220,.16);color:#fff;font-size:13px}.supp-hydration-row:last-child{border-bottom:0}.supp-hydration-row small{color:#D0D8D1}.supp-hydration-row button{border:1px solid #B9E9DC;background:transparent;color:#C7FF00;border-radius:9px;padding:4px 9px}
+@media(max-width:380px){.supp-hydration-card{padding:14px}.supp-hydration-head h3{font-size:19px}}
+</style>
+
+<style id="supp-hydration-swipe-v2357">
+.supp-hydration-slider-entry{display:block;margin-top:17px}
+.supp-water-quantity-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.supp-water-quantity-head>span,.supp-water-unit-row>span{font-size:10px;letter-spacing:.12em;font-weight:900;color:#D0D8D1}
+.supp-water-quantity-head strong{font-size:22px;color:#B9E9DC;font-weight:950;font-variant-numeric:tabular-nums}
+.supp-water-presets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.supp-water-presets button,.supp-water-unit-switch button{min-height:42px;border:1px solid rgba(185,233,220,.35);border-radius:12px;background:#505B56;color:#FFFFFF;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer}
+.supp-water-presets button.active,.supp-water-unit-switch button.active{background:#C7FF00;color:#505B56;border-color:#C7FF00}
+.supp-water-unit-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0}
+.supp-water-unit-switch{display:flex;gap:5px;padding:4px;border-radius:12px;background:#505B56}
+.supp-water-unit-switch button{min-width:48px;min-height:34px;padding:0 12px;border:0}
+.supp-water-slider{position:relative;display:flex;align-items:center;min-height:68px;padding:6px;border:1px solid #B9E9DC;border-radius:17px;background:linear-gradient(145deg,#505B56,#626D68);overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.supp-water-slider:before{content:"";position:absolute;inset:5px auto 5px 5px;width:0;max-width:calc(100% - 10px);border-radius:12px;background:rgba(199,255,0,.17);pointer-events:none;transition:width .04s linear}
+.supp-water-thumb{position:relative;z-index:2;display:grid;place-items:center;flex:0 0 56px;width:56px;height:54px;border:0;border-radius:13px;background:#C7FF00;color:#505B56;font-size:34px;font-weight:950;box-shadow:0 2px 8px rgba(0,0,0,.18);cursor:grab;touch-action:pan-y}
+.supp-water-thumb:active{cursor:grabbing}
+.supp-water-slider-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 64px;color:#FFFFFF;font-size:12px;font-weight:950;letter-spacing:.08em;text-align:center;pointer-events:none}
+.supp-water-feedback{min-height:18px;margin:9px 2px 0;color:#D0D8D1;font-size:11px;line-height:1.4;text-align:center}
+@media(max-width:390px){.supp-water-quantity-head strong{font-size:19px}.supp-water-presets{gap:5px}.supp-water-presets button{font-size:11px}.supp-water-slider{min-height:62px}.supp-water-thumb{flex-basis:50px;width:50px;height:50px}.supp-water-slider-label{font-size:10px;letter-spacing:.04em;padding:0 56px}}
+</style>
 <style id="supplement-dropdown-v2173">
 .supp-history-dropdown{cursor:pointer;overflow:hidden}
 .supp-history-dropdown summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;font-size:15px;font-weight:950;color:#C7FF00}
@@ -1683,6 +1710,24 @@ html,body{background:#858F89!important;color:#FFFFFF!important}
   <div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#B8FF32" d="M5 24c7-10 20-13 29-5l9-7v24l-9-7C25 37 12 34 5 24z"/><circle cx="29" cy="20" r="2.4" fill="#101713"/><path d="M18 17l5 7-5 7" fill="none" stroke="#101713" stroke-width="2"/></svg></div><div class="supp-copy"><strong>OMEGA 3</strong><small>1 cápsula · configurable</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppOmega"><span class="warm-slider"></span></label></div>
   <div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#B8FF32" d="M14 13h23l-3 29H17z"/><path fill="#B8FF32" d="M25 3h5v13h-5z" transform="rotate(18 27 9)"/><rect x="16" y="20" width="18" height="4" fill="#101713"/><path d="M18 30h14" stroke="#101713" stroke-width="2"/></svg></div><div class="supp-copy"><strong>WHEY PROTEIN</strong><small>34 g · 130 kcal · 24 g proteína</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppWhey"><span class="warm-slider"></span></label></div>
  </div>
+ <section class="supp-hydration-card" aria-labelledby="hydrationTitle">
+  <div class="supp-hydration-head"><div><span class="supp-hydration-kicker">REGISTRO DE AGUA</span><h3 id="hydrationTitle">Hidratación</h3><p>Registra cada consumo en mililitros o litros.</p></div><span class="supp-hydration-watermark" aria-hidden="true">💧</span></div>
+  <div class="supp-hydration-entry supp-hydration-slider-entry">
+   <div class="supp-water-quantity-head"><span>CANTIDAD A REGISTRAR</span><strong id="hydrationAmountDisplay">500 ml</strong></div>
+   <div class="supp-water-presets" role="group" aria-label="Cantidad de agua">
+    <button type="button" data-water-ml="250">250 ml</button><button type="button" data-water-ml="500" class="active">500 ml</button><button type="button" data-water-ml="750">750 ml</button><button type="button" data-water-ml="1000">1.000 ml</button>
+   </div>
+   <div class="supp-water-unit-row"><span>Unidad de visualización</span><div class="supp-water-unit-switch" role="group" aria-label="Unidad"><button type="button" data-water-unit="ml" class="active">ml</button><button type="button" data-water-unit="L">L</button></div></div>
+   <input id="hydrationAmount" type="hidden" value="500"><select id="hydrationUnit" hidden aria-hidden="true"><option value="ml" selected>ml</option><option value="L">L</option></select>
+   <div class="supp-water-slider" id="hydrationSwipeTrack" aria-label="Desliza hacia la derecha para registrar el agua">
+    <button type="button" class="supp-water-thumb" id="hydrationSwipeThumb" aria-label="Deslizar para registrar agua"><span>»</span></button>
+    <span class="supp-water-slider-label" id="hydrationSwipeLabel">DESLIZA PARA REGISTRAR AGUA</span>
+   </div>
+   <p class="supp-water-feedback" id="hydrationSwipeFeedback" aria-live="polite">Selecciona la cantidad y desliza para guardar el consumo.</p>
+  </div>
+  <div class="supp-hydration-total"><span>CONSUMO REGISTRADO HOY</span><strong id="hydrationTodayTotal">0 ml</strong></div>
+  <div id="hydrationTodayHistory" class="supp-hydration-history"><p class="supp-empty">Todavía no hay agua registrada hoy.</p></div>
+ </section>
  <details class="card supp-day-history supp-history-dropdown" id="suppHistoryDropdown">
   <summary><span>CONSUMO CONFIRMADO HOY</span><span class="supp-dropdown-meta" id="suppDropdownCount">0 registros</span></summary>
   <div class="supp-dropdown-content" id="suppDayHistory"><p class="supp-empty">Todavía no hay suplementos confirmados hoy. Activa el interruptor al consumir cada suplemento.</p></div>
@@ -1873,6 +1918,7 @@ $('foodDate').value=$('workDate').value=$('measureDate').value=today;updateDateD
 $('foodDate').addEventListener('change',()=>{updateDateDisplay();renderMealMiniSummary()});$('dateDisplayCard')?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('foodDate').showPicker?.();}});
 const DBKEY='fppro_v2';let db=JSON.parse(localStorage.getItem(DBKEY)||'{"foods":[],"workouts":[],"supplements":[],"measures":[{"date":"2026-10-25","weight":82.3,"waist":95}]}');
 if(!Array.isArray(db.measures))db.measures=[];
+if(!Array.isArray(db.hydration))db.hydration=[];
 db.measures.forEach((m,i)=>{if(!m.id)m.id='measure-'+String(m.date||'sin-fecha')+'-'+i+'-'+Date.now();});
 // Historial histórico confirmado por el usuario. Se integra por fecha sin duplicar registros
 // y conserva cualquier dato de cintura que ya exista para esas fechas.
@@ -2232,7 +2278,7 @@ function renderPremiumClinicalDashboard(){
  if(hostWorkout)hostWorkout.innerHTML=totalMinutes?`<svg viewBox="0 0 320 130" role="img" aria-label="Entrenamiento semanal: ${totalMinutes} minutos"><line x1="12" y1="100" x2="308" y2="100" stroke="#858F89" stroke-opacity=".5"/>${days.map((d,i)=>{const bh=d.minutes/maxMinutes*78,x=20+i*43;return `<rect x="${x}" y="${100-bh}" width="25" height="${bh}" rx="5" fill="${d.minutes?'#C7FF00':'#858F89'}" opacity="${d.minutes?'.9':'.45'}"/><text x="${x+12}" y="116" text-anchor="middle" fill="#D0D8D1" font-size="10">${d.label}</text><text x="${x+12}" y="${Math.max(10,94-bh)}" text-anchor="middle" fill="#fff" font-size="9">${d.minutes||''}</text>`}).join('')}<text x="308" y="12" text-anchor="end" fill="#B9E9DC" font-size="10">${totalMinutes} min</text></svg>`:'<div class="pc-chart-empty">No hay sesiones registradas en los últimos 7 días.</div>';
  const suppToday=(Array.isArray(db.supplements)?db.supplements:[]).filter(x=>x&&x.done&&String(x.date||'')===today);
  const suppStatus=$('pcSupplementStatus');if(suppStatus)suppStatus.textContent=suppToday.length?`${suppToday.length} de ${(db.supplements||[]).length} suplementos confirmados hoy.`:'Sin consumos confirmados hoy.';
- const hydration=$('pcHydrationStatus');if(hydration)hydration.textContent='No hay un registro de hidratación almacenado; no se estima consumo.';
+ const hydration=$('pcHydrationStatus');if(hydration){const water=(Array.isArray(db.hydration)?db.hydration:[]).filter(x=>String(x.date||'')===today).reduce((n,x)=>n+(Number(x.ml)||0),0);hydration.textContent=water?(water>=1000?(water/1000).toLocaleString('es-CL',{maximumFractionDigits:2})+' L de agua registrados hoy':Math.round(water)+' ml de agua registrados hoy'):'Sin registros de hidratación hoy.';}
  const goals=$('pcGoals');
  if(goals){
   const current=latest?Number(latest.weight):null,weightPct=current?Math.max(0,Math.min(100,Math.round((first?((Number(first.weight)-current)/(Number(first.weight)-80||1))*100:0)))):0;
@@ -2241,7 +2287,7 @@ function renderPremiumClinicalDashboard(){
  }
  const note=$('pcDataNote');if(note)note.textContent=`Actualizado desde registros guardados · ${weights.length} mediciones · ${dayFoods.length} alimentos hoy · ${workoutRows.length} sesiones esta semana${latestWaist?' · última cintura '+Number(latestWaist.waist).toFixed(1)+' cm':''}.`;
 }
-function renderAll(){renderPremiumClinicalDashboard();let m=macros();$('kCal').textContent=Math.round(m.k)+' kcal';renderSupplements();
+function renderAll(){renderPremiumClinicalDashboard();renderHydration();let m=macros();$('kCal').textContent=Math.round(m.k)+' kcal';renderSupplements();
 let last=[...db.measures].reverse().find(x=>x.weight);if(last)$('kWeight').textContent=last.weight+' kg';let lw=[...db.measures].reverse().find(x=>x.waist);if(lw)$('kWaist').textContent=lw.waist+' cm';
 $('foodTotals').textContent=`${Math.round(m.k)} kcal · P ${m.p.toFixed(1)} · C ${m.c.toFixed(1)} · G ${m.f.toFixed(1)}`;
 $('foodList').innerHTML=db.foods.filter(x=>x.date===$('foodDate').value).map(x=>`<div class="item"><span>${x.n}<small>${x.meal} · ${x.g} g</small></span><b>${Math.round(x.k)} kcal <button onclick="del('foods',${x.id})">×</button></b></div>`).join('')||'<p class="muted">Sin alimentos registrados para esta fecha.</p>';
@@ -2249,6 +2295,23 @@ $('foodList').innerHTML=db.foods.filter(x=>x.date===$('foodDate').value).map(x=>
 $('suppList').innerHTML=db.supplements.map(x=>`<div class="item"><span>${x.name}<small>${x.dose||'Dosis no indicada'} · ${x.time||'Horario libre'} · ${x.date}</small></span><span><button onclick="toggleSupp(${x.id})">${x.done?'✓ Consumido':'Confirmar consumo'}</button> <button onclick="del('supplements',${x.id})">×</button></span></div>`).join('')||'<p class="muted">Agrega tus suplementos.</p>';
 renderMeasureHistory();
 chart('weightChart');renderBodyEvolution();renderExercises();renderExerciseLibrary();renderCalendar();renderHistory();renderMealMiniSummary()}
+function renderHydration(){
+ const rows=(Array.isArray(db.hydration)?db.hydration:[]).filter(x=>String(x.date||'')===today).sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
+ const total=rows.reduce((n,x)=>n+(Number(x.ml)||0),0),totalEl=$('hydrationTodayTotal'),host=$('hydrationTodayHistory');
+ if(totalEl)totalEl.textContent=total>=1000?(total/1000).toLocaleString('es-CL',{maximumFractionDigits:2})+' L':Math.round(total)+' ml';
+ if(host)host.innerHTML=rows.length?rows.map(x=>`<div class="supp-hydration-row"><span>${Number(x.ml)>=1000?(Number(x.ml)/1000).toLocaleString('es-CL',{maximumFractionDigits:2})+' L':Math.round(Number(x.ml)||0)+' ml'} <small>· ${x.time||'—'}</small></span><button type="button" onclick="deleteHydrationEntry('${String(x.id)}')" aria-label="Eliminar registro de agua">×</button></div>`).join(''):'<p class="supp-empty">Todavía no hay agua registrada hoy.</p>';
+}
+function addHydrationEntry(){
+ const amountEl=$('hydrationAmount'),unitEl=$('hydrationUnit');if(!amountEl||!unitEl)return;
+ const amount=Number(String(amountEl.value||'').replace(',','.'));if(!Number.isFinite(amount)||amount<=0){amountEl.focus();return;}
+ const ml=Math.round(amount*(unitEl.value==='L'?1000:1));if(ml<=0)return;
+ const now=new Date(),time=now.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+ if(!Array.isArray(db.hydration))db.hydration=[];
+ db.hydration.push({id:'water-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),date:localDateISO(now),time,at:now.toISOString(),ml});
+ amountEl.value='';save();
+}
+function deleteHydrationEntry(id){db.hydration=(Array.isArray(db.hydration)?db.hydration:[]).filter(x=>String(x.id)!==String(id));save();}
+
 function toggleSupp(id,checked){
  const x=db.supplements.find(z=>String(z.id)===String(id));if(!x)return;
  const now=new Date(),stamp=now.toISOString(),day=localDateISO(now),clock=now.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
@@ -2977,7 +3040,7 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
   if(dropCount)dropCount.textContent=done.length+' '+(done.length===1?'registro':'registros');
   if(container)container.innerHTML=done.length?done.map(x=>`<div class="supp-history-row"><strong>✓ ${x.name}</strong><small>${day[x.id].time||'—'} · ${day[x.id].dose||x.dose}</small></div>`).join(''):'<p class="supp-empty">Todavía no hay suplementos confirmados hoy. Activa el interruptor al consumir cada suplemento.</p>';
  }
- supplements.forEach(x=>{const el=document.getElementById(x.id);if(!el)return;el.addEventListener('change',()=>{const all=load(),key=dateKey();all[key]=all[key]||{};if(el.checked)all[key][x.id]={time:timeNow(),dose:x.dose};else delete all[key][x.id];save(all);render();});});
+ supplements.forEach(x=>{const el=document.getElementById(x.id);if(!el)return;el.addEventListener('change',()=>{const all=load(),key=dateKey();all[key]=all[key]||{};if(el.checked)all[key][x.id]={time:timeNow(),dose:x.dose};else delete all[key][x.id];save(all);try{const target=(Array.isArray(db.supplements)?db.supplements:[]).find(z=>String(z.name||'').toLowerCase()===String(x.name||'').toLowerCase()||(x.name==='Whey Protein'&&String(z.name||'').toLowerCase().includes('proteína')));if(target&&typeof toggleSupp==='function')toggleSupp(target.id,el.checked);}catch(err){console.error('No se pudo sincronizar el suplemento con el registro principal',err);}render();});});
  render();window.addEventListener('pageshow',render);document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
 })();
 </script>
@@ -3593,4 +3656,27 @@ img,video,canvas,svg{filter:none}
 <style id="v23-55-remove-nutrition-goal-cards">
 #nutricion #nutritionControlPanel #nutritionGoalCircles{display:none!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;gap:0!important}
 </style>
+
+<script id="supp-hydration-swipe-init-v2357">
+(function(){
+ const track=document.getElementById('hydrationSwipeTrack'),thumb=document.getElementById('hydrationSwipeThumb');
+ const amount=document.getElementById('hydrationAmount'),unit=document.getElementById('hydrationUnit');
+ const display=document.getElementById('hydrationAmountDisplay'),label=document.getElementById('hydrationSwipeLabel'),feedback=document.getElementById('hydrationSwipeFeedback');
+ if(!track||!thumb||!amount||!unit||!display)return;
+ let selectedMl=500,startX=0,dragX=0,dragging=false,locked=false;
+ const maxOffset=()=>Math.max(0,track.clientWidth-thumb.offsetWidth-12);
+ function paint(){const shown=unit.value==='L'?(selectedMl/1000).toLocaleString('es-CL',{maximumFractionDigits:2})+' L':selectedMl.toLocaleString('es-CL')+' ml';display.textContent=shown;amount.value=unit.value==='L'?String(selectedMl/1000):String(selectedMl);document.querySelectorAll('[data-water-ml]').forEach(b=>b.classList.toggle('active',Number(b.dataset.waterMl)===selectedMl));document.querySelectorAll('[data-water-unit]').forEach(b=>b.classList.toggle('active',b.dataset.waterUnit===unit.value));}
+ function reset(message){dragging=false;locked=false;dragX=0;thumb.style.transform='translateX(0px)';track.style.setProperty('--water-progress','0%');track.style.setProperty('--water-fill','0px');track.style.setProperty('background','linear-gradient(145deg,#505B56,#626D68)');if(label)label.textContent='DESLIZA PARA REGISTRAR AGUA';if(feedback&&message)feedback.textContent=message;}
+ function setDrag(x){dragX=Math.max(0,Math.min(maxOffset(),x-startX));thumb.style.transform='translateX('+dragX+'px)';const pct=maxOffset()?dragX/maxOffset():0;track.style.background='linear-gradient(90deg,rgba(199,255,0,.22) '+(pct*100)+'%,#505B56 '+(pct*100)+'%)';if(label)label.textContent=pct>.72?'SUELTA PARA REGISTRAR':'DESLIZA PARA REGISTRAR AGUA';}
+ document.querySelectorAll('[data-water-ml]').forEach(b=>b.addEventListener('click',()=>{selectedMl=Number(b.dataset.waterMl)||500;paint();}));
+ document.querySelectorAll('[data-water-unit]').forEach(b=>b.addEventListener('click',()=>{unit.value=b.dataset.waterUnit==='L'?'L':'ml';paint();}));
+ thumb.addEventListener('pointerdown',e=>{if(locked)return;dragging=true;startX=e.clientX-dragX;thumb.setPointerCapture(e.pointerId);e.preventDefault();});
+ thumb.addEventListener('pointermove',e=>{if(!dragging)return;setDrag(e.clientX);});
+ function finish(){if(!dragging)return;const complete=maxOffset()>0&&dragX/maxOffset()>=.78;dragging=false;if(!complete){reset('Deslizamiento incompleto. Inténtalo nuevamente.');return;}locked=true;if(label)label.textContent='GUARDANDO…';if(feedback)feedback.textContent='Guardando consumo de agua…';amount.value=unit.value==='L'?String(selectedMl/1000):String(selectedMl);try{if(typeof window.addHydrationEntry==='function'){window.addHydrationEntry();selectedMl=500;unit.value='ml';paint();reset('¡Agua registrada correctamente!');}else{reset('No se encontró la función de registro.');}}catch(err){console.error('Error al registrar hidratación',err);reset('No se pudo registrar el agua. Inténtalo nuevamente.');}}
+ thumb.addEventListener('pointerup',finish);thumb.addEventListener('pointercancel',()=>reset('Deslizamiento cancelado.'));
+ thumb.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();amount.value=unit.value==='L'?String(selectedMl/1000):String(selectedMl);if(typeof window.addHydrationEntry==='function'){window.addHydrationEntry();selectedMl=500;unit.value='ml';paint();reset('¡Agua registrada correctamente!');}}});
+ paint();reset();
+})();
+</script>
+
 </body></html>
