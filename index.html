@@ -1704,11 +1704,11 @@ html,body{background:#858F89!important;color:#FFFFFF!important}
  </div>
  <div class="supp-progress-wrap"><div class="supp-progress-head"><span>PROGRESO DIARIO</span><b id="suppDayPercent">0%</b></div><div class="supp-progress-track"><div class="supp-progress-fill" id="suppDayProgress"></div></div></div>
  <div class="supp-list-title">MIS SUPLEMENTOS</div>
- <div class="supplement-switches">
-  <div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="#B8FF32"><rect x="8" y="16" width="32" height="16" rx="8" transform="rotate(-42 24 24)"/><path d="M14 11l11 11-6 6-11-11z" opacity=".55"/></g><path d="M24 12l12 12" stroke="#101713" stroke-width="2.5" stroke-linecap="round"/></svg></div><div class="supp-copy"><strong>CREATINA</strong><small>5 g · Consumo diario</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppCreatine"><span class="warm-slider"></span></label></div>
-  <div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#B8FF32" d="M24 5c-7 9-13 15-13 23a13 13 0 0 0 26 0C37 20 31 13 24 5z"/><path d="M18 29c1 4 3 6 7 7" fill="none" stroke="#101713" stroke-width="2.5" stroke-linecap="round"/></svg></div><div class="supp-copy"><strong>MAGNESIO</strong><small>Dosis habitual · configurable</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppMagnesium"><span class="warm-slider"></span></label></div>
-  <div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#B8FF32" d="M5 24c7-10 20-13 29-5l9-7v24l-9-7C25 37 12 34 5 24z"/><circle cx="29" cy="20" r="2.4" fill="#101713"/><path d="M18 17l5 7-5 7" fill="none" stroke="#101713" stroke-width="2"/></svg></div><div class="supp-copy"><strong>OMEGA 3</strong><small>1 cápsula · configurable</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppOmega"><span class="warm-slider"></span></label></div>
-  <div class="supp-item"><div class="supp-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#B8FF32" d="M14 13h23l-3 29H17z"/><path fill="#B8FF32" d="M25 3h5v13h-5z" transform="rotate(18 27 9)"/><rect x="16" y="20" width="18" height="4" fill="#101713"/><path d="M18 30h14" stroke="#101713" stroke-width="2"/></svg></div><div class="supp-copy"><strong>WHEY PROTEIN</strong><small>34 g · 130 kcal · 24 g proteína</small></div><label class="warm-switch supp-toggle"><input type="checkbox" id="suppWhey"><span class="warm-slider"></span></label></div>
+ <div class="supplement-swipe-list" id="supplementSwipeList">
+  <article class="supp-swipe-row" data-supp-row="suppCreatine"><span class="supp-swipe-icon" aria-hidden="true">♧</span><div class="supp-swipe-name"><strong>Creatina</strong><small>5 g</small></div><div class="supp-confirm-track" data-supp-track="suppCreatine"><button type="button" class="supp-confirm-thumb" data-supp-thumb="suppCreatine" aria-label="Deslizar para confirmar creatina">»</button><span class="supp-confirm-label" data-supp-label="suppCreatine">Desliza para confirmar</span></div><input type="checkbox" id="suppCreatine" class="supp-state-proxy" tabindex="-1" aria-hidden="true"></article>
+  <article class="supp-swipe-row" data-supp-row="suppMagnesium"><span class="supp-swipe-icon" aria-hidden="true">Mg</span><div class="supp-swipe-name"><strong>Magnesio</strong><small>Dosis habitual</small></div><div class="supp-confirm-track" data-supp-track="suppMagnesium"><button type="button" class="supp-confirm-thumb" data-supp-thumb="suppMagnesium" aria-label="Deslizar para confirmar magnesio">»</button><span class="supp-confirm-label" data-supp-label="suppMagnesium">Desliza para confirmar</span></div><input type="checkbox" id="suppMagnesium" class="supp-state-proxy" tabindex="-1" aria-hidden="true"></article>
+  <article class="supp-swipe-row" data-supp-row="suppOmega"><span class="supp-swipe-icon" aria-hidden="true">♧</span><div class="supp-swipe-name"><strong>Omega 3</strong><small>1 cápsula</small></div><div class="supp-confirm-track" data-supp-track="suppOmega"><button type="button" class="supp-confirm-thumb" data-supp-thumb="suppOmega" aria-label="Deslizar para confirmar Omega 3">»</button><span class="supp-confirm-label" data-supp-label="suppOmega">Desliza para confirmar</span></div><input type="checkbox" id="suppOmega" class="supp-state-proxy" tabindex="-1" aria-hidden="true"></article>
+  <article class="supp-swipe-row" data-supp-row="suppWhey"><span class="supp-swipe-icon" aria-hidden="true">▤</span><div class="supp-swipe-name"><strong>Proteína (Whey)</strong><small>34 g · 130 kcal · 24 g proteína</small></div><div class="supp-confirm-track" data-supp-track="suppWhey"><button type="button" class="supp-confirm-thumb" data-supp-thumb="suppWhey" aria-label="Deslizar para confirmar proteína Whey">»</button><span class="supp-confirm-label" data-supp-label="suppWhey">Desliza para confirmar</span></div><input type="checkbox" id="suppWhey" class="supp-state-proxy" tabindex="-1" aria-hidden="true"></article>
  </div>
  <section class="supp-hydration-card" aria-labelledby="hydrationTitle">
   <div class="supp-hydration-head"><div><span class="supp-hydration-kicker">REGISTRO DE AGUA</span><h3 id="hydrationTitle">Hidratación</h3><p>Registra cada consumo en mililitros o litros.</p></div><span class="supp-hydration-watermark" aria-hidden="true">💧</span></div>
@@ -3031,16 +3031,47 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
  const save=data=>localStorage.setItem(STORE,JSON.stringify(data));
  function render(){
   const all=load(),key=dateKey(),day=all[key]||{},container=document.getElementById('suppDayHistory');
-  supplements.forEach(x=>{const el=document.getElementById(x.id);if(el)el.checked=!!day[x.id]});
+  supplements.forEach(x=>{
+   const proxy=document.getElementById(x.id),row=document.querySelector(`[data-supp-row="${x.id}"]`),track=document.querySelector(`[data-supp-track="${x.id}"]`),label=document.querySelector(`[data-supp-label="${x.id}"]`),thumb=document.querySelector(`[data-supp-thumb="${x.id}"]`),done=!!day[x.id];
+   if(proxy)proxy.checked=done;
+   if(row)row.classList.toggle('is-confirmed',done);
+   if(track)track.classList.toggle('is-confirmed',done);
+   if(label)label.textContent=done?'✓ CONFIRMADO':'Desliza para confirmar';
+   if(thumb){thumb.style.transform='translateX(0px)';thumb.disabled=done;thumb.setAttribute('aria-label',done?`${x.name} confirmado`:`Deslizar para confirmar ${x.name}`);}
+  });
   const done=supplements.filter(x=>day[x.id]),count=document.getElementById('suppDayCount'),percent=document.getElementById('suppDayPercent'),bar=document.getElementById('suppDayProgress'),last=document.getElementById('suppDayLast'),dropCount=document.getElementById('suppDropdownCount');
   if(count)count.textContent=`${done.length} / ${supplements.length}`;
   if(percent)percent.textContent=Math.round(done.length/supplements.length*100)+'%';
   if(bar)bar.style.width=(done.length/supplements.length*100)+'%';
   if(last)last.textContent=done.map(x=>day[x.id].time||'').filter(Boolean).sort().pop()||'—';
   if(dropCount)dropCount.textContent=done.length+' '+(done.length===1?'registro':'registros');
-  if(container)container.innerHTML=done.length?done.map(x=>`<div class="supp-history-row"><strong>✓ ${x.name}</strong><small>${day[x.id].time||'—'} · ${day[x.id].dose||x.dose}</small></div>`).join(''):'<p class="supp-empty">Todavía no hay suplementos confirmados hoy. Activa el interruptor al consumir cada suplemento.</p>';
+  if(container)container.innerHTML=done.length?done.map(x=>`<div class="supp-history-row"><strong>✓ ${x.name}</strong><small>${day[x.id].time||'—'} · ${day[x.id].dose||x.dose}</small><button type="button" data-supp-undo="${x.id}" aria-label="Deshacer confirmación de ${x.name}">Deshacer</button></div>`).join(''):'<p class="supp-empty">Todavía no hay suplementos confirmados hoy. Desliza para confirmar cada consumo.</p>';
  }
- supplements.forEach(x=>{const el=document.getElementById(x.id);if(!el)return;el.addEventListener('change',()=>{const all=load(),key=dateKey();all[key]=all[key]||{};if(el.checked)all[key][x.id]={time:timeNow(),dose:x.dose};else delete all[key][x.id];save(all);try{const target=(Array.isArray(db.supplements)?db.supplements:[]).find(z=>String(z.name||'').toLowerCase()===String(x.name||'').toLowerCase()||(x.name==='Whey Protein'&&String(z.name||'').toLowerCase().includes('proteína')));if(target&&typeof toggleSupp==='function')toggleSupp(target.id,el.checked);}catch(err){console.error('No se pudo sincronizar el suplemento con el registro principal',err);}render();});});
+ function setConfirmed(x,checked){
+  const all=load(),key=dateKey();all[key]=all[key]||{};
+  if(checked)all[key][x.id]={time:timeNow(),dose:x.dose};else delete all[key][x.id];
+  save(all);
+  try{
+   const target=(Array.isArray(db.supplements)?db.supplements:[]).find(z=>String(z.name||'').toLowerCase()===String(x.name||'').toLowerCase()||(x.id==='suppWhey'&&String(z.name||'').toLowerCase().includes('proteína')));
+   if(target&&typeof toggleSupp==='function')toggleSupp(target.id,checked);
+  }catch(err){console.error('No se pudo sincronizar el suplemento con el registro principal',err);}
+  render();
+ }
+ supplements.forEach(x=>{
+  const track=document.querySelector(`[data-supp-track="${x.id}"]`),thumb=document.querySelector(`[data-supp-thumb="${x.id}"]`);if(!track||!thumb)return;
+  let dragging=false,startX=0,startLeft=0,pointerId=null;
+  const edge=5;
+  function maxLeft(){return Math.max(edge,track.clientWidth-thumb.offsetWidth-edge)}
+  function setLeft(value){const left=Math.max(edge,Math.min(maxLeft(),value));thumb.style.transform=`translateX(${left-edge}px)`;track.style.setProperty('--supp-swipe-progress',`${maxLeft()===edge?0:(left-edge)/(maxLeft()-edge)*100}%`);return maxLeft()===edge?0:(left-edge)/(maxLeft()-edge)}
+  function reset(){dragging=false;pointerId=null;thumb.style.transform='translateX(0px)';track.style.setProperty('--supp-swipe-progress','0%')}
+  function confirm(){reset();setConfirmed(x,true)}
+  thumb.addEventListener('pointerdown',e=>{if(thumb.disabled)return;dragging=true;pointerId=e.pointerId;startX=e.clientX;startLeft=0;try{thumb.setPointerCapture(pointerId)}catch(_){}e.preventDefault()});
+  thumb.addEventListener('pointermove',e=>{if(!dragging||e.pointerId!==pointerId)return;const pct=setLeft(startLeft+e.clientX-startX);if(pct>=.94){try{thumb.releasePointerCapture(pointerId)}catch(_){}confirm()}e.preventDefault()});
+  function finish(e){if(!dragging||e.pointerId!==pointerId)return;const pct=maxLeft()>edge?(parseFloat(thumb.style.transform.match(/translateX\(([-0-9.]+)/)?.[1]||'0')/(maxLeft()-edge)):0;reset();if(pct>=.78)confirm();}
+  thumb.addEventListener('pointerup',finish);thumb.addEventListener('pointercancel',reset);thumb.addEventListener('lostpointercapture',()=>{if(dragging)reset()});
+  thumb.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='End'){e.preventDefault();if(!thumb.disabled)confirm()}});
+ });
+ document.getElementById('suppDayHistory')?.addEventListener('click',e=>{const row=e.target.closest('[data-supp-undo]');if(!row)return;const x=supplements.find(s=>s.id===row.dataset.suppUndo);if(x)setConfirmed(x,false)});
  render();window.addEventListener('pageshow',render);document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
 })();
 </script>
@@ -3679,4 +3710,24 @@ img,video,canvas,svg{filter:none}
 })();
 </script>
 
+
+<style id="supplement-swipe-redesign-v2358">
+.supplement-switches{display:none!important}
+.supplement-swipe-list{display:grid;gap:10px;margin:10px 0 18px}
+.supp-swipe-row{display:grid;grid-template-columns:56px minmax(130px,.9fr) minmax(210px,1.35fr);align-items:center;gap:12px;padding:9px 12px;border:1px solid rgba(185,233,220,.35);border-radius:17px;background:linear-gradient(145deg,rgba(98,109,104,.78),rgba(80,91,86,.88));box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.supp-swipe-icon{width:48px;height:48px;display:grid;place-items:center;border:1px solid rgba(185,233,220,.45);border-radius:13px;color:#C7FF00;font-size:24px;font-weight:900;background:#505B56}
+.supp-swipe-name{min-width:0;display:flex;align-items:center;gap:10px}
+.supp-swipe-name strong{color:#FFFFFF;font-size:15px;font-weight:850;white-space:nowrap}
+.supp-swipe-name small{border-left:2px solid rgba(185,233,220,.45);padding-left:10px;color:#B9E9DC;font-size:13px;font-weight:800;white-space:nowrap}
+.supp-confirm-track{position:relative;display:flex;align-items:center;min-width:0;height:54px;padding:4px;border:1px solid #C7FF00;border-radius:999px;background:rgba(80,91,86,.9);overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.supp-confirm-track:before{content:"";position:absolute;inset:3px auto 3px 3px;width:var(--supp-swipe-progress,0%);max-width:calc(100% - 6px);border-radius:999px;background:rgba(199,255,0,.2);pointer-events:none}
+.supp-confirm-thumb{position:relative;z-index:2;display:grid;place-items:center;flex:0 0 46px;width:46px;height:44px;border:0;border-radius:999px;background:#C7FF00;color:#505B56;font-size:27px;font-weight:950;cursor:grab;touch-action:pan-y;box-shadow:0 1px 6px rgba(0,0,0,.2)}
+.supp-confirm-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 54px;color:#FFFFFF;font-size:12px;font-weight:850;text-align:center;pointer-events:none;white-space:nowrap}
+.supp-swipe-row.is-confirmed .supp-confirm-track{border-color:#B9E9DC;background:rgba(80,91,86,.55)}
+.supp-swipe-row.is-confirmed .supp-confirm-label{color:#C7FF00;letter-spacing:.08em}
+.supp-state-proxy{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
+.supp-history-row button{margin-left:8px;border:1px solid rgba(185,233,220,.4);border-radius:8px;background:transparent;color:#B9E9DC;padding:4px 8px;font-size:10px}
+@media(max-width:600px){.supp-swipe-row{grid-template-columns:40px minmax(96px,.85fr) minmax(125px,1.2fr);gap:8px;padding:8px;border-radius:14px}.supp-swipe-icon{width:36px;height:36px;font-size:19px}.supp-swipe-name{display:flex;flex-direction:column;align-items:flex-start;gap:3px}.supp-swipe-name strong{font-size:12px;white-space:normal}.supp-swipe-name small{border:0;padding:0;font-size:11px}.supp-confirm-track{height:46px;padding:3px}.supp-confirm-thumb{flex-basis:38px;width:38px;height:38px;font-size:23px}.supp-confirm-label{padding:0 43px;font-size:10px;white-space:normal;line-height:1.15}}
+@media(max-width:360px){.supp-swipe-row{grid-template-columns:32px minmax(80px,.75fr) minmax(112px,1.1fr);gap:6px;padding:7px}.supp-swipe-icon{width:30px;height:30px}.supp-swipe-name strong{font-size:11px}.supp-confirm-label{font-size:9px;padding:0 39px}}
+</style>
 </body></html>
