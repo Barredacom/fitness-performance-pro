@@ -4002,79 +4002,115 @@ img,video,canvas,svg{filter:none}
 
 
 
-<!-- V23.79 · INFORME DIARIO PDF: integración aditiva sobre V23.78 -->
-<style id="fp-daily-report-v1">
-.fp-report-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto}
-.fp-report-tools input{width:auto;min-width:142px;padding:9px 10px;border:1px solid #626D68;border-radius:10px;background:#505B56;color:#FFFFFF}
-.fp-report-download{border:1px solid #C7FF00!important;background:#C7FF00!important;color:#202922!important;font-weight:850!important;border-radius:10px!important;padding:10px 14px!important;box-shadow:0 4px 14px #C7FF0022}
-.fp-report-download:hover{filter:brightness(1.06);color:#101510!important}
-@media(max-width:700px){.fp-report-tools{width:100%;margin:8px 0 0}.fp-report-tools input{flex:1;min-width:0}.fp-report-download{white-space:nowrap}}
+<!-- V23.80 · INFORME DIARIO FP: descarga desde Gestión de datos -->
+<style id="fp-daily-report-v2380">
+.history-data-report{margin-top:10px;padding:13px;border:1px solid #626D68;border-radius:14px;background:#505B56;display:flex;flex-direction:column;gap:9px}
+.history-data-report-title{color:#C7FF00;font-size:12px;font-weight:900;letter-spacing:.5px}
+.history-data-report small{color:#FFFFFF!important;font-size:10px;line-height:1.45}
+.history-data-report-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.history-data-report input{flex:1;min-width:135px;padding:10px;border:1px solid #626D68;border-radius:9px;background:#424D46;color:#FFFFFF;font-size:12px}
+.history-data-report button{border:1px solid #C7FF00;border-radius:9px;background:#C7FF00;color:#273129;font-size:11px;font-weight:900;padding:11px 13px;cursor:pointer}
+@media(max-width:420px){.history-data-report-controls{flex-direction:column;align-items:stretch}.history-data-report input,.history-data-report button{width:100%}}
 </style>
-<script id="fp-daily-report-script-v1">
+<script id="fp-daily-report-script-v2380">
 (function(){
-  const addReportControl=()=>{
-    const top=document.querySelector('main .top');
-    if(!top||document.getElementById('fpReportDate'))return;
-    const wrap=document.createElement('div');wrap.className='fp-report-tools';
-    wrap.innerHTML='<input id="fpReportDate" type="date" aria-label="Fecha del informe"><button type="button" class="fp-report-download" onclick="downloadDailyReport()">↓ Descargar informe PDF</button>';
-    top.appendChild(wrap);
-    const dateInput=document.getElementById('fpReportDate');
-    dateInput.value=(typeof today!=='undefined'&&today)?today:new Date().toISOString().slice(0,10);
-  };
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addReportControl);else addReportControl();
-  window.downloadDailyReport=function(){
-    const date=document.getElementById('fpReportDate')?.value||((typeof today!=='undefined'&&today)?today:new Date().toISOString().slice(0,10));
-    if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert('Selecciona una fecha válida para el informe.');return;}
-    const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    const n=v=>Number(v)||0,fmt=(v,d=0)=>n(v).toLocaleString('es-CL',{minimumFractionDigits:d,maximumFractionDigits:d});
-    const dayFoods=(db.foods||[]).filter(x=>String(x.date||'')===date);
-    const totals=dayFoods.reduce((a,x)=>({k:a.k+n(x.k),p:a.p+n(x.p),c:a.c+n(x.c),f:a.f+n(x.f)}),{k:0,p:0,c:0,f:0});
-    const workouts=(db.workouts||[]).filter(x=>String(x.date||'')===date);
-    const workoutMinutes=workouts.reduce((a,x)=>a+n(x.minutes),0);
-    const workoutNames=workouts.map(x=>safe(x.routine||'Entrenamiento')).filter(Boolean);
-    const suppRows=(db.supplements||[]).flatMap(x=>(x.log||[]).filter(l=>String(l.date||'')===date&&String(l.status||'').startsWith('ON')).map(l=>({name:x.name,dose:l.dose||x.dose,time:l.time||x.consumedTime||x.time||''})))
-      .concat((db.supplements||[]).filter(x=>x.done&&String(x.date||'')===date&&!(x.log||[]).some(l=>String(l.date||'')===date&&String(l.status||'').startsWith('ON'))).map(x=>({name:x.name,dose:x.dose,time:x.consumedTime||x.time||''})));
-    const suppUnique=[];const seen=new Set();suppRows.forEach(x=>{const k=String(x.name)+'|'+String(x.time);if(!seen.has(k)){seen.add(k);suppUnique.push(x)}});
-    const measures=(db.measures||[]).filter(x=>String(x.date||'')<=date&& (x.weight||x.waist)).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
-    const measure=measures[0]||{};
-    const mealNames=['Desayuno','Almuerzo','Colación','Cena'];
-    const mealRows=mealNames.map(name=>{const xs=dayFoods.filter(x=>String(x.meal||'').toLowerCase()===name.toLowerCase());const k=xs.reduce((a,x)=>a+n(x.k),0),p=xs.reduce((a,x)=>a+n(x.p),0);return `<tr><td>${name}</td><td>${xs.length?xs.map(x=>safe(x.n)).join(', '):'Sin registro'}</td><td class="num">${fmt(k)} kcal</td><td class="num">${fmt(p,1)} g</td></tr>`}).join('');
-    const suppHtml=suppUnique.length?suppUnique.map(x=>`<tr><td>${safe(x.name)}</td><td>${safe(x.dose||'Dosis no indicada')}</td><td>${safe(x.time||'Hora no indicada')}</td><td class="status">Confirmado</td></tr>`).join(''):'<tr><td colspan="4" class="empty">Sin consumos confirmados para esta fecha.</td></tr>';
-    const workoutHtml=workouts.length?workouts.map(x=>`<div class="line"><b>${safe(x.routine||'Entrenamiento')}</b><span>${fmt(x.minutes)} min</span></div>`).join(''):'<p class="empty">Sin sesiones registradas para esta fecha.</p>';
-    const kcalPct=Math.round(totals.k/1900*100),proteinPct=Math.round(totals.p/125*100);
-    const dateObj=new Date(date+'T12:00:00');const dateLabel=dateObj.toLocaleDateString('es-CL',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
-    const logo=document.querySelector('.brand img')?.getAttribute('src')||'';
-    const w=window.open('','_blank');
-    if(!w){alert('El navegador bloqueó la ventana del informe. Permite las ventanas emergentes para descargarlo.');return;}
-    const html=`<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Informe diario FP · ${safe(date)}</title><style>
-      @page{size:A4;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0;background:#e8ece9;color:#202622;font-family:Arial,Helvetica,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-      .page{width:210mm;min-height:297mm;margin:0 auto;background:#fff;position:relative;overflow:hidden;padding:0 13mm 12mm}
-      .head{height:43mm;margin:0 -13mm 8mm;padding:8mm 13mm 6mm;background:#7c8f82;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12mm;border-bottom:3mm solid #a4ff28}
-      .brand{display:flex;align-items:center;gap:5mm;min-width:0}.brand img{width:76mm;max-height:27mm;object-fit:contain;object-position:left center}.brand-fallback{font-size:19pt;font-weight:900;letter-spacing:1px}.head-tag{text-align:right;font-size:8pt;letter-spacing:2px;line-height:1.6;color:#f7faf7}
-      .title-row{display:flex;justify-content:space-between;align-items:end;border-bottom:1px solid #cbd2cd;padding-bottom:5mm;margin-bottom:7mm}.title-row h1{font-size:25pt;line-height:1;margin:0;color:#27302a;font-weight:900;letter-spacing:-.8px}.title-row h1 span{color:#72a900}.title-row p{margin:3mm 0 0;font-size:8pt;letter-spacing:2.2px;color:#66736a;font-weight:700}.date{text-align:right;font-size:9pt;color:#37443b}.date b{display:block;font-size:10pt;color:#202922;margin-bottom:1mm}
-      .meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4mm;margin-bottom:7mm}.meta div{border-left:2px solid #a4ff28;padding-left:3mm;font-size:8pt;color:#647168}.meta strong{display:block;color:#29332c;font-size:10pt;margin-top:1mm}
-      .table-head{display:grid;grid-template-columns:35% 1fr 20mm;background:#e6e9e7;border-left:4mm solid #a4ff28;padding:3mm 4mm;font-size:9pt;font-weight:900;color:#263029;margin-bottom:1mm}.section{margin:0 0 5mm}.row{display:grid;grid-template-columns:35% 1fr 20mm;align-items:center;min-height:19mm;padding:3mm 4mm;border-bottom:1px solid #d7ddd8;gap:3mm}.row .name{font-size:10pt;font-weight:800;color:#29332c}.row .detail{font-size:9pt;line-height:1.45;color:#303a33}.row .detail b{font-size:12pt;color:#202922}.state{text-align:center;color:#70a900;font-size:17pt;font-weight:900}.muted{color:#7b857e;font-size:8pt}.macro{display:flex;gap:8mm;flex-wrap:wrap;margin-top:1mm}.macro span{white-space:nowrap}.bar{height:3mm;background:#e6eae7;border-radius:5mm;margin-top:2mm;overflow:hidden}.bar i{display:block;height:100%;background:#a4ff28;border-radius:5mm}
-      .score{margin:7mm 0;background:#e6e9e7;display:flex;justify-content:space-between;align-items:center;padding:3mm 5mm;font-weight:900;font-size:12pt}.score strong{background:#a4ff28;color:#1e281e;padding:2mm 8mm;font-size:19pt;min-width:35mm;text-align:center}
-      .lower{display:grid;grid-template-columns:1fr 1fr;gap:8mm;margin-top:7mm}.box h2{font-size:11pt;margin:0 0 4mm;padding:3mm 4mm;background:#e6e9e7;border-left:3mm solid #a4ff28;color:#263029}.box p,.box li{font-size:8.5pt;line-height:1.55}.box ul{padding-left:5mm;margin:0}.box li{margin-bottom:2mm}.line{display:flex;justify-content:space-between;gap:4mm;border-bottom:1px solid #e1e5e2;padding:2mm 0;font-size:9pt}.supp-table{width:100%;border-collapse:collapse;font-size:8pt}.supp-table td{padding:2.5mm 1mm;border-bottom:1px solid #e1e5e2}.status{color:#6e9e00;font-weight:800}.empty{color:#7a847d;font-style:italic}
-      .foot{position:absolute;left:0;right:0;bottom:0;height:8mm;background:#7c8f82;border-top:2mm solid #a4ff28}.foot:after{content:'';position:absolute;right:13mm;top:-2mm;width:28mm;height:8mm;background:#a4ff28;clip-path:polygon(30% 0,100% 0,70% 100%,0 100%)}
-      .actions{width:210mm;margin:0 auto;padding:8px;text-align:center}.actions button{border:0;border-radius:8px;padding:11px 18px;background:#a4ff28;color:#172017;font-weight:800;cursor:pointer}.hint{font-size:12px;color:#536057;margin:7px}
-      @media print{html,body{background:#fff}.page{margin:0;box-shadow:none}.actions{display:none}}
-      </style></head><body><div class="actions"><button onclick="window.print()">Imprimir / Guardar como PDF</button><div class="hint">En iPhone: abre Compartir en la ventana de impresión y guarda el PDF en Archivos.</div></div><main class="page">
-      <header class="head"><div class="brand">${logo?`<img src="${logo}" alt="FP Fitness Performance">`:'<div class="brand-fallback">FP · FITNESS PERFORMANCE</div>'}</div><div class="head-tag">BY ARIEL BARREDA<br>CONTROL · PROGRESO · RESULTADOS</div></header>
-      <div class="title-row"><div><h1>INFORME <span>DIARIO</span></h1><p>SEGUIMIENTO DE RENDIMIENTO PERSONAL</p></div><div class="date"><b>FECHA DEL INFORME</b>${safe(dateLabel)}</div></div>
-      <div class="meta"><div>USUARIO<strong>Ariel Barreda</strong></div><div>OBJETIVO NUTRICIONAL<strong>1.800–2.000 kcal · 120–130 g proteína</strong></div><div>REGISTRO<strong>${dayFoods.length+workouts.length+suppUnique.length} eventos del día</strong></div></div>
-      <div class="table-head"><div>ÍTEM DEL INFORME</div><div>DETALLE DEL DÍA</div><div style="text-align:center">ESTADO</div></div>
-      <section class="section">
-       <div class="row"><div class="name">Nutrición</div><div class="detail"><b>${fmt(totals.k)} kcal</b> consumidas<br>Proteína: ${fmt(totals.p,1)} g · CHO: ${fmt(totals.c,1)} g · Grasas: ${fmt(totals.f,1)} g<div class="bar"><i style="width:${Math.min(kcalPct,100)}%"></i></div><span class="muted">${kcalPct}% de referencia 1.900 kcal · Proteína ${proteinPct}% de referencia 125 g</span></div><div class="state">${dayFoods.length?'✓':'—'}</div></div>
-       <div class="row"><div class="name">Entrenamiento</div><div class="detail">${workoutHtml}<span class="muted">Tiempo total registrado: ${fmt(workoutMinutes)} min</span></div><div class="state">${workouts.length?'✓':'—'}</div></div>
-       <div class="row"><div class="name">Suplementos</div><div class="detail">${suppUnique.length?`<table class="supp-table">${suppHtml}</table>`:'Sin consumos confirmados para esta fecha.'}</div><div class="state">${suppUnique.length?'✓':'—'}</div></div>
-       <div class="row"><div class="name">Indicadores corporales</div><div class="detail">Peso: <b>${measure.weight?fmt(measure.weight,1)+' kg':'Sin registro'}</b> · Cintura: <b>${measure.waist?fmt(measure.waist,0)+' cm':'Sin registro'}</b><br><span class="muted">${measure.date?'Última medición registrada: '+safe(measure.date):'No hay mediciones anteriores disponibles'} · Composición corporal: sin dato registrado</span></div><div class="state">${measure.weight||measure.waist?'↗':'—'}</div></div>
-      </section>
-      <div class="score"><span>RESUMEN DE REGISTROS DEL DÍA</span><strong>${dayFoods.length+workouts.length+suppUnique.length} registros</strong></div>
-      <div class="lower"><section class="box"><h2>Resumen del día</h2><ul><li>${dayFoods.length?`Alimentación registrada: ${dayFoods.length} ítems.`:'No hay alimentos registrados.'}</li><li>${fmt(totals.k)} kcal y ${fmt(totals.p,1)} g de proteína.</li><li>${workouts.length?`Entrenamiento registrado: ${fmt(workoutMinutes)} minutos.`:'No hay entrenamiento registrado.'}</li><li>${suppUnique.length} consumos de suplementos confirmados.</li><li>${measure.weight||measure.waist?'Indicadores corporales disponibles.':'Sin medición corporal disponible.'}</li></ul></section>
-      <section class="box"><h2>Alimentación por comida</h2><table class="supp-table"><thead><tr><td><b>Comida</b></td><td><b>Detalle</b></td><td><b>kcal</b></td><td><b>P</b></td></tr></thead><tbody>${mealRows}</tbody></table></section></div>
-      <div class="lower"><section class="box"><h2>Próximo enfoque</h2><ul><li>Mantener ingesta dentro de 1.800–2.000 kcal.</li><li>Priorizar 120–130 g de proteína.</li><li>Registrar cada sesión y consumo de suplementos.</li><li>Actualizar peso y cintura cuando corresponda.</li></ul></section><section class="box"><h2>Control y observaciones</h2><p>Este informe refleja exclusivamente los datos guardados en FITNESS PERFORMANCE PRO para la fecha seleccionada. Los campos sin registro se muestran como tales y no se completan con estimaciones.</p><p class="muted">FITNESS PERFORMANCE · BY ARIEL BARREDA</p></section></div>
-      <footer class="foot"></footer></main><script>window.addEventListener('load',()=>{setTimeout(()=>window.print(),500)});${'</scr'+'ipt>'}</body></html>`;
+ const addReportDownload=()=>{
+  const sheet=document.querySelector('#historyDataModal .history-data-sheet');
+  if(!sheet||document.getElementById('fpReportDate'))return;
+  const block=document.createElement('div');
+  block.className='history-data-report';
+  block.innerHTML='<div class="history-data-report-title">INFORME DIARIO FP · PDF</div><small>Genera el informe visual con los registros guardados para la fecha seleccionada.</small><div class="history-data-report-controls"><input id="fpReportDate" type="date" aria-label="Fecha del informe"><button type="button" onclick="downloadDailyReport()">↓ DESCARGAR INFORME PDF</button></div>';
+  const warning=sheet.querySelector('.history-data-warning');
+  if(warning)sheet.insertBefore(block,warning);else sheet.appendChild(block);
+  const input=block.querySelector('input');
+  input.value=(typeof today!=='undefined'&&today)?today:new Date().toISOString().slice(0,10);
+ };
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addReportDownload);else addReportDownload();
+ const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const num=v=>Number(v)||0;
+ const fmt=(v,d=0)=>num(v).toLocaleString('es-CL',{minimumFractionDigits:d,maximumFractionDigits:d});
+ window.downloadDailyReport=function(){
+  const date=document.getElementById('fpReportDate')?.value||((typeof today!=='undefined'&&today)?today:new Date().toISOString().slice(0,10));
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert('Selecciona una fecha válida para el informe.');return;}
+  const foods=(db.foods||[]).filter(x=>String(x.date||'')===date);
+  const totals=foods.reduce((a,x)=>({k:a.k+num(x.k),p:a.p+num(x.p),c:a.c+num(x.c),f:a.f+num(x.f)}),{k:0,p:0,c:0,f:0});
+  const workouts=(db.workouts||[]).filter(x=>String(x.date||'')===date);
+  const minutes=workouts.reduce((a,x)=>a+num(x.minutes),0);
+  const supplements=(db.supplements||[]).flatMap(x=>(x.log||[]).filter(l=>String(l.date||'')===date&&String(l.status||'').startsWith('ON')).map(l=>({name:x.name,dose:l.dose||x.dose||'',time:l.time||x.consumedTime||''})))
+   .concat((db.supplements||[]).filter(x=>x.done&&String(x.date||'')===date&&!(x.log||[]).some(l=>String(l.date||'')===date&&String(l.status||'').startsWith('ON'))).map(x=>({name:x.name,dose:x.dose||'',time:x.consumedTime||x.time||''})));
+  const unique=[],seen=new Set();supplements.forEach(x=>{const k=String(x.name)+'|'+String(x.time);if(!seen.has(k)){seen.add(k);unique.push(x)}});
+  const measures=(db.measures||[]).filter(x=>String(x.date||'')<=date&&(x.weight||x.waist)).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+  const measure=measures[0]||{};
+  const dateObj=new Date(date+'T12:00:00');
+  const dateLabel=dateObj.toLocaleDateString('es-CL',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
+  const kcalOK=totals.k>=1800&&totals.k<=2000,proteinOK=totals.p>=120&&totals.p<=130;
+  const scoreParts=[kcalOK,proteinOK,workouts.length>0,unique.length>0];
+  const score=Math.round(scoreParts.filter(Boolean).length/scoreParts.length*100);
+  const foodStatus=foods.length?'✓':'—',trainingStatus=workouts.length?'✓':'—',suppStatus=unique.length?'✓':'—';
+  const meals=['Desayuno','Almuerzo','Colación','Cena'].map(name=>{
+   const xs=foods.filter(x=>String(x.meal||'').toLowerCase()===name.toLowerCase());
+   return `<div class="meal"><b>${name}</b><span>${xs.length?xs.map(x=>safe(x.n)).join(', '):'Sin registro'}</span><strong>${fmt(xs.reduce((a,x)=>a+num(x.k),0))} kcal</strong></div>`;
+  }).join('');
+  const workoutFocus=workouts.length?workouts.map(x=>safe(x.routine||'Sesión de entrenamiento')).join(' · '):'Sin entrenamiento registrado';
+  const suppText=unique.length?unique.map(x=>`${safe(x.name)} (${safe(x.dose||'dosis no indicada')})`).join(' · '):'Sin suplementos confirmados';
+  const logo=document.querySelector('.brand img')?.getAttribute('src')||'';
+  const w=window.open('','_blank');
+  if(!w){alert('El navegador bloqueó la ventana del informe. Permite las ventanas emergentes para continuar.');return;}
+  const report=`<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Informe diario FP ${safe(date)}</title><style>
+  @page{size:A4;margin:0}*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{margin:0;background:#fff;color:#171b18;font-family:Arial,Helvetica,sans-serif}
+  .page{width:210mm;height:297mm;margin:0 auto;padding:0 8mm 0;position:relative;overflow:hidden;background:#fff}
+  .mast{height:39mm;margin:0 -8mm 7mm;padding:5mm 10mm;background:#7b8c80;border-bottom:3mm solid #a4f000;display:flex;align-items:center;gap:8mm}
+  .logo{width:112mm;max-height:29mm;object-fit:contain;object-position:left center}.fallback{font-size:22pt;color:white;font-weight:900}
+  .titlebar{display:flex;justify-content:space-between;align-items:center;margin:0 2mm 10mm}
+  h1{font-size:27pt;line-height:1;margin:0;font-style:italic;font-weight:900;letter-spacing:-1px;color:#252b27}h1 span{color:#72ad00}
+  .tagline{margin-top:2mm;font-size:8pt;font-weight:700;letter-spacing:3px;color:#3f4942}
+  .date{border-left:1px solid #cbd0cc;padding-left:7mm;font-size:9pt;line-height:1.5}.date b{display:block;font-size:8pt;color:#667168}
+  .thead,.r{display:grid;grid-template-columns:34% 1fr 22mm;align-items:center}
+  .thead{height:13mm;background:#e4e5e4;border-left:11mm solid #a4f000;border-radius:3mm;padding:0 4mm;font-size:12pt;font-weight:900;margin-bottom:2mm}
+  .r{min-height:24mm;padding:3mm 4mm;border-bottom:1px solid #cdd2ce;gap:3mm}
+  .name{font-size:12pt;font-weight:900}.detail{font-size:10pt;line-height:1.45}.detail strong{font-size:14pt}.state{text-align:center;color:#79b300;font-size:24pt;font-weight:900}
+  .macros{font-size:9pt;margin-top:1mm}.score{height:15mm;margin:7mm 0 12mm;background:#e4e5e4;border-radius:3mm;display:flex;align-items:center;justify-content:flex-end;font-size:14pt;font-weight:900;padding-left:4mm}
+  .score strong{height:100%;min-width:43mm;padding:2mm 5mm;background:#a4f000;font-size:22pt;text-align:center;display:flex;align-items:center;justify-content:center;transform:skew(-13deg);margin-right:2mm}
+  .score strong span{transform:skew(13deg)}
+  .lower{display:grid;grid-template-columns:1fr 1fr;gap:8mm}.box h2{background:#e4e5e4;border-radius:3mm;padding:3mm 4mm;margin:0 0 5mm;font-size:14pt;font-style:italic}
+  .box ul{list-style:none;padding:0;margin:0}.box li{font-size:10pt;line-height:1.55;margin:0 0 2mm;padding-left:6mm;position:relative}.box li:before{content:'●';position:absolute;left:0;color:#8ec900}
+  .meal{display:grid;grid-template-columns:23mm 1fr 20mm;gap:2mm;padding:2mm 0;border-bottom:1px solid #e0e4e1;font-size:8pt}.meal strong{text-align:right}
+  .bottom{position:absolute;bottom:0;left:0;right:0;height:18mm;background:#7b8c80}.bottom:after{content:'';position:absolute;right:12mm;top:0;width:44mm;height:18mm;background:linear-gradient(120deg,transparent 0 24%,#dedfdf 24% 53%,#a4f000 53% 100%)}
+  .muted{color:#69746c;font-size:8pt}
+  .print-actions{width:210mm;margin:0 auto;padding:10px;text-align:center}.print-actions button{border:0;border-radius:8px;padding:11px 20px;background:#a4f000;color:#1c261b;font-weight:900}
+  @media print{.print-actions{display:none}.page{margin:0}}
+  </style></head><body><div class="print-actions"><button onclick="window.print()">Imprimir / Guardar como PDF</button><p class="muted">En iPhone: en la vista de impresión, abre Compartir y selecciona Guardar en Archivos.</p></div>
+  <main class="page"><header class="mast">${logo?`<img class="logo" src="${logo}" alt="FP Fitness Performance">`:'<div class="fallback">FP · FITNESS PERFORMANCE</div>'}</header>
+  <div class="titlebar"><div><h1>INFORME <span>DIARIO</span></h1><div class="tagline">CONTROL · PROGRESO · RESULTADOS</div></div><div class="date"><b>FECHA</b>${safe(dateLabel)}</div></div>
+  <div class="thead"><div>Ítem del Informe</div><div>Detalle del Día</div><div style="text-align:center">Estado</div></div>
+  <section>
+   <div class="r"><div class="name">🍴 &nbsp; Nutrición</div><div class="detail"><strong>${fmt(totals.k)} / 2.000 kcal</strong><div class="macros">Proteína: ${fmt(totals.p)} g &nbsp; | &nbsp; CHO: ${fmt(totals.c)} g &nbsp; | &nbsp; Grasas: ${fmt(totals.f)} g</div></div><div class="state">${foodStatus}</div></div>
+   <div class="r"><div class="name">🏋 &nbsp; Entrenamiento</div><div class="detail"><strong>${workouts.length?workoutFocus:'Sin sesión registrada'}</strong><br>Tiempo total: ${fmt(minutes)} min</div><div class="state">${trainingStatus}</div></div>
+   <div class="r"><div class="name">💊 &nbsp; Suplementos</div><div class="detail">${suppText}</div><div class="state">${suppStatus}</div></div>
+   <div class="r"><div class="name">⚖ &nbsp; Indicadores Corporales</div><div class="detail">Peso: <strong>${measure.weight?fmt(measure.weight,1)+' kg':'—'}</strong> &nbsp; | &nbsp; Cintura: <strong>${measure.waist?fmt(measure.waist)+' cm':'—'}</strong><br><span class="muted">% Grasa: — &nbsp; | &nbsp; Masa muscular: —</span></div><div class="state">${measure.weight||measure.waist?'▮':'—'}</div></div>
+  </section>
+  <div class="score"><span style="margin-right:auto;padding-left:4mm">Cumplimiento del Día</span><strong><span>${score} %</span></strong></div>
+  <div class="lower">
+   <section class="box"><h2>◎ &nbsp; Resumen del Día</h2><ul>
+    <li>${kcalOK?'Calorías dentro del rango del plan.':`Consumo registrado: ${fmt(totals.k)} kcal.`}</li>
+    <li>${proteinOK?'Meta de proteína cumplida.':`Proteína registrada: ${fmt(totals.p)} g.`}</li>
+    <li>${workouts.length?`Entrenamiento realizado (${fmt(minutes)} min).`:'Sin entrenamiento registrado.'}</li>
+    <li>${unique.length?'Suplementación registrada.':'Sin suplementos confirmados.'}</li>
+    <li>${measure.weight?`Peso registrado: ${fmt(measure.weight,1)} kg.`:'Sin peso registrado para la fecha.'}</li>
+   </ul></section>
+   <section class="box"><h2>» &nbsp; Próximo Enfoque</h2><ul>
+    <li>Mantener ingesta en 1.800–2.000 kcal.</li><li>Sostener 120–130 g de proteína.</li>
+    <li>Priorizar entrenamiento de fuerza según planificación.</li><li>Control de cintura y descanso (7–8 h).</li>
+   </ul></section>
+  </div>
+  <div style="margin-top:7mm"><div class="box"><h2>Detalle de Alimentación</h2>${meals}</div></div>
+  <div class="bottom"></div></main><script>window.addEventListener('load',()=>setTimeout(()=>window.print(),450));<\/script></body></html>`;
+  w.document.open();w.document.write(report);w.document.close();
+ };
+})();
+</script>
+</body></html>`;
     w.document.open();w.document.write(html);w.document.close();
   };
 })();
