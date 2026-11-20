@@ -3783,4 +3783,30 @@ img,video,canvas,svg{filter:none}
 #nutricion > .nutrition-intel-card:first-of-type .date-display-card{height:58px!important;min-height:58px!important;max-height:58px!important;box-sizing:border-box!important;padding:7px 9px!important;border-radius:14px!important}
 #nutricion > .nutrition-intel-card:first-of-type .nutrition-meal-field select{height:58px!important;min-height:58px!important;max-height:58px!important;box-sizing:border-box!important;padding:7px 11px!important;border-radius:13px!important}
 </style>
+
+<style id="nutrition-date-meal-force-v2363">
+/* V23.63 · Ajuste directo: controla las cajas visibles de FECHA y COMIDA, sin depender de la estructura del contenedor padre. */
+#nutricion .nutrition-date-field .date-display-card,
+.nutrition-date-field .date-display-card{
+  height:58px!important;min-height:58px!important;max-height:58px!important;
+  padding:6px 9px!important;box-sizing:border-box!important;
+  border-radius:14px!important;overflow:hidden!important;
+}
+#nutricion .nutrition-meal-field select,
+.nutrition-meal-field select{
+  height:58px!important;min-height:58px!important;max-height:58px!important;
+  padding:7px 11px!important;box-sizing:border-box!important;
+  border-radius:13px!important;line-height:1.15!important;
+}
+#nutricion .nutrition-date-field .date-display-icon{flex:0 0 24px!important;width:24px!important}
+#nutricion .nutrition-date-field .date-display-icon svg{width:23px!important;height:23px!important;max-height:23px!important}
+#nutricion .nutrition-date-field .date-display-text{font-size:clamp(14px,3.3vw,18px)!important;line-height:1.15!important}
+@media(max-width:600px){
+  #nutricion .nutrition-date-field .date-display-card,
+  .nutrition-date-field .date-display-card{height:58px!important;min-height:58px!important;max-height:58px!important}
+  #nutricion .nutrition-meal-field select,
+  .nutrition-meal-field select{height:58px!important;min-height:58px!important;max-height:58px!important}
+}
+</style>
+
 </body></html>
