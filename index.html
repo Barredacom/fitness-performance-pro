@@ -3906,4 +3906,83 @@ img,video,canvas,svg{filter:none}
 #nutritionControlPanel .nutrition-trend-metric svg text{font-family:inherit!important;fill:#D0D8D1!important;font-size:10px!important}
 #nutritionControlPanel .nutrition-trend-metric svg text.trend-goal-label{fill:#B9E9DC!important;font-size:9px!important;font-weight:800!important}
 #nutritionControlPanel .nutrition-trend-legend{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:8px 14px!important;color:#D0D8D1!important;font-size:11px!important;line-height:1.4!important}
-#nutritionControlPanel .nutrition-trend-legend span{display:inlin
+#nutritionControlPanel .nutrition-trend-legend span{display:inline-flex!important;align-items:center!important;gap:6px!important;color:#D0D8D1!important}
+#nutritionControlPanel .nutrition-trend-legend i{display:inline-block!important;flex:0 0 9px!important;width:9px!important;height:9px!important;border-radius:50%!important}
+#nutritionControlPanel .nutrition-trend-legend b{display:block!important;width:100%!important;margin:3px 0 0!important;color:#C7FF00!important;font-size:12px!important}
+#nutritionControlPanel .trend-dot-consumed{background:#C7FF00!important}
+#nutritionControlPanel .trend-dot-goal{background:#B9E9DC!important}
+@media(max-width:420px){#nutritionControlPanel .nutrition-trend-metric{padding:12px 10px!important}#nutritionControlPanel .nutrition-trend-head{align-items:flex-start!important}#nutritionControlPanel .nutrition-trend-head span{margin-left:0!important}}
+</style>
+
+<style id="nutrition-progress-dashboard-v2366">
+/* V23.66 · Seguimiento nutricional sin SVG: barras CSS nativas, estables en Safari */
+#nutritionControlPanel .nutrition-control-content{gap:14px!important;padding:12px!important}
+#nutritionControlPanel #nutritionTrendChart{display:none!important}
+#nutritionControlPanel .nutrition-goal-circles{display:block!important;width:100%!important;min-width:0!important}
+#nutritionControlPanel .nutrition-progress-dashboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%;min-width:0}
+#nutritionControlPanel .nutrition-progress-card{min-width:0;padding:14px 12px;border-radius:15px;background:#626D68;border:1px solid rgba(208,216,209,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+#nutritionControlPanel .nutrition-progress-top{display:flex;align-items:center;justify-content:space-between;gap:6px;color:#FFFFFF;font-size:clamp(10px,2.8vw,12px);font-weight:850;letter-spacing:.5px}
+#nutritionControlPanel .nutrition-progress-percent{color:#D0D8D1;font-size:11px;font-weight:750;white-space:nowrap}
+#nutritionControlPanel .nutrition-progress-values{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px;margin:10px 0 9px;color:#FFFFFF}
+#nutritionControlPanel .nutrition-progress-values b{font-size:clamp(19px,5.4vw,25px);line-height:1.1;font-weight:850;font-variant-numeric:tabular-nums}
+#nutritionControlPanel .nutrition-progress-values span{font-size:11px;color:#D0D8D1}
+#nutritionControlPanel .nutrition-progress-track{height:9px;border-radius:20px;background:#858F89;overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.18)}
+#nutritionControlPanel .nutrition-progress-track>span{display:block;height:100%;border-radius:inherit;background:var(--progress-accent);transition:width .25s ease}
+#nutritionControlPanel .nutrition-progress-foot{margin-top:9px;color:#FFFFFF;font-size:11px;font-weight:750;line-height:1.35;font-variant-numeric:tabular-nums}
+#nutritionControlPanel .nutrition-progress-foot.is-over{color:#D8FF32}
+#nutritionControlPanel .nutrition-meals-list{display:flex;flex-direction:column;gap:8px}
+#nutritionControlPanel .nutrition-meal-group{min-width:0}
+#nutritionControlPanel .nutrition-meal-group header{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+#nutritionControlPanel .nutrition-meal-group header strong{color:#C7FF00}
+#nutritionControlPanel .nutrition-meal-total{margin-left:auto;color:#B9E9DC;font-size:11px;text-align:right}
+#nutritionControlPanel .nutrition-food-name{color:#D8FF32}
+#nutritionControlPanel .nutrition-food-values{color:#B9E9DC}
+#nutritionControlPanel .nutrition-meal-empty{color:#D0D8D1!important;opacity:.78}
+@media(max-width:360px){#nutritionControlPanel .nutrition-progress-dashboard{grid-template-columns:1fr}#nutritionControlPanel .nutrition-progress-card{padding:12px}}
+@media(prefers-reduced-motion:reduce){#nutritionControlPanel .nutrition-progress-track>span{transition:none}}
+</style>
+
+
+<style id="training-swipe-contrast-v2367">
+/* V23.67 — Mejora de contraste exclusiva del deslizador de Entrenamiento. */
+#tpWorkoutSwipeTrack #tpWorkoutSwipeCopy .history-swipe-subtitle{
+  color:#FFFFFF !important;
+  opacity:1 !important;
+}
+#tpWorkoutSwipeTrack #tpWorkoutSwipeCopy .history-swipe-title{
+  color:#C7FF00 !important;
+  opacity:1 !important;
+}
+</style>
+
+<style id="supplements-ice-title-v2368">
+#suplementos .sectionHead h2{color:#B9E9DC!important}
+</style>
+
+<style id="peso-medidas-palette-v2371">
+/* V23.71 · Peso y medidas: valores principales en verde lima oficial */
+#peso .body-kpis-live > .body-kpi:nth-child(1) > strong,
+#peso .body-kpis-live > .body-kpi:nth-child(2) > strong{
+  color:#C7FF00!important;
+  text-shadow:none!important;
+}
+</style>
+<!-- V23.73: desplazamiento interno exclusivo del texto PESO Y MEDIDAS; banner, recorte y resto de contenido conservados. -->
+<!-- V23.74: banner fotográfico optimizado del módulo Historial; imagen WebP embebida, sin dependencias externas. -->
+
+<style id="history-readable-white-labels">
+/* Mejorar contraste de textos secundarios del Historial 360° */
+.history-kpi span,
+.history-kpi small,
+.history-monthbar label,
+.history-count,
+.history-time,
+.history-event-meta,
+.history-empty,
+.history-swipe-subtitle,
+.history-calendar-panel .history-monthbar label {
+  color:#FFFFFF !important;
+}
+</style>
+
+</body></html>
