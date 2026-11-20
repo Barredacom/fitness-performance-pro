@@ -4002,7 +4002,7 @@ img,video,canvas,svg{filter:none}
 
 
 
-<!-- V23.84 · INFORME DIARIO FP · DISEÑO OFICIAL APROBADO -->
+<!-- V23.86 · INFORME DIARIO FP · DISEÑO OFICIAL APROBADO -->
 <style id="fp-daily-report-v2381">
 .history-data-report{margin-top:10px;padding:13px;border:1px solid #626D68;border-radius:14px;background:#505B56;display:flex;flex-direction:column;gap:9px}
 .history-data-report-title{color:#C7FF00;font-size:12px;font-weight:900;letter-spacing:.5px}
@@ -4069,7 +4069,7 @@ html,body{margin:0;padding:0;background:#fff;color:#171b18;font-family:Arial,Hel
 .titlebar{height:31mm;display:flex;justify-content:space-between;align-items:center;padding:0 9mm;margin:0 0 5mm}
 h1{font-size:27pt;line-height:1;margin:0;font-style:italic;font-weight:900;letter-spacing:-1.1px;color:#252b27}
 h1 span{color:#75ae00}
-.tagline{margin-top:2mm;font-size:8pt;font-weight:700;letter-spacing:2.8px;color:#3f4942}
+.tagline{margin-top:2mm;display:flex;align-items:center;gap:4mm;font-size:8pt;font-weight:700;letter-spacing:2.8px;color:#3f4942}.tagline-accent{display:inline-block;flex:0 0 11mm;height:1.5mm;background:#a4f000;transform:skew(-18deg)}
 .date{border-left:1px solid #cbd0cc;padding-left:7mm;font-size:11pt;line-height:1.3;min-width:68mm;display:flex;align-items:center}
 .date b{display:block;font-size:8pt;color:#667168;margin-bottom:1mm}
 .calendar{display:inline-flex;color:#657b69;width:10mm;height:10mm;vertical-align:middle;margin-right:4mm;align-items:center}.calendar svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
@@ -4157,9 +4157,24 @@ h1 span{color:#75ae00}
  .footer{position:absolute;bottom:0;left:0;right:0;height:18mm;margin:0}
  .print-actions{display:none}
 }
+
+  /* V23.86: encabezado del título según la segunda referencia aprobada */
+  .titlebar .date{border-left:0!important;padding-left:0!important}
+  .titlebar .tagline{display:flex!important;align-items:center!important;gap:5mm!important}
+  .titlebar .tagline-accent{display:inline-block!important;flex:0 0 17mm!important;width:17mm!important;height:1.6mm!important;background:#a4f000!important;transform:skew(-18deg)!important}
+  @media screen and (max-width:700px){
+    .titlebar .tagline{gap:2.3vw!important}
+    .titlebar .tagline-accent{flex-basis:8vw!important;width:8vw!important;height:.75vw!important}
+    .titlebar .date{border-left:0!important;padding-left:0!important}
+  }
+  @media print{
+    .titlebar .tagline{gap:5mm!important}
+    .titlebar .tagline-accent{flex-basis:17mm!important;width:17mm!important;height:1.6mm!important}
+    .titlebar .date{border-left:0!important;padding-left:0!important}
+  }
 </style></head><body><div class="print-actions"><button onclick="window.print()">Imprimir / Guardar como PDF</button><p style="font-size:11px;color:#68736b">En iPhone: abre Compartir en la vista de impresión y selecciona Guardar en Archivos.</p></div>
   <main class="page"><img class="mast-art" src="${fpApprovedBanner}" alt="Fitness Performance FP">
-  <div class="titlebar"><div><h1>INFORME <span>DIARIO</span></h1><div class="tagline">━ &nbsp; CONTROL · PROGRESO · RESULTADOS</div></div><div class="date"><span class="calendar">${iconSvg.calendar}</span><div><b>FECHA</b>${safe(dateLabel)}</div></div></div>
+  <div class="titlebar"><div><h1>INFORME <span>DIARIO</span></h1><div class="tagline"><span class="tagline-accent" aria-hidden="true"></span><span>CONTROL · PROGRESO · RESULTADOS</span></div></div><div class="date"><span class="calendar">${iconSvg.calendar}</span><div><b>FECHA</b>${safe(dateLabel)}</div></div></div>
   <div class="table-wrap">
    <div class="thead"><div>Ítem del Informe</div><div>Detalle del Día</div><div>Estado</div></div>
    <section>
