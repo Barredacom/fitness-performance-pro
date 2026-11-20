@@ -1637,7 +1637,7 @@ html,body{background:#858F89!important;color:#FFFFFF!important}
 .supp-dashboard{display:grid;gap:14px;margin-top:16px}
 .supp-overview{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .supp-overview-card{padding:15px;border:1px solid #626D68;border-radius:17px;background:linear-gradient(145deg,#505B56,#505B56)}
-.supp-overview-card small{display:block;color:#626D68;font-size:11px;font-weight:750;letter-spacing:.08em;text-transform:uppercase}
+.supp-overview-card small{display:block;color:#FFFFFF;font-size:11px;font-weight:750;letter-spacing:.08em;text-transform:uppercase}
 .supp-overview-card strong{display:block;color:#C7FF00;font-size:25px;font-weight:950;margin-top:5px}
 .supp-progress-wrap{padding:14px 16px;border:1px solid #626D68;border-radius:16px;background:#505B56}
 .supp-progress-head{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:12px;font-weight:850;color:#C7FF00}
@@ -1654,7 +1654,7 @@ html,body{background:#858F89!important;color:#FFFFFF!important}
 .supp-item:has(input:checked) .supp-copy:after{content:'✓ CONFIRMADO';display:block;color:#C7FF00;font-size:9px;font-weight:950;letter-spacing:.12em;margin-top:5px}
 .supp-day-history{padding:16px;border:1px solid #626D68;border-radius:18px;background:linear-gradient(145deg,#505B56,#505B56)}
 .supp-day-history h3{font-size:15px;margin:0 0 12px;color:#C7FF00}
-.supp-history-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid #505B56}
+.supp-history-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) auto;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #505B56}
 .supp-history-row:last-child{border-bottom:0}.supp-history-row strong{font-size:13px;color:#C7FF00}.supp-history-row small{font-size:11px;color:#C7FF00;text-align:right}
 .supp-empty{padding:12px;border:1px dashed #626D68;border-radius:13px;color:#626D68;font-size:12px;line-height:1.5}
 .supp-recent{display:grid;gap:8px}.supp-recent-day{padding:11px 12px;border-radius:13px;background:#505B56;border:1px solid #505B56}.supp-recent-day strong{display:block;color:#C7FF00;font-size:12px}.supp-recent-day small{display:block;color:#626D68;font-size:11px;margin-top:4px}
@@ -1711,7 +1711,7 @@ html,body{background:#858F89!important;color:#FFFFFF!important}
   <article class="supp-swipe-row" data-supp-row="suppWhey"><span class="supp-swipe-icon" aria-hidden="true">▤</span><div class="supp-swipe-name"><strong>Proteína (Whey)</strong><small>34 g · 130 kcal · 24 g proteína</small></div><div class="supp-confirm-track" data-supp-track="suppWhey"><button type="button" class="supp-confirm-thumb" data-supp-thumb="suppWhey" aria-label="Deslizar para confirmar proteína Whey">»</button><span class="supp-confirm-label" data-supp-label="suppWhey">Desliza para confirmar</span></div><input type="checkbox" id="suppWhey" class="supp-state-proxy" tabindex="-1" aria-hidden="true"></article>
  </div>
  <section class="supp-hydration-card" aria-labelledby="hydrationTitle">
-  <div class="supp-hydration-head"><div><span class="supp-hydration-kicker">REGISTRO DE AGUA</span><h3 id="hydrationTitle">Hidratación</h3><p>Registra cada consumo en mililitros o litros.</p></div><span class="supp-hydration-watermark" aria-hidden="true">💧</span></div>
+  <div class="supp-hydration-head"><div><span class="supp-hydration-kicker">REGISTRO DE AGUA</span><h3 id="hydrationTitle">Hidratación</h3><p>Registra cada consumo en mililitros o litros.</p></div></div>
   <div class="supp-hydration-entry supp-hydration-slider-entry">
    <div class="supp-water-quantity-head"><span>CANTIDAD A REGISTRAR</span><strong id="hydrationAmountDisplay">500 ml</strong></div>
    <div class="supp-water-presets" role="group" aria-label="Cantidad de agua">
@@ -3726,8 +3726,18 @@ img,video,canvas,svg{filter:none}
 .supp-swipe-row.is-confirmed .supp-confirm-track{border-color:#B9E9DC;background:rgba(80,91,86,.55)}
 .supp-swipe-row.is-confirmed .supp-confirm-label{color:#C7FF00;letter-spacing:.08em}
 .supp-state-proxy{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
-.supp-history-row button{margin-left:8px;border:1px solid rgba(185,233,220,.4);border-radius:8px;background:transparent;color:#B9E9DC;padding:4px 8px;font-size:10px}
+.supp-history-row button{justify-self:end;margin:0;border:1px solid rgba(185,233,220,.55);border-radius:8px;background:transparent;color:#FFFFFF;padding:7px 11px;font-size:11px;font-weight:800;white-space:nowrap;word-break:keep-all;min-width:max-content;line-height:1.2}
 @media(max-width:600px){.supp-swipe-row{grid-template-columns:40px minmax(96px,.85fr) minmax(125px,1.2fr);gap:8px;padding:8px;border-radius:14px}.supp-swipe-icon{width:36px;height:36px;font-size:19px}.supp-swipe-name{display:flex;flex-direction:column;align-items:flex-start;gap:3px}.supp-swipe-name strong{font-size:12px;white-space:normal}.supp-swipe-name small{border:0;padding:0;font-size:11px}.supp-confirm-track{height:46px;padding:3px}.supp-confirm-thumb{flex-basis:38px;width:38px;height:38px;font-size:23px}.supp-confirm-label{padding:0 43px;font-size:10px;white-space:normal;line-height:1.15}}
 @media(max-width:360px){.supp-swipe-row{grid-template-columns:32px minmax(80px,.75fr) minmax(112px,1.1fr);gap:6px;padding:7px}.supp-swipe-icon{width:30px;height:30px}.supp-swipe-name strong{font-size:11px}.supp-confirm-label{font-size:9px;padding:0 39px}}
+</style>
+<style id="supplement-summary-history-fixes-v2359">
+/* V23.59: contraste y distribución del historial de suplementos */
+#suplementos .supp-overview-card small{color:#FFFFFF!important}
+#suplementos .supp-history-row{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) auto;column-gap:10px}
+#suplementos .supp-history-row strong{min-width:0;overflow-wrap:anywhere}
+#suplementos .supp-history-row small{min-width:0;text-align:right;overflow-wrap:anywhere;line-height:1.35}
+#suplementos .supp-history-row button{white-space:nowrap!important;word-break:keep-all!important;min-width:max-content!important;justify-self:end}
+@media(max-width:430px){#suplementos .supp-history-row{grid-template-columns:minmax(0,.9fr) minmax(0,1fr) auto;gap:7px;padding:10px 0}#suplementos .supp-history-row strong{font-size:11px}#suplementos .supp-history-row small{font-size:10px}#suplementos .supp-history-row button{font-size:10px;padding:7px 9px}}
+@media(max-width:350px){#suplementos .supp-history-row{grid-template-columns:minmax(0,1fr) auto;row-gap:5px}#suplementos .supp-history-row small{grid-column:1;grid-row:2;text-align:left}#suplementos .supp-history-row button{grid-column:2;grid-row:1 / span 2}}
 </style>
 </body></html>
