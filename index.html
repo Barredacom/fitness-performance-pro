@@ -4002,7 +4002,7 @@ img,video,canvas,svg{filter:none}
 
 
 
-<!-- V23.83 · INFORME DIARIO FP · DISEÑO OFICIAL APROBADO -->
+<!-- V23.84 · INFORME DIARIO FP · DISEÑO OFICIAL APROBADO -->
 <style id="fp-daily-report-v2381">
 .history-data-report{margin-top:10px;padding:13px;border:1px solid #626D68;border-radius:14px;background:#505B56;display:flex;flex-direction:column;gap:9px}
 .history-data-report-title{color:#C7FF00;font-size:12px;font-weight:900;letter-spacing:.5px}
@@ -4050,6 +4050,15 @@ img,video,canvas,svg{filter:none}
    const xs=foods.filter(x=>String(x.meal||'').toLowerCase()===name.toLowerCase());
    return `<div class="meal"><b>${name}</b><span>${xs.length?xs.map(x=>safe(x.n||x.name||'Alimento')).join(', '):'Sin registro'}</span><strong>${fmt(xs.reduce((a,x)=>a+n(x.k),0))} kcal</strong></div>`;
   }).join('');
+  const iconSvg={
+   food:'<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 5v13M8 5v9c0 5 10 5 10 0V5M13 18v25M33 5v38M33 5c-8 8-8 18 0 20"/></svg>',
+   training:'<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 18v12M11 13v22M17 20h14M31 13v22M37 18v12M43 21v6"/></svg>',
+   supplement:'<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 7a10 10 0 0 1 14 0l11 11a10 10 0 0 1-14 14L16 21A10 10 0 0 1 16 7Z"/><path d="m19 10 19 19"/></svg>',
+   body:'<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7v34M10 12h28M13 12 6 30h14L13 12Zm22 0-7 18h14l-7-18ZM6 34c4 4 10 4 14 0M28 34c4 4 10 4 14 0M17 42h14"/></svg>',
+   calendar:'<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="10" width="36" height="32" rx="5"/><path d="M15 5v10M33 5v10M6 19h36M15 26h2M24 26h2M33 26h2M15 34h2M24 34h2"/></svg>',
+   target:'<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="22" cy="26" r="17"/><circle cx="22" cy="26" r="10"/><circle cx="22" cy="26" r="3"/><path d="m22 26 18-18M31 8h9v9"/></svg>',
+   next:'<svg viewBox="0 0 48 48" aria-hidden="true"><path d="m7 8 15 16L7 40M25 8l15 16-15 16"/></svg>'
+  };
   const w=window.open('','_blank');if(!w){alert('El navegador bloqueó la ventana del informe. Permite las ventanas emergentes para continuar.');return;}
   const report=`<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Informe Diario FP ${safe(date)}</title><style>
 @page{size:A4 portrait;margin:0}
@@ -4063,7 +4072,7 @@ h1 span{color:#75ae00}
 .tagline{margin-top:2mm;font-size:8pt;font-weight:700;letter-spacing:2.8px;color:#3f4942}
 .date{border-left:1px solid #cbd0cc;padding-left:7mm;font-size:11pt;line-height:1.3;min-width:68mm;display:flex;align-items:center}
 .date b{display:block;font-size:8pt;color:#667168;margin-bottom:1mm}
-.calendar{display:inline-flex;color:#657b69;font-size:23pt;vertical-align:middle;margin-right:4mm;align-items:center}
+.calendar{display:inline-flex;color:#657b69;width:10mm;height:10mm;vertical-align:middle;margin-right:4mm;align-items:center}.calendar svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
 .table-wrap{margin:0 6mm}
 .thead{height:13mm;display:grid;grid-template-columns:37% 1fr 24mm;align-items:center;background:#e2e3e2;margin:0 0 2mm;position:relative;overflow:hidden;padding:0 4mm 0 15mm;font-size:12pt;font-weight:900;border-radius:3mm}
 .thead:before{content:"";position:absolute;left:-2mm;top:0;width:14mm;height:100%;background:#a4f000;transform:skew(-18deg)}
@@ -4072,7 +4081,7 @@ h1 span{color:#75ae00}
 .thead>div:nth-child(3){text-align:center}
 .r{min-height:24mm;padding:3mm 4mm;display:grid;grid-template-columns:37% 1fr 24mm;align-items:center;gap:2mm;border-bottom:1px solid #cdd2ce}
 .name{font-size:12pt;font-weight:900;display:flex;align-items:center;white-space:nowrap}
-.ico{display:inline-flex;width:14mm;font-size:21pt;color:#75a900;align-items:center;justify-content:flex-start}
+.ico{display:inline-flex;width:14mm;height:12mm;color:#78b500;align-items:center;justify-content:flex-start}.ico svg{width:9mm;height:9mm;fill:none;stroke:currentColor;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
 .detail{font-size:10pt;line-height:1.35;border-left:1px solid #cbd0cc;padding-left:8mm}
 .detail strong{font-size:14pt}
 .macros{font-size:9pt;margin-top:1mm;white-space:nowrap}
@@ -4085,7 +4094,7 @@ h1 span{color:#75ae00}
 .score strong span{transform:skew(13deg)}
 .lower{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin:0 5mm}
 .box h2{background:#e2e3e2;border-radius:3mm;padding:3mm 4mm;margin:0 0 5mm;font-size:14pt;font-style:italic;display:flex;align-items:center;gap:3mm;white-space:nowrap}
-.box h2 .heading-icon{font-size:21pt;color:#78ad00;font-style:normal}
+.box h2 .heading-icon{display:inline-flex;width:10mm;height:10mm;margin-right:2mm;color:#78ad00;vertical-align:middle}.heading-icon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 .lower .box:first-child{border-right:1px solid #cbd0cc;padding-right:5mm}
 .box ul{list-style:none;padding:0;margin:0}
 .box li{font-size:10pt;line-height:1.45;margin:0 0 2mm;padding-left:7mm;position:relative}
@@ -4120,7 +4129,7 @@ h1 span{color:#75ae00}
  .score strong{min-width:22vw;font-size:5vw;padding:1vw 2vw;margin-right:1vw}
  .lower{gap:3vw;margin:0 4vw}
  .box h2{font-size:3vw;padding:2vw 2.5vw;margin-bottom:2.5vw;gap:1vw}
- .box h2 .heading-icon{font-size:4.5vw}
+ .box h2 .heading-icon{width:5vw;height:5vw;margin-right:1vw}
  .lower .box:first-child{padding-right:2.5vw}
  .box li{font-size:2.25vw;line-height:1.4;margin-bottom:1.3vw;padding-left:4vw}
  .box.summary li:before{width:3vw;height:3vw;line-height:3vw;font-size:2vw}
@@ -4150,26 +4159,26 @@ h1 span{color:#75ae00}
 }
 </style></head><body><div class="print-actions"><button onclick="window.print()">Imprimir / Guardar como PDF</button><p style="font-size:11px;color:#68736b">En iPhone: abre Compartir en la vista de impresión y selecciona Guardar en Archivos.</p></div>
   <main class="page"><img class="mast-art" src="${fpApprovedBanner}" alt="Fitness Performance FP">
-  <div class="titlebar"><div><h1>INFORME <span>DIARIO</span></h1><div class="tagline">━ &nbsp; CONTROL · PROGRESO · RESULTADOS</div></div><div class="date"><span class="calendar">▦</span><div><b>FECHA</b>${safe(dateLabel)}</div></div></div>
+  <div class="titlebar"><div><h1>INFORME <span>DIARIO</span></h1><div class="tagline">━ &nbsp; CONTROL · PROGRESO · RESULTADOS</div></div><div class="date"><span class="calendar">${iconSvg.calendar}</span><div><b>FECHA</b>${safe(dateLabel)}</div></div></div>
   <div class="table-wrap">
    <div class="thead"><div>Ítem del Informe</div><div>Detalle del Día</div><div>Estado</div></div>
    <section>
-    <div class="r"><div class="name"><span class="ico">🍴</span>Nutrición</div><div class="detail"><strong>${fmt(totals.k)} / 2.000 kcal</strong><div class="macros">Proteína: ${fmt(totals.p)} g &nbsp; | &nbsp; CHO: ${fmt(totals.c)} g &nbsp; | &nbsp; Grasas: ${fmt(totals.f)} g</div></div><div class="state ${foods.length?'ok':'none'}">${foods.length?'':'—'}</div></div>
-    <div class="r"><div class="name"><span class="ico">🏋️</span>Entrenamiento</div><div class="detail"><strong>${workoutTitle}</strong><br>Tiempo total: ${fmt(minutes)} min</div><div class="state ${workoutOK?'ok':'none'}">${workoutOK?'':'—'}</div></div>
-    <div class="r"><div class="name"><span class="ico">💊</span>Suplementos</div><div class="detail">${suppText}</div><div class="state ${suppOK?'ok':'none'}">${suppOK?'':'—'}</div></div>
-    <div class="r"><div class="name"><span class="ico">⚖️</span>Indicadores Corporales</div><div class="detail">Peso: <strong>${measure.weight?fmt(measure.weight,1)+' kg':'—'}</strong> &nbsp; | &nbsp; Cintura: <strong>${measure.waist?fmt(measure.waist)+' cm':'—'}</strong><br><span style="font-size:8pt;color:#7b827d">% Grasa (est.): — &nbsp; | &nbsp; Masa muscular (est.): —</span></div><div class="state ${measureOK?'ok':'none'}">${measureOK?'':'—'}</div></div>
+    <div class="r"><div class="name"><span class="ico">${iconSvg.food}</span>Nutrición</div><div class="detail"><strong>${fmt(totals.k)} / 2.000 kcal</strong><div class="macros">Proteína: ${fmt(totals.p)} g &nbsp; | &nbsp; CHO: ${fmt(totals.c)} g &nbsp; | &nbsp; Grasas: ${fmt(totals.f)} g</div></div><div class="state ${foods.length?'ok':'none'}">${foods.length?'':'—'}</div></div>
+    <div class="r"><div class="name"><span class="ico">${iconSvg.training}</span>Entrenamiento</div><div class="detail"><strong>${workoutTitle}</strong><br>Tiempo total: ${fmt(minutes)} min</div><div class="state ${workoutOK?'ok':'none'}">${workoutOK?'':'—'}</div></div>
+    <div class="r"><div class="name"><span class="ico">${iconSvg.supplement}</span>Suplementos</div><div class="detail">${suppText}</div><div class="state ${suppOK?'ok':'none'}">${suppOK?'':'—'}</div></div>
+    <div class="r"><div class="name"><span class="ico">${iconSvg.body}</span>Indicadores Corporales</div><div class="detail">Peso: <strong>${measure.weight?fmt(measure.weight,1)+' kg':'—'}</strong> &nbsp; | &nbsp; Cintura: <strong>${measure.waist?fmt(measure.waist)+' cm':'—'}</strong><br><span style="font-size:8pt;color:#7b827d">% Grasa (est.): — &nbsp; | &nbsp; Masa muscular (est.): —</span></div><div class="state ${measureOK?'ok':'none'}">${measureOK?'':'—'}</div></div>
    </section>
   </div>
   <div class="score"><span class="score-label">Cumplimiento del Día</span><strong><span>${score} %</span></strong></div>
   <div class="lower">
-   <section class="box summary"><h2><span class="heading-icon">◉</span>Resumen del Día</h2><ul>
+   <section class="box summary"><h2><span class="heading-icon">${iconSvg.target}</span>Resumen del Día</h2><ul>
     <li>${kcalOK?`Calorías en rango del plan (${Math.round(totals.k/2000*100)} %).`:`Consumo registrado: ${fmt(totals.k)} kcal.`}</li>
     <li>${proteinOK?`Proteína cumplida (${fmt(totals.p)} g).`:`Proteína registrada: ${fmt(totals.p)} g.`}</li>
     <li>${workoutOK?`Entrenamiento realizado (${fmt(minutes)} min).`:'Sin entrenamiento registrado.'}</li>
     <li>${suppOK?'Suplementación completa.':'Sin suplementos confirmados.'}</li>
     <li>${measure.weight?`Peso registrado: ${fmt(measure.weight,1)} kg.`:'Sin peso registrado.'}</li>
    </ul></section>
-   <section class="box"><h2><span class="heading-icon">»</span>Próximo Enfoque</h2><ul>
+   <section class="box"><h2><span class="heading-icon">${iconSvg.next}</span>Próximo Enfoque</h2><ul>
     <li>Mantener ingesta en 1.800–2.000 kcal.</li><li>Sostener 120–130 g de proteína.</li>
     <li>Entrenamiento de fuerza según planificación.</li><li>Control de cintura y descanso (7–8 h).</li>
    </ul></section>
