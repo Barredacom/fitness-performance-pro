@@ -1911,7 +1911,7 @@ function renderMealMiniSummary(){
  const foodsForDay=(db.foods||[]).filter(x=>String(x.date||'')===String(date));
  const totalK=foodsForDay.reduce((a,x)=>a+(Number(x.k)||0),0),totalP=foodsForDay.reduce((a,x)=>a+(Number(x.p)||0),0);
  const kcalGoal=1900,proteinGoal=125;
- const circle=(label,value,goal,unit,color)=>{const percent=Math.round(value/goal*100),ratio=Math.max(0,Math.min(value/goal,1)),r=42,circ=2*Math.PI*r,offset=circ*(1-ratio),shown=unit==='kcal'?Math.round(value):value.toFixed(1);return `<div class="nutrition-goal-card"><div class="nutrition-goal-ring nutrition-simple-ring" role="img" aria-label="${label}: ${percent}% del objetivo"><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="nutrition-ring-track" cx="50" cy="50" r="${r}"/><circle class="nutrition-ring-value" cx="50" cy="50" r="${r}" style="stroke-dasharray:${circ.toFixed(2)};stroke-dashoffset:${offset.toFixed(2)}"/></svg><span>${percent}%</span></div><strong>${label}</strong><small>${unit==='kcal'?Math.round(value)+' / '+goal+' kcal':value.toFixed(1)+' / '+goal+' g'}</small><span class="nutrition-goal-remaining">${value>goal?'+'+(value-goal).toFixed(unit==='kcal'?0:1)+' '+unit:'Restan '+(goal-value).toFixed(unit==='kcal'?0:1)+' '+unit}</span></div>`;}
+ const circle=(label,value,goal,unit,color)=>{const percent=Math.round(value/goal*100),ratio=Math.max(0,Math.min(value/goal,1)),shown=unit==='kcal'?Math.round(value):value.toFixed(1);return `<div class="nutrition-goal-card"><div class="nutrition-goal-ring nutrition-simple-ring" style="--ring-progress:${(ratio*100).toFixed(2)}%" role="img" aria-label="${label}: ${percent}% del objetivo"><span>${percent}%</span></div><strong>${label}</strong><small>${unit==='kcal'?Math.round(value)+' / '+goal+' kcal':value.toFixed(1)+' / '+goal+' g'}</small><span class="nutrition-goal-remaining">${value>goal?'+'+(value-goal).toFixed(unit==='kcal'?0:1)+' '+unit:'Restan '+(goal-value).toFixed(unit==='kcal'?0:1)+' '+unit}</span></div>`;}
  const circles=$('nutritionGoalCircles'),list=$('nutritionMealsList');if(!circles||!list)return;
  circles.innerHTML=circle('CALORÍAS',totalK,kcalGoal,'kcal','#A4FF28')+circle('PROTEÍNAS',totalP,proteinGoal,'g','#A4FF28');
  list.innerHTML=names.map((name,i)=>{const mealFoods=foodsForDay.filter(x=>String(x.meal||'').toLowerCase()===name.toLowerCase()),mk=mealFoods.reduce((a,x)=>a+(Number(x.k)||0),0),mp=mealFoods.reduce((a,x)=>a+(Number(x.p)||0),0);return `<section class="nutrition-meal-group"><header><span class="nutrition-meal-icon">${icons[i]}</span><strong>${name.toUpperCase()}</strong><span class="nutrition-meal-total">${mk.toFixed(0)} kcal · P ${mp.toFixed(1)} g</span></header>${mealFoods.length?`<ul>${mealFoods.map(x=>`<li><span class="nutrition-food-name">${escapeHtml(x.n||'Alimento')}</span><span class="nutrition-food-values">${(Number(x.k)||0).toFixed(0)} kcal · ${(Number(x.p)||0).toFixed(1)} g P</span></li>`).join('')}</ul>`:'<p class="nutrition-meal-empty">Sin alimentos registrados</p>'}</section>`}).join('');
@@ -3542,15 +3542,15 @@ img,video,canvas,svg{filter:none}
 }
 #nutricion #nutritionControlPanel .nutrition-simple-ring{
   width:112px!important;height:112px!important;max-width:100%;aspect-ratio:1;
-  border-radius:50%;display:grid;place-items:center;position:relative;flex:none;
-  background:conic-gradient(#C7FF00 0 var(--ring-progress),#858F89 var(--ring-progress) 100%)!important;
-  box-shadow:none!important;filter:none!important;
+  border-radius:50%;display:grid!important;place-items:center;position:relative;flex:none;
+  background:conic-gradient(#C7FF00 0 var(--ring-progress,0%),#858F89 var(--ring-progress,0%) 100%)!important;
+  box-shadow:none!important;filter:none!important;isolation:isolate;
 }
 #nutricion #nutritionControlPanel .nutrition-simple-ring:before{
-  content:"";position:absolute;inset:9px;border-radius:50%;background:#626D68!important;
+  content:"";position:absolute;inset:9px;border-radius:50%;background:#626D68!important;z-index:0;
 }
 #nutricion #nutritionControlPanel .nutrition-simple-ring>span{
-  position:relative;z-index:1;color:#FFFFFF!important;font-size:25px;font-weight:850;line-height:1;
+  position:relative;z-index:1;display:block!important;color:#FFFFFF!important;font-size:25px!important;font-weight:850!important;line-height:1!important;
 }
 #nutricion #nutritionControlPanel .nutrition-goal-card>strong{color:#C7FF00!important;font-size:12px!important}
 #nutricion #nutritionControlPanel .nutrition-goal-card>small{color:#FFFFFF!important;font-size:11px!important;line-height:1.4}
