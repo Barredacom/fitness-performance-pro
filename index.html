@@ -1972,7 +1972,7 @@ function toggleFoodCatalog(show,mode='create'){
  if(open){
    const editing=mode==='edit';
    modal.dataset.mode=editing?'edit':'create';
-   $('customFoodTitle').textContent=editing?'✏️ Editar alimento personalizado':'＋ Crear alimento personalizado';
+   $('customFoodTitle').innerHTML=editing?'<span class="fp-edit-mark" aria-hidden="true">✎</span> Editar alimento personalizado':'＋ Crear alimento personalizado';
    $('catalogSaveButton').textContent=editing?'Guardar cambios':'Guardar alimento';
    $('catalogEditPickerWrap').hidden=!editing;
    $('catalogSearchWrap').hidden=editing;
@@ -3440,4 +3440,61 @@ img,video,canvas,svg{filter:none}
   color:#B9E9DC!important;
 }
 </style>
+
+<style id="v23-47-custom-food-modal-palette-fix">
+/* V23.47: formularios Crear/Editar alimento personalizados — contraste y paleta oficial. */
+#customFoodModal .fp-modal{
+  background:#626D68!important;
+  border:1px solid #B9E9DC!important;
+  outline:0!important;
+  box-shadow:0 12px 32px rgba(0,0,0,.22),inset 0 0 0 1px rgba(185,233,220,.08)!important;
+}
+#customFoodModal .fp-modal h2{color:#FFFFFF!important}
+#customFoodModal .fp-modal h2 .fp-edit-mark{
+  color:#C7FF00!important;font-style:normal;font-weight:800;
+  display:inline-block;margin-right:7px;font-size:1.08em;line-height:1;
+}
+#customFoodModal .fp-modal label,
+#customFoodModal .fp-modal p,
+#customFoodModal .fp-modal .muted,
+#customFoodModal .fp-modal .fp-custom-status,
+#customFoodModal .fp-custom-macro label,
+#customFoodModal #catalogEditPickerWrap label{color:#FFFFFF!important;opacity:1!important}
+#customFoodModal .fp-modal input,
+#customFoodModal .fp-modal select,
+#customFoodModal .fp-modal textarea{
+  color:#FFFFFF!important;
+  -webkit-text-fill-color:#FFFFFF!important;
+  background:#505B56!important;
+  border:1px solid #B9E9DC!important;
+  outline:0!important;
+  box-shadow:none!important;
+  accent-color:#C7FF00!important;
+  caret-color:#C7FF00!important;
+}
+#customFoodModal .fp-modal input::placeholder,
+#customFoodModal .fp-modal textarea::placeholder{
+  color:#D0D8D1!important;-webkit-text-fill-color:#D0D8D1!important;opacity:1!important;
+}
+#customFoodModal .fp-modal input:focus,
+#customFoodModal .fp-modal input:focus-visible,
+#customFoodModal .fp-modal select:focus,
+#customFoodModal .fp-modal select:focus-visible,
+#customFoodModal .fp-modal textarea:focus,
+#customFoodModal .fp-modal textarea:focus-visible{
+  border-color:#C7FF00!important;
+  outline:2px solid rgba(199,255,0,.35)!important;
+  outline-offset:1px!important;
+  box-shadow:0 0 0 2px rgba(199,255,0,.12)!important;
+}
+#customFoodModal .fp-modal select,
+#customFoodModal .fp-modal input[type="number"]{
+  accent-color:#C7FF00!important;
+}
+#customFoodModal .fp-custom-macro,
+#customFoodModal .fp-custom-result{background:#505B56!important;border-color:#B9E9DC!important}
+#customFoodModal .fp-custom-result small{color:#D0D8D1!important}
+#customFoodModal .fp-modal-actions button{border-color:#B9E9DC!important}
+</style>
+
 </body></html>
