@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FITNESS PERFORMANCE PRO · V23.79 · Informe Diario FP</title>
+<title>FITNESS PERFORMANCE PRO · V23.88 · Informe Diario FP</title>
 <style>
 :root{--bg:#858F89;--panel:#626D68;--panel2:#505B56;--line:rgba(208,216,209,.28);--text:#FFFFFF;--muted:#D0D8D1;--green:#C7FF00;--lime:#D8FF32;--blue:#B9E9DC;--orange:#C7FF00;--pink:#B9E9DC;--purple:#B9E9DC;--palette-bg:#858F89;--palette-card:#626D68;--palette-surface:#505B56;--palette-lime:#C7FF00;--palette-lime-soft:#D8FF32;--palette-ice:#B9E9DC}
 *{box-sizing:border-box}body{margin:0;background:var(--palette-bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
@@ -1388,84 +1388,6 @@ html,body{background:#858F89!important;color:#FFFFFF!important}
 #peso .body-kpis-live > .body-kpi:not(.body-chart-kpi) strong{color:#C7FF00!important;text-shadow:none!important}
 #peso .body-kpis-live > .body-kpi:not(.body-chart-kpi) em{color:#D0D8D1!important}
 </style>
-
-<!-- V23.88 PATCH: SUPLEMENTOS A ANCHO COMPLETO, MISMA AMPLITUD QUE ENTRENAMIENTO -->
-<style id="supplements-full-width-v2388">
-/* El módulo completo utiliza todo el ancho disponible de main, igual que Entrenamiento. */
-#suplementos{
-  display:none;
-  width:100%!important;
-  max-width:none!important;
-  min-width:0!important;
-  box-sizing:border-box!important;
-}
-#suplementos.active{display:block!important}
-#suplementos > .supplement-hero-banner,
-#suplementos > .sectionHead,
-#suplementos > .supp-dashboard{
-  display:block;
-  width:100%!important;
-  max-width:none!important;
-  min-width:0!important;
-  box-sizing:border-box!important;
-}
-#suplementos .supp-dashboard{
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr)!important;
-  gap:14px!important;
-}
-#suplementos .supp-overview{
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr)!important;
-  width:100%!important;
-  max-width:none!important;
-  gap:12px!important;
-}
-#suplementos .supp-overview-card,
-#suplementos .supp-progress-wrap,
-#suplementos .supplement-swipe-list,
-#suplementos .supp-swipe-row,
-#suplementos .supp-hydration-card,
-#suplementos .supp-history-dropdown{
-  width:100%!important;
-  max-width:none!important;
-  min-width:0!important;
-  box-sizing:border-box!important;
-  justify-self:stretch!important;
-}
-#suplementos .supplement-swipe-list{
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr)!important;
-}
-#suplementos .supp-swipe-row{
-  grid-template-columns:56px minmax(0,1fr) minmax(180px,1.2fr)!important;
-}
-#suplementos .supp-hydration-card{
-  margin-left:0!important;
-  margin-right:0!important;
-}
-@media(max-width:600px){
-  #suplementos{width:100%!important;padding-left:0!important;padding-right:0!important}
-  #suplementos > .supplement-hero-banner,
-  #suplementos > .sectionHead,
-  #suplementos > .supp-dashboard{width:100%!important}
-  #suplementos .supp-overview{grid-template-columns:minmax(0,1fr)!important}
-  #suplementos .supp-overview-card,
-  #suplementos .supp-progress-wrap,
-  #suplementos .supp-swipe-row,
-  #suplementos .supp-hydration-card,
-  #suplementos .supp-history-dropdown{width:100%!important}
-  #suplementos .supp-swipe-row{
-    grid-template-columns:40px minmax(0,1fr) minmax(120px,1.15fr)!important;
-  }
-}
-@media(max-width:360px){
-  #suplementos .supp-swipe-row{
-    grid-template-columns:32px minmax(0,1fr) minmax(108px,1.1fr)!important;
-  }
-}
-</style>
-
 </head><body>
 
 
@@ -1718,7 +1640,7 @@ html,body{background:#858F89!important;color:#FFFFFF!important}
 </div></section>
 <section id="suplementos" class="section">
 <style>
-.supplement-hero-banner{width:100%;aspect-ratio:1.288/1;max-height:none;position:relative;overflow:hidden;border:1px solid #505B56;border-radius:30px;background:#505B56;margin:0 0 22px;}
+.supplement-hero-banner{display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;aspect-ratio:1.288/1;max-height:none;position:relative;overflow:hidden;border:1px solid #505B56;border-radius:30px;background:#505B56;margin:0 0 22px;}
 .supplement-hero-banner img{width:100%;height:100%;display:block;object-fit:cover;object-position:center;border-radius:29px;}
 @media(max-width:600px){.supplement-hero-banner{border-radius:22px;aspect-ratio:1.288/1;}.supplement-hero-banner img{border-radius:21px;}}
 </style>
