@@ -660,6 +660,12 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
 /* V23.89 · CALENDARIO 7×7: título ampliado en verde hielo */
 #turnos > .sectionHead > h2{font-size:clamp(28px,3.2vw,36px)!important;color:#B9E9DC!important;font-weight:800;line-height:1.15;letter-spacing:.1px;margin:0 0 14px}
 @media(max-width:600px){#turnos > .sectionHead > h2{font-size:28px!important;line-height:1.18}}
+
+/* V23.91: título principal visible de la aplicación en verde hielo */
+body.app-ready .top h1{
+  color:#B9E9DC!important;
+}
+
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
