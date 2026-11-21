@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FITNESS PERFORMANCE PRO · V23.88 · Informe Diario FP</title>
+<title>FITNESS PERFORMANCE PRO · V23.89 · Calendario 7x7 · Informe Diario FP</title>
 <style>
 :root{--bg:#858F89;--panel:#626D68;--panel2:#505B56;--line:rgba(208,216,209,.28);--text:#FFFFFF;--muted:#D0D8D1;--green:#C7FF00;--lime:#D8FF32;--blue:#B9E9DC;--orange:#C7FF00;--pink:#B9E9DC;--purple:#B9E9DC;--palette-bg:#858F89;--palette-card:#626D68;--palette-surface:#505B56;--palette-lime:#C7FF00;--palette-lime-soft:#D8FF32;--palette-ice:#B9E9DC}
 *{box-sizing:border-box}body{margin:0;background:var(--palette-bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
@@ -656,6 +656,10 @@ body:not(.app-ready) #fp-settings-toggle,body:not(.app-ready) #fp-settings-panel
   animation:navIconPulse 2.2s ease-in-out infinite!important;
 }
 
+
+/* V23.89 · CALENDARIO 7×7: título ampliado en verde hielo */
+#turnos > .sectionHead > h2{font-size:clamp(28px,3.2vw,36px)!important;color:#B9E9DC!important;font-weight:800;line-height:1.15;letter-spacing:.1px;margin:0 0 14px}
+@media(max-width:600px){#turnos > .sectionHead > h2{font-size:28px!important;line-height:1.18}}
 </style><style>
 /* Mejora global: reloj y turno compactos en esquina superior derecha */
 .top{position:relative;align-items:flex-start!important;padding-top:2px;min-height:62px}
