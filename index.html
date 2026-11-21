@@ -1394,6 +1394,53 @@ html,body{background:#858F89!important;color:#FFFFFF!important}
 #inicio .home-main-title span{display:block;white-space:nowrap;}
 @media(max-width:600px){#inicio .home-main-title{font-size:clamp(32px,8.4vw,42px);line-height:1.08;letter-spacing:-.8px;margin:20px 0 22px;}}
 </style>
+
+<style id="supplements-full-width-v2388">
+/* V23.88 · Suplementos: igualar el ancho de todos los bloques al módulo Entrenamiento */
+#suplementos,
+#suplementos > *,
+#suplementos .supp-dashboard,
+#suplementos .supplement-hero-banner,
+#suplementos .supp-overview,
+#suplementos .supp-overview-card,
+#suplementos .supp-progress-wrap,
+#suplementos .supplement-swipe-list,
+#suplementos .supp-swipe-row,
+#suplementos .supp-hydration-card,
+#suplementos .supp-day-history {
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+}
+#suplementos .supp-dashboard {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) !important;
+  align-items:stretch !important;
+}
+#suplementos .supp-overview {
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  align-items:stretch !important;
+}
+#suplementos .supp-overview-card,
+#suplementos .supp-progress-wrap,
+#suplementos .supp-swipe-row,
+#suplementos .supp-hydration-card,
+#suplementos .supp-day-history {
+  justify-self:stretch !important;
+  margin-left:0 !important;
+  margin-right:0 !important;
+}
+@media(max-width:700px){
+  #suplementos .supp-overview {
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:10px !important;
+  }
+  #suplementos .supp-overview-card {
+    min-height:94px;
+  }
+}
+</style>
 </head><body>
 
 
