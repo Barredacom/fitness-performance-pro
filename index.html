@@ -4224,7 +4224,6 @@ img,video,canvas,svg{filter:none}
   };
   const w=window.open('','_blank');if(!w){alert('El navegador bloqueó la ventana del informe. Permite las ventanas emergentes para continuar.');return;}
   const report=`<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Informe Diario FP ${safe(date)}</title><style>
-@page{size:letter portrait;margin:0}
 *{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 html,body{margin:0;padding:0;background:#fff;color:#171b18;font-family:Arial,Helvetica,sans-serif}
 .page{width:215.9mm;height:279.4mm;margin:0 auto;position:relative;overflow:hidden;background:#fff}
@@ -4300,28 +4299,7 @@ h1 span{color:#75ae00}
  .footer:after{width:28vw;height:9vw}
  .print-actions{width:100%;padding:8px}
 }
-@media print{
- html,body{width:auto;max-width:none;overflow:visible}
- .page{width:215.9mm;height:279.4mm;min-height:279.4mm;overflow:hidden}
- .mast-art{width:215.9mm;height:38mm}
- .titlebar{height:31mm;padding:0 9mm;margin:0 0 5mm}
- .table-wrap{margin:0 6mm}
- .thead,.r{grid-template-columns:37% 1fr 24mm}
- .thead{height:13mm;padding:0 4mm 0 15mm;font-size:12pt}
- .r{min-height:24mm;padding:3mm 4mm}
- .name{font-size:12pt}.ico{width:14mm;font-size:21pt}
- .detail{font-size:10pt;padding-left:8mm}.detail strong{font-size:14pt}.macros{font-size:9pt;white-space:nowrap}
- .state.ok:before{width:9mm;height:9mm;font-size:17pt;border-width:2px}
- .score{height:15mm;margin:7mm 8mm 12mm;padding-left:8mm;font-size:14pt}
- .score strong{min-width:43mm;padding:2mm 5mm;font-size:22pt}
- .lower{gap:5mm;margin:0 5mm}
- .box h2{font-size:14pt;padding:3mm 4mm;margin-bottom:5mm}
- .box li{font-size:10pt;line-height:1.45;margin-bottom:2mm;padding-left:7mm}
- .footer{position:absolute;bottom:0;left:0;right:0;height:18mm;margin:0}
- .print-actions{display:none}
-}
-
-  /* V23.87: encabezado del título según la segunda referencia aprobada */
+/* V23.87: encabezado del título según la segunda referencia aprobada */
   .titlebar .date{border-left:0!important;padding-left:0!important}
   .titlebar .tagline{display:flex!important;align-items:center!important;gap:5mm!important}
   .titlebar .tagline-accent{display:inline-block!important;flex:0 0 17mm!important;width:17mm!important;height:1.6mm!important;background:#a4f000!important;transform:skew(-18deg)!important}
@@ -4336,62 +4314,26 @@ h1 span{color:#75ae00}
     .titlebar .date{border-left:0!important;padding-left:0!important}
   }
 
-  /* V24.03 · PDF Carta: reemplazo del ajuste anterior y contención en una sola página */
+  /* V24.06 · ÚNICA configuración de impresión Carta */
   @media print{
+    @page{size:letter portrait;margin:0}
     html,body{
-      width:215.9mm!important;
-      height:279.4mm!important;
-      min-height:279.4mm!important;
-      max-height:279.4mm!important;
-      margin:0!important;
-      padding:0!important;
-      overflow:hidden!important;
+      width:215.9mm!important;height:279.4mm!important;
+      min-height:279.4mm!important;max-height:279.4mm!important;
+      margin:0!important;padding:0!important;overflow:hidden!important;
     }
-    body{position:relative!important}
     .print-actions{display:none!important}
     main.page{
-      position:absolute!important;
-      top:0!important;
-      left:0!important;
-      width:239.89mm!important;
-      height:310.44mm!important;
-      min-height:310.44mm!important;
-      max-height:310.44mm!important;
-      margin:0!important;
-      padding:0!important;
-      overflow:hidden!important;
-      zoom:.9!important;
-      transform:none!important;
-      break-before:avoid!important;
-      break-after:avoid!important;
-      break-inside:avoid!important;
-      page-break-before:avoid!important;
-      page-break-after:avoid!important;
-      page-break-inside:avoid!important;
+      position:absolute!important;top:0!important;left:0!important;
+      width:263.2927mm!important;height:340.7317mm!important;
+      min-height:340.7317mm!important;max-height:340.7317mm!important;
+      margin:0!important;padding:0!important;overflow:hidden!important;
+      zoom:.82!important;transform:none!important;
+      break-before:avoid!important;break-after:avoid!important;break-inside:avoid!important;
+      page-break-before:avoid!important;page-break-after:avoid!important;page-break-inside:avoid!important;
     }
-    .mast-art{display:block!important;width:239.89mm!important;height:35.56mm!important;object-fit:fill!important}
-    .titlebar{height:26mm!important;padding:0 8mm!important;margin:0 0 3mm!important}
-    h1{font-size:25pt!important}
-    .tagline{font-size:7.5pt!important;letter-spacing:2.3px!important;margin-top:1.5mm!important}
-    .table-wrap{margin:0 5mm!important}
-    .thead{height:11mm!important;margin-bottom:1mm!important;font-size:11pt!important}
-    .r{min-height:20mm!important;padding:2mm 3mm!important;break-inside:avoid!important;page-break-inside:avoid!important}
-    .name{font-size:11pt!important}
-    .ico{width:12mm!important;height:10mm!important}
-    .ico svg{width:8mm!important;height:8mm!important}
-    .detail{font-size:9pt!important;padding-left:6mm!important;line-height:1.25!important}
-    .detail strong{font-size:12pt!important}
-    .macros{font-size:8pt!important}
-    .state.ok:before{width:8mm!important;height:8mm!important;font-size:15pt!important}
-    .score{height:12mm!important;margin:5mm 7mm 7mm!important;padding-left:7mm!important;font-size:12pt!important}
-    .score strong{min-width:38mm!important;font-size:19pt!important;padding:1.5mm 4mm!important}
-    .lower{gap:4mm!important;margin:0 5mm!important}
-    .box h2{font-size:12pt!important;padding:2.5mm 3mm!important;margin-bottom:3mm!important}
-    .box h2 .heading-icon{width:8mm!important;height:8mm!important}
-    .box li{font-size:8.5pt!important;line-height:1.3!important;margin-bottom:1.2mm!important;padding-left:6mm!important}
-    .box.summary li:before{width:4mm!important;height:4mm!important;line-height:4mm!important;font-size:7pt!important}
-    .footer{height:14mm!important;bottom:0!important}
-    .footer:after{height:14mm!important;width:46mm!important}
+    .mast-art{display:block!important;width:263.2927mm!important;height:46.3415mm!important;object-fit:fill!important}
+    .footer{position:absolute!important;bottom:0!important}
   }
 </style></head><body><div class="print-actions"><button onclick="window.print()">Imprimir / Guardar como PDF</button><p style="font-size:11px;color:#68736b">En iPhone: abre Compartir en la vista de impresión y selecciona Guardar en Archivos.</p></div>
   <main class="page"><img class="mast-art" src="${fpApprovedBanner}" alt="Fitness Performance FP">
