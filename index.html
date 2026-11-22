@@ -4224,7 +4224,7 @@ img,video,canvas,svg{filter:none}
   };
   const w=window.open('','_blank');if(!w){alert('El navegador bloqueó la ventana del informe. Permite las ventanas emergentes para continuar.');return;}
   const report=`<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Informe Diario FP ${safe(date)}</title><style>
-@page{size:A4 portrait;margin:0}
+@page{size:letter portrait;margin:0}
 *{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 html,body{margin:0;padding:0;background:#fff;color:#171b18;font-family:Arial,Helvetica,sans-serif}
 .page{width:210mm;height:297mm;margin:0 auto;position:relative;overflow:hidden;background:#fff}
@@ -4336,12 +4336,12 @@ h1 span{color:#75ae00}
     .titlebar .date{border-left:0!important;padding-left:0!important}
   }
 
-  /* V23.87 · PDF en una sola hoja tamaño carta (8.5 × 11 pulgadas) */
-  @page{size:letter portrait;margin:0}
+  /* V24.01 · PDF tamaño Carta, contenido completo ajustado a una sola hoja */
   @media print{
     html,body{width:215.9mm!important;height:279.4mm!important;margin:0!important;padding:0!important;overflow:hidden!important}
-    .page{width:215.9mm!important;height:279.4mm!important;min-height:279.4mm!important;max-height:279.4mm!important;margin:0!important;padding:0!important;overflow:hidden!important;break-after:avoid!important;page-break-after:avoid!important}
-    .mast-art{display:block;width:215.9mm!important;height:32mm!important;object-fit:fill}
+    /* El lienzo interno se amplía y se reduce proporcionalmente para conservar el diseño completo dentro de Carta. */
+    .page{width:234.7mm!important;height:303.7mm!important;min-height:303.7mm!important;max-height:303.7mm!important;margin:0!important;padding:0!important;overflow:hidden!important;transform:scale(.92)!important;transform-origin:top left!important;break-after:avoid!important;page-break-after:avoid!important}
+    .mast-art{display:block;width:234.7mm!important;height:32mm!important;object-fit:fill}
     .titlebar{height:26mm!important;padding:0 8mm!important;margin:0 0 3mm!important}
     h1{font-size:25pt!important}
     .tagline{font-size:7.5pt!important;letter-spacing:2.3px!important;margin-top:1.5mm!important}
