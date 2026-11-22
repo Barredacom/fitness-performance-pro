@@ -2497,7 +2497,7 @@ let last=[...db.measures].reverse().find(x=>x.weight);if(last)$('kWeight').textC
 $('foodTotals').textContent=`${Math.round(m.k)} kcal · P ${m.p.toFixed(1)} · C ${m.c.toFixed(1)} · G ${m.f.toFixed(1)}`;
 $('foodList').innerHTML=db.foods.filter(x=>x.date===$('foodDate').value).map(x=>`<div class="item"><span>${x.n}<small>${x.meal} · ${x.g} g</small></span><b>${Math.round(x.k)} kcal <button onclick="del('foods',${x.id})">×</button></b></div>`).join('')||'<p class="muted">Sin alimentos registrados para esta fecha.</p>';
 
-$('suppList').innerHTML=db.supplements.map(x=>`<div class="item"><span>${x.name}<small>${x.dose||'Dosis no indicada'} · ${x.time||'Horario libre'} · ${x.date}</small></span><span><button onclick="toggleSupp(${x.id})">${x.done?'✓ Consumido':'Confirmar consumo'}</button> <button onclick="del('supplements',${x.id})">×</button></span></div>`).join('')||'<p class="muted">Agrega tus suplementos.</p>';
+/* V24.08: eliminado renderizador heredado de #suppList; el módulo actual se actualiza mediante renderSupplements(), que valida sus contenedores. */
 renderMeasureHistory();
 chart('weightChart');renderBodyEvolution();renderExercises();renderExerciseLibrary();renderCalendar();renderHistory();renderMealMiniSummary()}
 function renderHydration(){
@@ -4314,7 +4314,7 @@ h1 span{color:#75ae00}
     .titlebar .date{border-left:0!important;padding-left:0!important}
   }
 
-  /* V24.07 · Corrección de paginación: lienzo físico Carta, sin zoom */
+  /* V24.08 · Corrección de paginación: lienzo físico Carta, sin zoom */
   @media print{
     @page{size:letter portrait;margin:0}
     html,body{
