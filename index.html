@@ -2552,7 +2552,7 @@ function renderSupplements(){
  $('suppLastTime').textContent=todayRows.map(x=>x.consumedTime).filter(Boolean).sort().pop()||'—';
  const hist=$('suppHistory');if(hist){let logs=db.supplements.flatMap(x=>(x.log||[]).map(l=>({...l,name:x.name}))).sort((a,b)=>b.at.localeCompare(a.at));hist.innerHTML=logs.slice(0,80).map(l=>`<div class="item"><span>${l.name}<small>${l.date} · ${l.time} · ${l.dose||''}</small></span><b>${l.status}</b></div>`).join('')||'<p class="muted">Todavía no hay consumos registrados.</p>';}
 }
-function chart(id){let data=db.measures.filter(x=>x.weight).sort((a,b)=>a.date.localeCompare(b.date));if(!data.length){$(id).innerHTML='<p class="muted">Registra peso para visualizar evolución.</p>';return}let vals=data.map(x=>x.weight),min=Math.min(...vals)-1,max=Math.max(...vals)+1,points=vals.map((v,i)=>`${20+i*360/Math.max(1,vals.length-1)},${155-(v-min)/(max-min)*125}`).join(' ');$(id).innerHTML=`<svg viewBox="0 0 400 180" preserveAspectRatio="none"><path d="M20 155 H380 M20 90 H380 M20 25 H380" stroke="#263329" fill="none"/><polyline points="${points}" fill="none" stroke="#53ff55" stroke-width="3"/>${vals.map((v,i)=>`<circle cx="${20+i*360/Math.max(1,vals.length-1)}" cy="${155-(v-min)/(max-min)*125}" r="4" fill="#b7ff39"/>`).join('')}<text x="22" y="15" fill="#9bad9f" font-size="11">${max.toFixed(1)} kg</text><text x="22" y="175" fill="#9bad9f" font-size="11">${min.toFixed(1)} kg</text></svg>`}
+function chart(id){const host=$(id);if(!host)return;let data=(Array.isArray(db.measures)?db.measures:[]).filter(x=>x&&Number(x.weight)>0).sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));if(!data.length){host.innerHTML='<p class="muted">Registra peso para visualizar evolución.</p>';return}let vals=data.map(x=>Number(x.weight)),min=Math.min(...vals)-1,max=Math.max(...vals)+1,span=Math.max(1,max-min),points=vals.map((v,i)=>`${20+i*360/Math.max(1,vals.length-1)},${155-(v-min)/span*125}`).join(' ');host.innerHTML=`<svg viewBox="0 0 400 180" preserveAspectRatio="none"><path d="M20 155 H380 M20 90 H380 M20 25 H380" stroke="#263329" fill="none"/><polyline points="${points}" fill="none" stroke="#53ff55" stroke-width="3"/>${vals.map((v,i)=>`<circle cx="${20+i*360/Math.max(1,vals.length-1)}" cy="${155-(v-min)/span*125}" r="4" fill="#b7ff39"/>`).join('')}<text x="22" y="15" fill="#9bad9f" font-size="11">${max.toFixed(1)} kg</text><text x="22" y="175" fill="#9bad9f" font-size="11">${min.toFixed(1)} kg</text></svg>`}
 function renderBodyHistoryLineChart(weights,waists){
  const host=$('bodyHistoryLineChart');if(!host)return;
  const series=[
@@ -4314,7 +4314,7 @@ h1 span{color:#75ae00}
     .titlebar .date{border-left:0!important;padding-left:0!important}
   }
 
-  /* V24.08 · Corrección de paginación: lienzo físico Carta, sin zoom */
+  /* V24.09 · Corrección de paginación: lienzo físico Carta, sin zoom */
   @media print{
     @page{size:letter portrait;margin:0}
     html,body{
