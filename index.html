@@ -1488,9 +1488,9 @@ body:not(.welcome-dismissed) #fp-welcome-screen{
   @keyframes fpw-rise{from{opacity:0;translate:-22px 18px}to{opacity:1;translate:0 0}}
 }
 
-</style>
 
-/* V23.96 · PORTADA TAMBIÉN AL CERRAR SESIÓN + LOGIN SOBRE LA PORTADA */
+
+/* V23.97 · CSS DE ACCESO INTEGRADO CORRECTAMENTE */
 #supabase-auth-panel{display:none!important}
 body.auth-open #supabase-auth-panel{
   display:block!important;position:fixed!important;z-index:100002!important;
@@ -1511,6 +1511,9 @@ body.auth-open #supabase-auth-panel{z-index:100003!important}
 @media(max-width:600px){
  body.auth-open #supabase-auth-panel{padding:18px!important;max-height:78svh!important}
 }
+</style>
+
+
 
 </head><body>
 
@@ -4408,7 +4411,7 @@ h1 span{color:#75ae00}
 })();
 </script>
 <script>
-/* V23.96 · Entrada al panel y autenticación desde la portada */
+/* V23.97 · Entrada al panel y autenticación desde la portada */
 (function(){
   const enter=document.getElementById('fpw-enter-app');
   const close=document.getElementById('sb-close-auth');
