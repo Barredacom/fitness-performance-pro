@@ -1490,7 +1490,7 @@ body:not(.welcome-dismissed) #fp-welcome-screen{
 
 
 
-/* V23.97 · CSS DE ACCESO INTEGRADO CORRECTAMENTE */
+/* V23.98 · INGRESO DIRECTO AL PANEL TRAS AUTENTICACIÓN */
 #supabase-auth-panel{display:none!important}
 body.auth-open #supabase-auth-panel{
   display:block!important;position:fixed!important;z-index:100002!important;
@@ -2881,7 +2881,17 @@ try{renderBodyEvolution();}catch(e){console.error('Error al cargar el panel corp
 
   function setAuthUI(session) {
     const signedIn = !!session?.user;
-    if (signedIn) document.body.classList.remove('auth-open');
+
+    // V23.98: al autenticar correctamente, cerrar el modal y retirar
+    // la portada para entrar directamente al panel principal.
+    if (signedIn) {
+      document.body.classList.remove('auth-open');
+      document.body.classList.add('app-ready', 'welcome-dismissed');
+      const welcome = $('fp-welcome-screen');
+      if (welcome) welcome.setAttribute('aria-hidden', 'true');
+    } else {
+      document.body.classList.remove('app-ready');
+    }
 
     // Login gate: muestra el acceso si no hay sesión; dashboard solo autenticado.
     document.body.classList.toggle('app-ready', signedIn);
@@ -4411,7 +4421,7 @@ h1 span{color:#75ae00}
 })();
 </script>
 <script>
-/* V23.97 · Entrada al panel y autenticación desde la portada */
+/* V23.98 · Entrada directa al panel tras iniciar sesión */
 (function(){
   const enter=document.getElementById('fpw-enter-app');
   const close=document.getElementById('sb-close-auth');
