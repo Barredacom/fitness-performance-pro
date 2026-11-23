@@ -2391,67 +2391,8 @@ async function registerMeal(){
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
-async function addFood(){
-  let x = foodVals();
-
-  if(!x.g || x.g <= 0){
-    return alert('Ingresa una cantidad válida');
-  }
-
-  const supabase = window.fpSupabaseClient;
-
-  if(!supabase){
-    return alert('Supabase no está conectado');
-  }
-
-  const {data:{user},error:userError} = await supabase.auth.getUser();
-
-  if(userError || !user){
-    return alert('Debes iniciar sesión');
-  }
-
-  const registro = {
-  fecha: $('foodDate').value,
-  alimento: x.n,
-  comida: $('meal').value,
-  gramos: x.g,
-    calorias: x.k,
-    proteina: x.p,
-    carbohidratos: x.c,
-    grasas: x.f,
-    user_id: user.id
-  };
-
-  const {error} = await supabase
-    .from('registros_nutricion')
-    .insert(registro);
-
-  if(error){
-    console.error(error);
-    return alert('Error al guardar en Supabase: '+error.message);
-  }
-
-  db.foods.push({
-    ...x,
-    meal: $('meal').value,
-    date: $('foodDate').value,
-    id: Date.now()
-  });
-
-  save();
-
-  alert('Alimento registrado y sincronizado correctamente');
-}
 
 function addWorkout(){db.workouts.push({routine:$('routine').value,minutes:+$('duration').value||0,date:$('workDate').value,id:Date.now()});save()}
-function addSupp(){
- const nameEl=$('suppName'),doseEl=$('suppDose'),timeEl=$('suppTime');
- if(!nameEl||!doseEl||!timeEl){console.warn('Formulario heredado de suplementos no disponible en esta versión.');return;}
- const n=nameEl.value.trim();if(!n)return alert('Escribe el suplemento');
- if(!Array.isArray(db.supplements))db.supplements=[];
- db.supplements.push({name:n,dose:doseEl.value,time:timeEl.value,done:false,date:today,id:Date.now(),log:[]});
- nameEl.value=doseEl.value=timeEl.value='';save();
-}
 function renderMeasureHistory(){const list=$('measureList'),count=$('measureCount');if(!list||!count)return;const rows=(Array.isArray(db.measures)?db.measures:[]).slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||(Number(b.id)||0)-(Number(a.id)||0));list.innerHTML=rows.map(x=>`<div class="item"><span>${x.date||'Sin fecha'}<small>${x.weight?x.weight+' kg':''} ${x.waist?'· '+x.waist+' cm':''}</small></span><button type="button" class="measure-delete-btn" onclick="deleteMeasure('${String(x.id).replace(/'/g,"\\\\'")}')">Eliminar</button></div>`).join('')||'<p class="muted">Todavía no hay mediciones registradas.</p>';count.textContent=rows.length+' '+(rows.length===1?'registro':'registros');}
 function deleteMeasure(id){if(!Array.isArray(db.measures))return;const before=db.measures.length;db.measures=db.measures.filter(x=>String(x.id)!==String(id));if(db.measures.length===before)return;try{localStorage.setItem(DBKEY,JSON.stringify(db));}catch(e){alert('No se pudo actualizar el historial en el almacenamiento del navegador.');return;}renderMeasureHistory();try{renderAll();}catch(e){console.error('Medición eliminada; hubo un error al actualizar otros módulos:',e);renderMeasureHistory();}}
 function addMeasure(){const w=Number($('weight').value),wa=Number($('waist').value),date=$('measureDate').value;if(!w&&!wa)return alert('Ingresa peso o cintura');if((w&&w<=0)||(wa&&wa<=0))return alert('Peso y cintura deben ser valores positivos');if(!date)return alert('Selecciona una fecha');if(!Array.isArray(db.measures))db.measures=[];db.measures.push({date,weight:w||null,waist:wa||null,id:Date.now()});try{localStorage.setItem(DBKEY,JSON.stringify(db));}catch(e){alert('No se pudo guardar en el almacenamiento del navegador.');return;} $('weight').value='';$('waist').value='';renderMeasureHistory();try{renderAll();}catch(e){console.error('Registro guardado; hubo un error al actualizar otros módulos:',e);renderMeasureHistory();}closeBodyMeasureModal();}
@@ -2573,7 +2514,6 @@ function toggleSupp(id,checked){
  }
  save();
 }
-function updateSupp(id,field,value){let x=db.supplements.find(z=>String(z.id)===String(id));if(!x)return;x[field]=value;save();}
 function renderSupplements(){
  if(!Array.isArray(db.supplements))db.supplements=[];
  const list=$('suppList');
@@ -2846,9 +2786,6 @@ function updateShiftLivePanel(){
  const remaining=Math.max(0,bounds.next.getTime()-Date.now());
  const days=Math.floor(remaining/86400000),hours=Math.floor((remaining%86400000)/3600000),mins=Math.floor((remaining%3600000)/60000),secs=Math.floor((remaining%60000)/1000);
  $('shiftCountdown').textContent=`${days}d ${String(hours).padStart(2,'0')}h ${String(mins).padStart(2,'0')}m ${String(secs).padStart(2,'0')}s`;
-}
-function historyMoveDay(delta){
- const input=$('historyDate');const baseDate=input.value||today;const d=new Date(baseDate+'T12:00:00');d.setDate(d.getDate()+delta);input.value=localDateISO(d);$('historyMonth').value=input.value.slice(0,7);renderHistory();
 }
 function historySelectMonth(){
  const month=$('historyMonth').value;if(!month)return;
@@ -3247,14 +3184,6 @@ document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
 <script>
 const SMART_MEALS_KEY='fp_smart_meals_v1';
 function smartMealsRead(){try{return JSON.parse(localStorage.getItem(SMART_MEALS_KEY)||'[]')}catch(e){return []}}
-function smartSaveMeal(){
- const x=foodVals(),name=$('smartMealName').value.trim(),meal=$('smartMealType').value;
- if(!name)return alert('Ingresa un nombre para la comida');
- if(!x.g||x.g<=0)return alert('Ingresa una cantidad válida');
- const list=smartMealsRead();list.unshift({id:Date.now(),name,meal,foodKey:$('food').value,foodName:x.n,grams:x.g,unit:(foods[$('food').value]?.unit||'g')});
- localStorage.setItem(SMART_MEALS_KEY,JSON.stringify(list.slice(0,50)));
- $('smartMealName').value='';smartRefreshMeals();alert('Comida favorita guardada');
-}
 function smartUseMeal(id){
  const item=smartMealsRead().find(x=>x.id===id);if(!item)return;
  $('food').value=item.foodKey;$('grams').value=item.grams;$('meal').value=item.meal;$('smartMealType').value=item.meal;
