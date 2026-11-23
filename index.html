@@ -2499,14 +2499,38 @@ function renderPremiumClinicalDashboard(){
  }
  const note=$('pcDataNote');if(note)note.textContent=`Actualizado desde registros guardados · ${weights.length} mediciones · ${dayFoods.length} alimentos hoy · ${workoutRows.length} sesiones esta semana${latestWaist?' · última cintura '+Number(latestWaist.waist).toFixed(1)+' cm':''}.`;
 }
-function renderAll(){renderPremiumClinicalDashboard();renderHydration();let m=macros();$('kCal').textContent=Math.round(m.k)+' kcal';renderSupplements();
-let last=[...db.measures].reverse().find(x=>x.weight);if(last)$('kWeight').textContent=last.weight+' kg';let lw=[...db.measures].reverse().find(x=>x.waist);if(lw)$('kWaist').textContent=lw.waist+' cm';
-$('foodTotals').textContent=`${Math.round(m.k)} kcal · P ${m.p.toFixed(1)} · C ${m.c.toFixed(1)} · G ${m.f.toFixed(1)}`;
-$('foodList').innerHTML=db.foods.filter(x=>x.date===$('foodDate').value).map(x=>`<div class="item"><span>${x.n}<small>${x.meal} · ${x.g} g</small></span><b>${Math.round(x.k)} kcal <button onclick="del('foods',${x.id})">×</button></b></div>`).join('')||'<p class="muted">Sin alimentos registrados para esta fecha.</p>';
-
-/* V24.08: eliminado renderizador heredado de #suppList; el módulo actual se actualiza mediante renderSupplements(), que valida sus contenedores. */
-renderMeasureHistory();
-chart('weightChart');renderBodyEvolution();renderExercises();renderExerciseLibrary();renderCalendar();renderHistory();renderMealMiniSummary()}
+function renderAll(){
+ const run=(name,fn)=>{try{fn()}catch(err){console.error('Error al actualizar '+name+'; se continúa con los demás módulos:',err)}};
+ run('dashboard clínico',renderPremiumClinicalDashboard);
+ run('hidratación',renderHydration);
+ run('resumen nutricional',()=>{
+  const m=macros(),kCal=$('kCal');
+  if(kCal)kCal.textContent=Math.round(m.k)+' kcal';
+  const foodTotals=$('foodTotals');
+  if(foodTotals)foodTotals.textContent=`${Math.round(m.k)} kcal · P ${m.p.toFixed(1)} · C ${m.c.toFixed(1)} · G ${m.f.toFixed(1)}`;
+  const foodList=$('foodList'),foodDate=$('foodDate');
+  if(foodList&&foodDate){
+   const rows=Array.isArray(db.foods)?db.foods:[];
+   foodList.innerHTML=rows.filter(x=>x&&x.date===foodDate.value).map(x=>`<div class="item"><span>${x.n||'Alimento'}<small>${x.meal||''} · ${x.g||'—'} g</small></span><b>${Math.round(Number(x.k)||0)} kcal <button onclick="del('foods',${x.id})">×</button></b></div>`).join('')||'<p class="muted">Sin alimentos registrados para esta fecha.</p>';
+  }
+ });
+ run('suplementos',renderSupplements);
+ run('indicadores corporales',()=>{
+  const measures=Array.isArray(db.measures)?db.measures:[];
+  const last=[...measures].reverse().find(x=>x&&x.weight),lw=[...measures].reverse().find(x=>x&&x.waist);
+  const weight=$('kWeight'),waist=$('kWaist');
+  if(last&&weight)weight.textContent=last.weight+' kg';
+  if(lw&&waist)waist.textContent=lw.waist+' cm';
+ });
+ run('historial de mediciones',renderMeasureHistory);
+ run('gráfico de peso',()=>chart('weightChart'));
+ run('evolución corporal',renderBodyEvolution);
+ run('rutina de entrenamiento',renderExercises);
+ run('biblioteca de ejercicios',renderExerciseLibrary);
+ run('calendario de turnos',renderCalendar);
+ run('historial diario',renderHistory);
+ run('resumen por comida',renderMealMiniSummary);
+}
 function renderHydration(){
  const rows=(Array.isArray(db.hydration)?db.hydration:[]).filter(x=>String(x.date||'')===today).sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
  const total=rows.reduce((n,x)=>n+(Number(x.ml)||0),0),totalEl=$('hydrationTodayTotal'),host=$('hydrationTodayHistory');
@@ -2751,8 +2775,16 @@ function renderTrainingPlan(){
  const d=$('duration');if(d)d.value=isMonday?0:(parseInt(plan.duration)||45);
 }
 function renderExercises(){renderTrainingPlan()}
- document.addEventListener('DOMContentLoaded',()=>{renderTrainingPlan()});
-$('routine').addEventListener('change',()=>{$('routine').dataset.userChanged='1'});
+ function initTrainingPlan(){
+  try{renderTrainingPlan()}catch(err){console.error('No se pudo inicializar el plan de entrenamiento:',err)}
+  const routine=$('routine');
+  if(routine&&routine.dataset.trainingListenerReady!=='1'){
+   routine.dataset.trainingListenerReady='1';
+   routine.addEventListener('change',()=>{routine.dataset.userChanged='1'});
+  }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initTrainingPlan,{once:true});
+ else initTrainingPlan();
 const SHIFT_CYCLE=[{name:'Descanso',label:'Descanso laboral',short:'DESCANSO',cls:'shift-rest',hours:'Sin jornada laboral'},{name:'Noche',label:'Turno noche',short:'NOCHE',cls:'shift-night',hours:'19:00–07:00'},{name:'Descanso',label:'Descanso laboral',short:'DESCANSO',cls:'shift-rest',hours:'Sin jornada laboral'},{name:'Día',label:'Turno día',short:'DÍA',cls:'shift-day',hours:'07:00–19:00'}];
 const shiftReferenceDate='2026-11-03'; // Referencia fija: 03–09 nov descanso; 10–16 nov noche.
 let calendarView=new Date(new Date().getFullYear(),new Date().getMonth(),1,12),calendarSelectedDate=localDateISO(new Date());
@@ -2851,8 +2883,12 @@ function clearAll(){if(confirm('¿Borrar todos los registros?')){db={foods:[],wo
 function chileNowParts(){const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const get=t=>parts.find(p=>p.type===t)?.value;return `${get('year')}-${get('month')}-${get('day')}`}
 function updateGlobalShiftClock(){const now=new Date();const timeEl=document.getElementById('liveClock'),dateEl=document.getElementById('liveDate'),shiftEl=document.getElementById('todayShift');if(timeEl)timeEl.textContent=new Intl.DateTimeFormat('es-CL',{timeZone:'America/Santiago',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);if(dateEl)dateEl.textContent=new Intl.DateTimeFormat('es-CL',{timeZone:'America/Santiago',weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(now);if(shiftEl){const sh=shiftForDate(chileNowParts());shiftEl.className='pill shift-pill '+sh.cls;shiftEl.textContent='● '+sh.name;}}
 updateGlobalShiftClock();setInterval(()=>{updateGlobalShiftClock();updateShiftLivePanel()},1000);
-renderCalendar();updateShiftLivePanel();if($('historyDate'))$('historyDate').value=today;if($('historyMonth'))$('historyMonth').value=today.slice(0,7);
-try{renderBodyEvolution();}catch(e){console.error('Error al cargar el panel corporal:',e)}renderAll();try{renderBodyEvolution();}catch(e){console.error('Error al actualizar el panel corporal:',e)}preview();
+try{renderCalendar()}catch(e){console.error('Error al inicializar el calendario de turnos:',e)}
+try{updateShiftLivePanel()}catch(e){console.error('Error al inicializar el panel de turnos:',e)}
+if($('historyDate'))$('historyDate').value=today;
+if($('historyMonth'))$('historyMonth').value=today.slice(0,7);
+renderAll();
+try{preview()}catch(e){console.error('Error al inicializar la vista previa nutricional:',e)}
 </script>
 
 <!-- SUPABASE AUTH INTEGRATION -->
@@ -2866,6 +2902,11 @@ try{renderBodyEvolution();}catch(e){console.error('Error al cargar el panel corp
   const messageEl = $('sb-message');
   const configEl = $('sb-config');
   const authEl = $('sb-auth');
+  const requiredAuthNodes = [urlInput,keyInput,statusEl,messageEl,configEl,authEl,$('sb-connect'),$('sb-login'),$('sb-signup'),$('sb-reset'),$('sb-email'),$('sb-password'),$('sb-user')];
+  if(requiredAuthNodes.some(node=>!node)){
+    console.warn('Panel de autenticación Supabase incompleto; se omite su inicialización sin bloquear los demás módulos.');
+    return;
+  }
 
   let client = null;
   let authSubscription = null;
@@ -3388,10 +3429,11 @@ window.addEventListener('pageshow',()=>{try{renderBodyEvolution()}catch(e){conso
  const track=()=>document.getElementById('historySwipeTrack');
  const thumb=()=>document.getElementById('historySwipeThumb');
  const panel=()=>document.getElementById('historyCalendarPanel');
- function travelLimit(){const t=track(),b=thumb();return Math.max(0,t.clientWidth-b.offsetWidth-14)}
- function setPosition(x){const b=thumb(),p=document.getElementById('historySwipeProgress'),limit=travelLimit();currentX=Math.max(0,Math.min(limit,x));b.style.transform=`translateX(${currentX}px)`;p.style.width=`${currentX+58}px`;b.setAttribute('aria-valuenow',String(Math.round(limit?currentX/limit*100:0)))}
+ function travelLimit(){const t=track(),b=thumb();if(!t||!b)return 0;return Math.max(0,t.clientWidth-b.offsetWidth-14)}
+ function setPosition(x){const b=thumb(),p=document.getElementById('historySwipeProgress');if(!b)return;const limit=travelLimit();currentX=Math.max(0,Math.min(limit,x));b.style.transform=`translateX(${currentX}px)`;if(p)p.style.width=`${currentX+58}px`;b.setAttribute('aria-valuenow',String(Math.round(limit?currentX/limit*100:0)))}
  function unlock(){
   const t=track(),b=thumb(),p=panel();
+  if(!t||!b||!p)return;
   t.classList.add('is-unlocked');
   b.innerHTML='<span>✓</span>';
   b.setAttribute('aria-label','Desliza a la izquierda para cerrar el calendario');
@@ -3411,7 +3453,7 @@ window.addEventListener('pageshow',()=>{try{renderBodyEvolution()}catch(e){conso
   // con el día actual seleccionado y sus registros cargados.
  }
  function lock(){
-  const t=track(),b=thumb(),p=panel();p.hidden=true;t.classList.remove('is-unlocked');b.innerHTML='<span>››</span>';b.setAttribute('aria-label','Desliza a la derecha para abrir el calendario');setPosition(0);
+  const t=track(),b=thumb(),p=panel();if(!t||!b||!p)return;p.hidden=true;t.classList.remove('is-unlocked');b.innerHTML='<span>››</span>';b.setAttribute('aria-label','Desliza a la derecha para abrir el calendario');setPosition(0);
  }
  function down(e){
   if(!track())return;
@@ -3433,11 +3475,14 @@ window.addEventListener('pageshow',()=>{try{renderBodyEvolution()}catch(e){conso
   if(e.key==='Enter'||e.key===' '||e.key==='ArrowRight'){e.preventDefault();setPosition(travelLimit());unlock()}
   else if(e.key==='ArrowLeft'||e.key==='Escape'){e.preventDefault();lock()}
  }
- document.addEventListener('DOMContentLoaded',function(){
-  const b=thumb();if(!b)return;
+ function initHistorySwipe(){
+  const t=track(),b=thumb(),p=panel();if(!t||!b||!p||b.dataset.historySwipeReady==='1')return;
+  b.dataset.historySwipeReady='1';
   b.addEventListener('pointerdown',down);b.addEventListener('pointermove',move);b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('keydown',key);
-  window.addEventListener('resize',()=>{if(panel().hidden)setPosition(0);else setPosition(travelLimit())});
- });
+  window.addEventListener('resize',()=>{if(panel()?.hidden)setPosition(0);else setPosition(travelLimit())});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initHistorySwipe,{once:true});else initHistorySwipe();
+ window.addEventListener('pageshow',initHistorySwipe);
 })();
 </script>
 
