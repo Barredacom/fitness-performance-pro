@@ -2444,7 +2444,14 @@ async function addFood(){
 }
 
 function addWorkout(){db.workouts.push({routine:$('routine').value,minutes:+$('duration').value||0,date:$('workDate').value,id:Date.now()});save()}
-function addSupp(){let n=$('suppName').value.trim();if(!n)return alert('Escribe el suplemento');db.supplements.push({name:n,dose:$('suppDose').value,time:$('suppTime').value,done:false,date:today,id:Date.now()});$('suppName').value=$('suppDose').value=$('suppTime').value='';save()}
+function addSupp(){
+ const nameEl=$('suppName'),doseEl=$('suppDose'),timeEl=$('suppTime');
+ if(!nameEl||!doseEl||!timeEl){console.warn('Formulario heredado de suplementos no disponible en esta versión.');return;}
+ const n=nameEl.value.trim();if(!n)return alert('Escribe el suplemento');
+ if(!Array.isArray(db.supplements))db.supplements=[];
+ db.supplements.push({name:n,dose:doseEl.value,time:timeEl.value,done:false,date:today,id:Date.now(),log:[]});
+ nameEl.value=doseEl.value=timeEl.value='';save();
+}
 function renderMeasureHistory(){const list=$('measureList'),count=$('measureCount');if(!list||!count)return;const rows=(Array.isArray(db.measures)?db.measures:[]).slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||(Number(b.id)||0)-(Number(a.id)||0));list.innerHTML=rows.map(x=>`<div class="item"><span>${x.date||'Sin fecha'}<small>${x.weight?x.weight+' kg':''} ${x.waist?'· '+x.waist+' cm':''}</small></span><button type="button" class="measure-delete-btn" onclick="deleteMeasure('${String(x.id).replace(/'/g,"\\\\'")}')">Eliminar</button></div>`).join('')||'<p class="muted">Todavía no hay mediciones registradas.</p>';count.textContent=rows.length+' '+(rows.length===1?'registro':'registros');}
 function deleteMeasure(id){if(!Array.isArray(db.measures))return;const before=db.measures.length;db.measures=db.measures.filter(x=>String(x.id)!==String(id));if(db.measures.length===before)return;try{localStorage.setItem(DBKEY,JSON.stringify(db));}catch(e){alert('No se pudo actualizar el historial en el almacenamiento del navegador.');return;}renderMeasureHistory();try{renderAll();}catch(e){console.error('Medición eliminada; hubo un error al actualizar otros módulos:',e);renderMeasureHistory();}}
 function addMeasure(){const w=Number($('weight').value),wa=Number($('waist').value),date=$('measureDate').value;if(!w&&!wa)return alert('Ingresa peso o cintura');if((w&&w<=0)||(wa&&wa<=0))return alert('Peso y cintura deben ser valores positivos');if(!date)return alert('Selecciona una fecha');if(!Array.isArray(db.measures))db.measures=[];db.measures.push({date,weight:w||null,waist:wa||null,id:Date.now()});try{localStorage.setItem(DBKEY,JSON.stringify(db));}catch(e){alert('No se pudo guardar en el almacenamiento del navegador.');return;} $('weight').value='';$('waist').value='';renderMeasureHistory();try{renderAll();}catch(e){console.error('Registro guardado; hubo un error al actualizar otros módulos:',e);renderMeasureHistory();}closeBodyMeasureModal();}
@@ -2544,13 +2551,20 @@ function toggleSupp(id,checked){
 }
 function updateSupp(id,field,value){let x=db.supplements.find(z=>String(z.id)===String(id));if(!x)return;x[field]=value;save();}
 function renderSupplements(){
- const list=$('suppList');if(!list)return;
- list.innerHTML=db.supplements.map(x=>`<div class="supp-card"><div class="supp-info"><strong>${x.name}</strong><small>${x.dose||'Dosis no indicada'} · ${x.done?'Consumido '+(x.consumedTime||''):'Pendiente'}</small></div><label class="supp-switch"><input type="checkbox" aria-label="Consumo ${x.name}" ${x.done?'checked':''} onchange="toggleSupp(${JSON.stringify(x.id)},this.checked)"><span class="supp-slider"></span></label></div>`).join('');
-
- let todayRows=db.supplements.filter(x=>x.done&&x.date===today),n=todayRows.length,total=4;
- $('suppDoneCount').textContent=n+'/'+total;$('suppProgress').style.width=(n/total*100)+'%';$('suppPercent').textContent=Math.round(n/total*100)+'% cumplimiento';
- $('suppLastTime').textContent=todayRows.map(x=>x.consumedTime).filter(Boolean).sort().pop()||'—';
- const hist=$('suppHistory');if(hist){let logs=db.supplements.flatMap(x=>(x.log||[]).map(l=>({...l,name:x.name}))).sort((a,b)=>b.at.localeCompare(a.at));hist.innerHTML=logs.slice(0,80).map(l=>`<div class="item"><span>${l.name}<small>${l.date} · ${l.time} · ${l.dose||''}</small></span><b>${l.status}</b></div>`).join('')||'<p class="muted">Todavía no hay consumos registrados.</p>';}
+ if(!Array.isArray(db.supplements))db.supplements=[];
+ const list=$('suppList');
+ if(list)list.innerHTML=db.supplements.map(x=>`<div class="supp-card"><div class="supp-info"><strong>${x.name||'Suplemento'}</strong><small>${x.dose||'Dosis no indicada'} · ${x.done?'Consumido '+(x.consumedTime||''):'Pendiente'}</small></div><label class="supp-switch"><input type="checkbox" aria-label="Consumo ${x.name||'suplemento'}" ${x.done?'checked':''} onchange="toggleSupp(${JSON.stringify(x.id)},this.checked)"><span class="supp-slider"></span></label></div>`).join('');
+ const todayRows=db.supplements.filter(x=>x&&x.done&&x.date===today),n=todayRows.length,total=4;
+ const doneCount=$('suppDoneCount'),progress=$('suppProgress'),percent=$('suppPercent'),lastTime=$('suppLastTime');
+ if(doneCount)doneCount.textContent=n+'/'+total;
+ if(progress)progress.style.width=(n/total*100)+'%';
+ if(percent)percent.textContent=Math.round(n/total*100)+'% cumplimiento';
+ if(lastTime)lastTime.textContent=todayRows.map(x=>x.consumedTime).filter(Boolean).sort().pop()||'—';
+ const hist=$('suppHistory');
+ if(hist){
+  const logs=db.supplements.flatMap(x=>(Array.isArray(x.log)?x.log:[]).map(l=>({...l,name:x.name||'Suplemento'}))).sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
+  hist.innerHTML=logs.slice(0,80).map(l=>`<div class="item"><span>${l.name}<small>${l.date||''} · ${l.time||''} · ${l.dose||''}</small></span><b>${l.status||''}</b></div>`).join('')||'<p class="muted">Todavía no hay consumos registrados.</p>';
+ }
 }
 function chart(id){const host=$(id);if(!host)return;let data=(Array.isArray(db.measures)?db.measures:[]).filter(x=>x&&Number(x.weight)>0).sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));if(!data.length){host.innerHTML='<p class="muted">Registra peso para visualizar evolución.</p>';return}let vals=data.map(x=>Number(x.weight)),min=Math.min(...vals)-1,max=Math.max(...vals)+1,span=Math.max(1,max-min),points=vals.map((v,i)=>`${20+i*360/Math.max(1,vals.length-1)},${155-(v-min)/span*125}`).join(' ');host.innerHTML=`<svg viewBox="0 0 400 180" preserveAspectRatio="none"><path d="M20 155 H380 M20 90 H380 M20 25 H380" stroke="#263329" fill="none"/><polyline points="${points}" fill="none" stroke="#53ff55" stroke-width="3"/>${vals.map((v,i)=>`<circle cx="${20+i*360/Math.max(1,vals.length-1)}" cy="${155-(v-min)/span*125}" r="4" fill="#b7ff39"/>`).join('')}<text x="22" y="15" fill="#9bad9f" font-size="11">${max.toFixed(1)} kg</text><text x="22" y="175" fill="#9bad9f" font-size="11">${min.toFixed(1)} kg</text></svg>`}
 function renderBodyHistoryLineChart(weights,waists){
@@ -3155,6 +3169,7 @@ document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
 <script>
 (()=>{
  const panel=document.getElementById('fp-settings-panel'),back=document.getElementById('fp-settings-backdrop'),toggle=document.getElementById('fp-settings-toggle'),close=document.getElementById('fp-settings-close');
+ if(!panel||!back||!toggle||!close)return;
  const viewBtns=[...document.querySelectorAll('[data-fp-view]')];
  function open(){panel.style.display='block';back.style.display='block';panel.classList.add('open');back.classList.add('open');panel.setAttribute('aria-hidden','false')}
  function shut(){panel.classList.remove('open');back.classList.remove('open');panel.style.display='none';back.style.display='none';panel.setAttribute('aria-hidden','true')}
@@ -3163,8 +3178,9 @@ document.querySelectorAll('#nav button[data-tab]').forEach(btn=>{
  function setView(v){document.body.classList.remove('view-mobile','view-tablet','view-desktop');if(v!=='auto')document.body.classList.add('view-'+v);viewBtns.forEach(b=>b.classList.toggle('active',b.dataset.fpView===v));try{localStorage.setItem('fp_view_mode',v)}catch(e){}}
  viewBtns.forEach(b=>b.addEventListener('click',()=>setView(b.dataset.fpView)));
  let v='auto';try{v=localStorage.getItem('fp_view_mode')||'auto'}catch(e){}setView(v);
- document.getElementById('fp-settings-logout').addEventListener('click',async()=>{
-   const btn=document.getElementById('fp-settings-logout');btn.disabled=true;btn.textContent='Cerrando sesión…';
+ const logoutBtn=document.getElementById('fp-settings-logout');
+ if(logoutBtn)logoutBtn.addEventListener('click',async()=>{
+   const btn=logoutBtn;btn.disabled=true;btn.textContent='Cerrando sesión…';
    try{const c=window.fpSupabaseClient;if(!c)throw new Error('Supabase no está conectado');const {error}=await c.auth.signOut();if(error)throw error;shut();document.body.classList.remove('app-ready','welcome-dismissed','auth-open');location.reload();}
    catch(e){btn.disabled=false;btn.textContent='Cerrar sesión';alert('No se pudo cerrar sesión: '+(e.message||e));}
  });document.addEventListener('keydown',e=>{if(e.key==='Escape')shut()});
