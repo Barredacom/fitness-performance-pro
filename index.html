@@ -2269,9 +2269,9 @@ document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeal
  const syncButton=()=>{const activeSection=document.querySelector('.section.active');const nutritionActive=activeSection?.id==='nutricion';btn.classList.toggle('visible',nutritionActive);btn.style.display=nutritionActive?'grid':'none';};
  syncButton();
  // Sincroniza el botón ante cambios de sección, carga/auth y modificaciones de clases.
- const sectionObserver=new MutationObserver(syncButton);
- document.querySelectorAll('.section').forEach(s=>sectionObserver.observe(s,{attributes:true,attributeFilter:['class']}));
- const navObserver=new MutationObserver(syncButton);const nav=document.getElementById('nav');if(nav)navObserver.observe(nav,{subtree:true,attributes:true,attributeFilter:['class']});
+ const observer=new MutationObserver(syncButton);
+ document.querySelectorAll('.section').forEach(s=>observer.observe(s,{attributes:true,attributeFilter:['class']}));
+ const nav=document.getElementById('nav');if(nav)observer.observe(nav,{subtree:true,attributes:true,attributeFilter:['class']});
  window.addEventListener('pageshow',syncButton);document.addEventListener('visibilitychange',syncButton);
 })();
 </script>
