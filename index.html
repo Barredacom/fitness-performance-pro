@@ -1167,9 +1167,16 @@ function renderMealMiniSummary(){
   `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>`,
   `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.5A9 9 0 0 1 8.5 3.5 9 9 0 1 0 20.5 15.5Z"/></svg>`
  ];
- const foodsForDay=(db.foods||[]).filter(x=>String(x.date||'')===String(date));
- const totalK=foodsForDay.reduce((a,x)=>a+(Number(x.k)||0),0);
- const totalP=foodsForDay.reduce((a,x)=>a+(Number(x.p)||0),0);
+ const mealData=Object.create(null);
+ names.forEach(name=>{mealData[name.toLowerCase()]={foods:[],k:0,p:0};});
+ let totalK=0,totalP=0;
+ (db.foods||[]).forEach(x=>{
+  if(String(x.date||'')!==String(date))return;
+  const k=Number(x.k)||0,p=Number(x.p)||0;
+  totalK+=k;totalP+=p;
+  const meal=mealData[String(x.meal||'').toLowerCase()];
+  if(meal){meal.foods.push(x);meal.k+=k;meal.p+=p;}
+ });
  // Metas actuales del plan nutricional configurado en la aplicación.
  const kcalGoal=1900,proteinGoal=125;
  const fmt=(n,d=1)=>Number(n).toLocaleString('es-CL',{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -1187,9 +1194,8 @@ function renderMealMiniSummary(){
  if(trend)trend.innerHTML='';
  circles.innerHTML=`<div class="nutrition-progress-dashboard">${metric('CALORÍAS',totalK,kcalGoal,'kcal','#C7FF00')}${metric('PROTEÍNAS',totalP,proteinGoal,'g','#B9E9DC')}</div>`;
  list.innerHTML=names.map((name,i)=>{
-  const mealFoods=foodsForDay.filter(x=>String(x.meal||'').toLowerCase()===name.toLowerCase());
-  const mk=mealFoods.reduce((a,x)=>a+(Number(x.k)||0),0),mp=mealFoods.reduce((a,x)=>a+(Number(x.p)||0),0);
-  return `<section class="nutrition-meal-group"><header><span class="nutrition-meal-icon">${icons[i]}</span><strong>${name.toUpperCase()}</strong><span class="nutrition-meal-total">${mk.toFixed(0)} kcal · P ${mp.toFixed(1)} g</span></header>${mealFoods.length?`<ul>${mealFoods.map(x=>`<li><span class="nutrition-food-name">${escapeHtml(x.n||'Alimento')}</span><span class="nutrition-food-values">${(Number(x.k)||0).toFixed(0)} kcal · ${(Number(x.p)||0).toFixed(1)} g P</span></li>`).join('')}</ul>`:'<p class="nutrition-meal-empty">Sin alimentos registrados</p>'}</section>`;
+  const meal=mealData[name.toLowerCase()],mealFoods=meal.foods;
+  return `<section class="nutrition-meal-group"><header><span class="nutrition-meal-icon">${icons[i]}</span><strong>${name.toUpperCase()}</strong><span class="nutrition-meal-total">${meal.k.toFixed(0)} kcal · P ${meal.p.toFixed(1)} g</span></header>${mealFoods.length?`<ul>${mealFoods.map(x=>`<li><span class="nutrition-food-name">${escapeHtml(x.n||'Alimento')}</span><span class="nutrition-food-values">${(Number(x.k)||0).toFixed(0)} kcal · ${(Number(x.p)||0).toFixed(1)} g P</span></li>`).join('')}</ul>`:'<p class="nutrition-meal-empty">Sin alimentos registrados</p>'}</section>`;
  }).join('');
 }
 
