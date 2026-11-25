@@ -1156,7 +1156,13 @@ db.supplements=db.supplements.filter(x=>suppDefaults.some(([k,n])=>n===x.name)).
 db.supplements.forEach(x=>{if(!x.id)x.id=Date.now()+Math.random();if(!Array.isArray(x.log))x.log=[];});
 localStorage.setItem(DBKEY,JSON.stringify(db));
 const foods={arroz:{n:'Arroz blanco cocido',k:130,p:2.7,c:28.2,f:.3},pollo:{n:'Pechuga de pollo cocida',k:165,p:31,c:0,f:3.6},atun:{n:'Atún al agua drenado',k:116,p:25.5,c:0,f:1},avena:{n:'Avena',k:389,p:16.9,c:66.3,f:6.9},platano:{n:'Plátano',k:89,p:1.1,c:22.8,f:.3},huevo:{n:'Huevo entero',k:143,p:12.6,c:.7,f:9.5},salmon:{n:'Salmón',k:208,p:20.4,c:0,f:13.4},quinoa:{n:'Quinoa cocida',k:120,p:4.4,c:21.3,f:1.9}};
-function save(){localStorage.setItem(DBKEY,JSON.stringify(db));renderAll()}
+function save(){
+ let persisted=false;
+ try{localStorage.setItem(DBKEY,JSON.stringify(db));persisted=true;}
+ catch(err){console.error('No se pudieron persistir los datos de FITNESS PERFORMANCE PRO:',err);alert('No se pudieron guardar los cambios en el almacenamiento del navegador. Tus cambios siguen visibles en esta sesión, pero podrían perderse al cerrar o recargar la página. Libera espacio del navegador y vuelve a intentarlo.');}
+ try{renderAll();}catch(err){console.error('Los datos fueron procesados, pero hubo un error al actualizar la interfaz:',err);}
+ return persisted;
+}
 function macros(){return db.foods.filter(x=>x.date===today).reduce((a,x)=>({k:a.k+x.k,p:a.p+x.p,c:a.c+x.c,f:a.f+x.f}),{k:0,p:0,c:0,f:0})}
 function renderMealMiniSummary(){
  const date=$('foodDate')?.value||today;
@@ -2232,7 +2238,12 @@ function smartUseMeal(id){
  $('food').value=item.foodKey;$('grams').value=item.grams;$('meal').value=item.meal;$('smartMealType').value=item.meal;
  preview();alert('Comida cargada. Presiona “Registrar alimento” para guardarla en tu diario.');
 }
-function smartDeleteMeal(id){localStorage.setItem(SMART_MEALS_KEY,JSON.stringify(smartMealsRead().filter(x=>x.id!==id)));smartRefreshMeals()}
+function smartDeleteMeal(id){
+ const current=smartMealsRead(),next=current.filter(x=>x.id!==id);
+ try{localStorage.setItem(SMART_MEALS_KEY,JSON.stringify(next));}
+ catch(err){console.error('No se pudo actualizar comidas favoritas:',err);alert('No se pudo actualizar el almacenamiento de comidas favoritas. No se aplicó la eliminación.');return false;}
+ smartRefreshMeals();return true;
+}
 function smartRefreshMeals(){
  const el=$('smartMealList');if(!el)return;const list=smartMealsRead();
  el.innerHTML=list.length?list.map(x=>`<div class="item"><div><b>${x.name.replace(/[<>]/g,'')}</b><div class="muted">${x.foodName} · ${x.grams} ${x.unit||'g'} · ${x.meal}</div></div><div style="display:flex;gap:6px"><button onclick="smartUseMeal(${x.id})">Usar</button><button onclick="smartDeleteMeal(${x.id})">×</button></div>`).join(''):'<p class="muted">Aún no tienes comidas favoritas guardadas.</p>';
