@@ -1878,7 +1878,43 @@ function renderHistory(){
  $('historyResult').innerHTML=events.map(x=>`<div class="history-event"><div class="history-time">${x.time||'—'}</div><div class="history-track"><i class="history-dot"></i></div><article class="history-event-card"><div class="history-event-top"><strong>${escapeHtml(x.title)}</strong><span class="history-event-tag">${escapeHtml(x.tag)}</span></div><p>${escapeHtml(x.body)}</p>${x.meta?`<div class="history-event-meta">${escapeHtml(x.meta)}</div>`:''}</article></div>`).join('');
 }
 function exportData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='fitness-performance-respaldo.json';a.click();URL.revokeObjectURL(a.href)}
-function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{db=JSON.parse(r.result);save();alert('Respaldo importado')}catch{alert('Archivo no válido')}};r.readAsText(f)}
+function importData(e){
+ let f=e.target.files[0];if(!f)return;
+ let r=new FileReader();
+ r.onload=()=>{
+  let imported;
+  try{
+   imported=JSON.parse(r.result);
+   if(!imported||typeof imported!=='object'||Array.isArray(imported))throw new Error('La raíz del respaldo debe ser un objeto JSON.');
+   const expected=['foods','workouts','supplements','measures'];
+   if(!expected.some(k=>Array.isArray(imported[k])))throw new Error('No se reconocen las colecciones del respaldo.');
+   for(const key of expected){if(imported[key]!==undefined&&!Array.isArray(imported[key]))throw new Error('La colección '+key+' tiene un formato inválido.');}
+  }catch(err){
+   console.error('Respaldo rechazado; los datos actuales no se modificaron:',err);
+   alert('Archivo no válido o estructura incompatible. No se modificaron tus registros.');
+   e.target.value='';return;
+  }
+  const previous=db;
+  try{
+   localStorage.setItem('fppro_v2_preimport_backup',JSON.stringify(previous));
+  }catch(err){
+   console.error('No se pudo crear respaldo previo a la importación:',err);
+   alert('No se pudo crear una copia de seguridad de los datos actuales. Se canceló la importación.');
+   e.target.value='';return;
+  }
+  db=imported;
+  if(save()){
+   alert('Respaldo importado correctamente. Se conservó una copia previa en el almacenamiento del navegador.');
+  }else{
+   db=previous;
+   try{renderAll();}catch(renderErr){console.error('Error al restaurar la vista anterior:',renderErr);}
+   alert('No se pudo guardar el respaldo importado. Se conservaron los datos anteriores en esta sesión.');
+  }
+  e.target.value='';
+ };
+ r.onerror=()=>{alert('No se pudo leer el archivo de respaldo. Los datos actuales no fueron modificados.');e.target.value='';};
+ r.readAsText(f);
+}
 function clearAll(){if(confirm('¿Borrar todos los registros?')){db={foods:[],workouts:[],supplements:[],measures:[]};save()}}
 // GLOBAL SHIFT STATUS PRO + LIVE CLOCK · America/Santiago
 function chileNowParts(){const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const get=t=>parts.find(p=>p.type===t)?.value;return `${get('year')}-${get('month')}-${get('day')}`}
