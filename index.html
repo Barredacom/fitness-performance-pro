@@ -1464,7 +1464,13 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':
 
 
 function addWorkout(){db.workouts.push({routine:$('routine').value,minutes:+$('duration').value||0,date:$('workDate').value,id:Date.now()});save()}
-function renderMeasureHistory(){const list=$('measureList'),count=$('measureCount');if(!list||!count)return;const rows=(Array.isArray(db.measures)?db.measures:[]).slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||(Number(b.id)||0)-(Number(a.id)||0));list.innerHTML=rows.map(x=>`<div class="item"><span>${x.date||'Sin fecha'}<small>${x.weight?x.weight+' kg':''} ${x.waist?'· '+x.waist+' cm':''}</small></span><button type="button" class="measure-delete-btn" onclick="deleteMeasure('${String(x.id).replace(/'/g,"\\\\'")}')">Eliminar</button></div>`).join('')||'<p class="muted">Todavía no hay mediciones registradas.</p>';count.textContent=rows.length+' '+(rows.length===1?'registro':'registros');}
+function renderMeasureHistory(){
+ const list=$('measureList'),count=$('measureCount');if(!list||!count)return;
+ const rows=(Array.isArray(db.measures)?db.measures:[]).slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||(Number(b.id)||0)-(Number(a.id)||0));
+ list.innerHTML=rows.map(x=>`<div class="item"><span>${escapeHtml(x.date||'Sin fecha')}<small>${Number(x.weight)>0?Number(x.weight).toFixed(1)+' kg':''} ${Number(x.waist)>0?'· '+Number(x.waist).toFixed(1)+' cm':''}</small></span><button type="button" class="measure-delete-btn" data-delete-measure="${escapeHtml(String(x.id??''))}">Eliminar</button></div>`).join('')||'<p class="muted">Todavía no hay mediciones registradas.</p>';
+ list.querySelectorAll('[data-delete-measure]').forEach(btn=>btn.addEventListener('click',()=>deleteMeasure(btn.dataset.deleteMeasure)));
+ count.textContent=rows.length+' '+(rows.length===1?'registro':'registros');
+}
 function deleteMeasure(id){if(!Array.isArray(db.measures))return;const before=db.measures.length;db.measures=db.measures.filter(x=>String(x.id)!==String(id));if(db.measures.length===before)return;try{localStorage.setItem(DBKEY,JSON.stringify(db));}catch(e){alert('No se pudo actualizar el historial en el almacenamiento del navegador.');return;}renderMeasureHistory();try{renderAll();}catch(e){console.error('Medición eliminada; hubo un error al actualizar otros módulos:',e);renderMeasureHistory();}}
 function addMeasure(){const w=Number($('weight').value),wa=Number($('waist').value),date=$('measureDate').value;if(!w&&!wa)return alert('Ingresa peso o cintura');if((w&&w<=0)||(wa&&wa<=0))return alert('Peso y cintura deben ser valores positivos');if(!date)return alert('Selecciona una fecha');if(!Array.isArray(db.measures))db.measures=[];db.measures.push({date,weight:w||null,waist:wa||null,id:Date.now()});try{localStorage.setItem(DBKEY,JSON.stringify(db));}catch(e){alert('No se pudo guardar en el almacenamiento del navegador.');return;} $('weight').value='';$('waist').value='';renderMeasureHistory();try{renderAll();}catch(e){console.error('Registro guardado; hubo un error al actualizar otros módulos:',e);renderMeasureHistory();}closeBodyMeasureModal();}
 function del(arr,id){db[arr]=db[arr].filter(x=>x.id!==id);save()}
@@ -1523,7 +1529,7 @@ function renderAll(){
   const foodList=$('foodList'),foodDate=$('foodDate');
   if(foodList&&foodDate){
    const rows=Array.isArray(db.foods)?db.foods:[];
-   foodList.innerHTML=rows.filter(x=>x&&x.date===foodDate.value).map(x=>`<div class="item"><span>${x.n||'Alimento'}<small>${x.meal||''} · ${x.g||'—'} g</small></span><b>${Math.round(Number(x.k)||0)} kcal <button onclick="del('foods',${x.id})">×</button></b></div>`).join('')||'<p class="muted">Sin alimentos registrados para esta fecha.</p>';
+   foodList.innerHTML=rows.filter(x=>x&&x.date===foodDate.value).map(x=>`<div class="item"><span>${escapeHtml(x.n||'Alimento')}<small>${escapeHtml(x.meal||'')} · ${Number(x.g)||0} g</small></span><b>${Math.round(Number(x.k)||0)} kcal <button type="button" data-delete-food="${escapeHtml(String(x.id??''))}">×</button></b></div>`).join('')||'<p class="muted">Sin alimentos registrados para esta fecha.</p>'; foodList.querySelectorAll('[data-delete-food]').forEach(btn=>btn.addEventListener('click',()=>del('foods',btn.dataset.deleteFood)));
   }
  });
  run('suplementos',renderSupplements);
@@ -1547,7 +1553,10 @@ function renderHydration(){
  const rows=(Array.isArray(db.hydration)?db.hydration:[]).filter(x=>String(x.date||'')===today).sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
  const total=rows.reduce((n,x)=>n+(Number(x.ml)||0),0),totalEl=$('hydrationTodayTotal'),host=$('hydrationTodayHistory');
  if(totalEl)totalEl.textContent=total>=1000?(total/1000).toLocaleString('es-CL',{maximumFractionDigits:2})+' L':Math.round(total)+' ml';
- if(host)host.innerHTML=rows.length?rows.map(x=>`<div class="supp-hydration-row"><span>${Number(x.ml)>=1000?(Number(x.ml)/1000).toLocaleString('es-CL',{maximumFractionDigits:2})+' L':Math.round(Number(x.ml)||0)+' ml'} <small>· ${x.time||'—'}</small></span><button type="button" onclick="deleteHydrationEntry('${String(x.id)}')" aria-label="Eliminar registro de agua">×</button></div>`).join(''):'<p class="supp-empty">Todavía no hay agua registrada hoy.</p>';
+ if(host){
+  host.innerHTML=rows.length?rows.map(x=>`<div class="supp-hydration-row"><span>${Number(x.ml)>=1000?(Number(x.ml)/1000).toLocaleString('es-CL',{maximumFractionDigits:2})+' L':Math.round(Number(x.ml)||0)+' ml'} <small>· ${escapeHtml(x.time||'—')}</small></span><button type="button" data-delete-water="${escapeHtml(String(x.id??''))}" aria-label="Eliminar registro de agua">×</button></div>`).join(''):'<p class="supp-empty">Todavía no hay agua registrada hoy.</p>';
+  host.querySelectorAll('[data-delete-water]').forEach(btn=>btn.addEventListener('click',()=>deleteHydrationEntry(btn.dataset.deleteWater)));
+ }
 }
 function addHydrationEntry(){
  const amountEl=$('hydrationAmount'),unitEl=$('hydrationUnit');if(!amountEl||!unitEl)return false;
@@ -1588,7 +1597,10 @@ function toggleSupp(id,checked){
 function renderSupplements(){
  if(!Array.isArray(db.supplements))db.supplements=[];
  const list=$('suppList');
- if(list)list.innerHTML=db.supplements.map(x=>`<div class="supp-card"><div class="supp-info"><strong>${x.name||'Suplemento'}</strong><small>${x.dose||'Dosis no indicada'} · ${x.done?'Consumido '+(x.consumedTime||''):'Pendiente'}</small></div><label class="supp-switch"><input type="checkbox" aria-label="Consumo ${x.name||'suplemento'}" ${x.done?'checked':''} onchange="toggleSupp(${JSON.stringify(x.id)},this.checked)"><span class="supp-slider"></span></label></div>`).join('');
+ if(list){
+  list.innerHTML=db.supplements.map(x=>`<div class="supp-card"><div class="supp-info"><strong>${escapeHtml(x.name||'Suplemento')}</strong><small>${escapeHtml(x.dose||'Dosis no indicada')} · ${x.done?'Consumido '+escapeHtml(x.consumedTime||''):'Pendiente'}</small></div><label class="supp-switch"><input type="checkbox" data-supp-id="${escapeHtml(String(x.id??''))}" aria-label="Consumo ${escapeHtml(x.name||'suplemento')}" ${x.done?'checked':''}><span class="supp-slider"></span></label></div>`).join('');
+  list.querySelectorAll('[data-supp-id]').forEach(input=>input.addEventListener('change',()=>toggleSupp(input.dataset.suppId,input.checked)));
+ }
  const todayRows=db.supplements.filter(x=>x&&x.done&&x.date===today),n=todayRows.length,total=4;
  const doneCount=$('suppDoneCount'),progress=$('suppProgress'),percent=$('suppPercent'),lastTime=$('suppLastTime');
  if(doneCount)doneCount.textContent=n+'/'+total;
@@ -1598,7 +1610,7 @@ function renderSupplements(){
  const hist=$('suppHistory');
  if(hist){
   const logs=db.supplements.flatMap(x=>(Array.isArray(x.log)?x.log:[]).map(l=>({...l,name:x.name||'Suplemento'}))).sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
-  hist.innerHTML=logs.slice(0,80).map(l=>`<div class="item"><span>${l.name}<small>${l.date||''} · ${l.time||''} · ${l.dose||''}</small></span><b>${l.status||''}</b></div>`).join('')||'<p class="muted">Todavía no hay consumos registrados.</p>';
+  hist.innerHTML=logs.slice(0,80).map(l=>`<div class="item"><span>${escapeHtml(l.name||'Suplemento')}<small>${escapeHtml(l.date||'')} · ${escapeHtml(l.time||'')} · ${escapeHtml(l.dose||'')}</small></span><b>${escapeHtml(l.status||'')}</b></div>`).join('')||'<p class="muted">Todavía no hay consumos registrados.</p>';
  }
 }
 function chart(id){const host=$(id);if(!host)return;let data=(Array.isArray(db.measures)?db.measures:[]).filter(x=>x&&Number(x.weight)>0).sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));if(!data.length){host.innerHTML='<p class="muted">Registra peso para visualizar evolución.</p>';return}let vals=data.map(x=>Number(x.weight)),min=Math.min(...vals)-1,max=Math.max(...vals)+1,span=Math.max(1,max-min),points=vals.map((v,i)=>`${20+i*360/Math.max(1,vals.length-1)},${155-(v-min)/span*125}`).join(' ');host.innerHTML=`<svg viewBox="0 0 400 180" preserveAspectRatio="none"><path d="M20 155 H380 M20 90 H380 M20 25 H380" stroke="#263329" fill="none"/><polyline points="${points}" fill="none" stroke="#53ff55" stroke-width="3"/>${vals.map((v,i)=>`<circle cx="${20+i*360/Math.max(1,vals.length-1)}" cy="${155-(v-min)/span*125}" r="4" fill="#b7ff39"/>`).join('')}<text x="22" y="15" fill="#9bad9f" font-size="11">${max.toFixed(1)} kg</text><text x="22" y="175" fill="#9bad9f" font-size="11">${min.toFixed(1)} kg</text></svg>`}
@@ -2304,7 +2316,9 @@ function smartDeleteMeal(id){
 }
 function smartRefreshMeals(){
  const el=$('smartMealList');if(!el)return;const list=smartMealsRead();
- el.innerHTML=list.length?list.map(x=>`<div class="item"><div><b>${x.name.replace(/[<>]/g,'')}</b><div class="muted">${x.foodName} · ${x.grams} ${x.unit||'g'} · ${x.meal}</div></div><div style="display:flex;gap:6px"><button onclick="smartUseMeal(${x.id})">Usar</button><button onclick="smartDeleteMeal(${x.id})">×</button></div>`).join(''):'<p class="muted">Aún no tienes comidas favoritas guardadas.</p>';
+ el.innerHTML=list.length?list.map(x=>`<div class="item"><div><b>${escapeHtml(x.name||'Comida')}</b><div class="muted">${escapeHtml(x.foodName||'')} · ${Number(x.grams)||0} ${escapeHtml(x.unit||'g')} · ${escapeHtml(x.meal||'')}</div></div><div style="display:flex;gap:6px"><button type="button" data-smart-use="${escapeHtml(String(x.id??''))}">Usar</button><button type="button" data-smart-delete="${escapeHtml(String(x.id??''))}">×</button></div></div>`).join(''):'<p class="muted">Aún no tienes comidas favoritas guardadas.</p>';
+ el.querySelectorAll('[data-smart-use]').forEach(btn=>btn.addEventListener('click',()=>smartUseMeal(btn.dataset.smartUse)));
+ el.querySelectorAll('[data-smart-delete]').forEach(btn=>btn.addEventListener('click',()=>smartDeleteMeal(btn.dataset.smartDelete)));
 }
 document.addEventListener('DOMContentLoaded',smartRefreshMeals);smartRefreshMeals();
 </script>
@@ -2842,4 +2856,58 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElement
     <div class="r"><div class="name"><span class="ico">${iconSvg.body}</span>Indicadores Corporales</div><div class="detail">Peso: <strong>${measure.weight?fmt(measure.weight,1)+' kg':'—'}</strong> &nbsp; | &nbsp; Cintura: <strong>${measure.waist?fmt(measure.waist)+' cm':'—'}</strong><br><span style="font-size:8pt;color:#7b827d">% Grasa (est.): — &nbsp; | &nbsp; Masa muscular (est.): —</span></div><div class="state ${measureOK?'ok':'none'}">${measureOK?'':'—'}</div></div>
    </section>
   </div>
-  <div class="sc
+  <div class="score"><span class="score-label">Cumplimiento del Día</span><strong><span>${score} %</span></strong></div>
+  <div class="lower">
+   <section class="box summary"><h2><span class="heading-icon">${iconSvg.target}</span>Resumen del Día</h2><ul>
+    <li>${kcalOK?`Calorías en rango del plan (${Math.round(totals.k/2000*100)} %).`:`Consumo registrado: ${fmt(totals.k)} kcal.`}</li>
+    <li>${proteinOK?`Proteína cumplida (${fmt(totals.p)} g).`:`Proteína registrada: ${fmt(totals.p)} g.`}</li>
+    <li>${workoutOK?`Entrenamiento realizado (${fmt(minutes)} min).`:'Sin entrenamiento registrado.'}</li>
+    <li>${suppOK?'Suplementación completa.':'Sin suplementos confirmados.'}</li>
+    <li>${measure.weight?`Peso registrado: ${fmt(measure.weight,1)} kg.`:'Sin peso registrado.'}</li>
+   </ul></section>
+   <section class="box"><h2><span class="heading-icon">${iconSvg.next}</span>Próximo Enfoque</h2><ul>
+    <li>Mantener ingesta en 1.800–2.000 kcal.</li><li>Sostener 120–130 g de proteína.</li>
+    <li>Entrenamiento de fuerza según planificación.</li><li>Control de cintura y descanso (7–8 h).</li>
+   </ul></section>
+  </div>
+  <div class="footer"></div></main><script>window.addEventListener('load',()=>setTimeout(()=>window.print(),500));<\/script>
+<script>
+(function(){
+  var enter=document.getElementById('fpw-enter-app');
+  if(enter){
+    enter.addEventListener('click',function(){
+      document.body.classList.add('welcome-dismissed');
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  }
+})();
+<\/script>
+
+</body></html>`;
+  w.document.open();w.document.write(report);w.document.close();
+ };
+})();
+</script>
+<script>
+/* V23.99 · Limpieza JavaScript y reparación del informe diario */
+(function(){
+  const enter=document.getElementById('fpw-enter-app');
+  const close=document.getElementById('sb-close-auth');
+  if(enter){
+    enter.addEventListener('click',function(){
+      if(document.body.classList.contains('app-ready')){
+        document.body.classList.add('welcome-dismissed');
+        const welcome=document.getElementById('fp-welcome-screen');
+        if(welcome) welcome.setAttribute('aria-hidden','true');
+        window.scrollTo({top:0,behavior:'smooth'});
+      }else{
+        document.body.classList.add('auth-open');
+        const auth=document.getElementById('supabase-auth-panel');
+        if(auth) auth.scrollTop=0;
+      }
+    });
+  }
+  if(close) close.addEventListener('click',()=>document.body.classList.remove('auth-open'));
+})();
+</script>
+</body></html>
