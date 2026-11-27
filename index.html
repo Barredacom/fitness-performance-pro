@@ -1126,7 +1126,28 @@ const $=id=>document.getElementById(id), today=localDateISO(new Date());
 function updateDateDisplay(){const el=$('foodDate'),out=$('dateDisplayText');if(!el||!out)return;const v=el.value||today;const d=new Date(v+'T12:00:00');out.textContent=d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
 $('foodDate').value=$('workDate').value=$('measureDate').value=today;updateDateDisplay();
 $('foodDate').addEventListener('change',()=>{updateDateDisplay();renderMealMiniSummary()});$('dateDisplayCard')?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('foodDate').showPicker?.();}});
-const DBKEY='fppro_v2';let db=JSON.parse(localStorage.getItem(DBKEY)||'{"foods":[],"workouts":[],"supplements":[],"measures":[{"date":"2026-10-25","weight":82.3,"waist":95}]}');
+const DBKEY='fppro_v2';
+const DB_DEFAULT='{"foods":[],"workouts":[],"supplements":[],"measures":[{"date":"2026-10-25","weight":82.3,"waist":95}]}';
+let db={},dbRecoveryBackupFailed=false;
+try{
+ const storedDB=localStorage.getItem(DBKEY);
+ db=JSON.parse(storedDB||DB_DEFAULT);
+ if(!db||typeof db!=='object'||Array.isArray(db))throw new Error('La raíz de los datos guardados no es un objeto válido.');
+}catch(storageReadError){
+ console.error('Los datos principales no se pudieron interpretar:',storageReadError);
+ try{
+  const originalRaw=localStorage.getItem(DBKEY);
+  if(originalRaw!==null)localStorage.setItem('fppro_v2_recovery_'+new Date().toISOString(),originalRaw);
+ }catch(backupError){
+  dbRecoveryBackupFailed=true;
+  console.error('No se pudo crear una copia de recuperación; se bloquea la escritura automática para preservar el original:',backupError);
+ }
+ db=JSON.parse(DB_DEFAULT);
+ if(!dbRecoveryBackupFailed){
+  try{localStorage.setItem(DBKEY,JSON.stringify(db));}
+  catch(initWriteError){console.error('No se pudo inicializar el almacenamiento de recuperación:',initWriteError);}
+ }
+}
 if(!Array.isArray(db.measures))db.measures=[];
 if(!Array.isArray(db.hydration))db.hydration=[];
 db.measures.forEach((m,i)=>{if(!m.id)m.id='measure-'+String(m.date||'sin-fecha')+'-'+i+'-'+Date.now();});
@@ -1158,6 +1179,7 @@ localStorage.setItem(DBKEY,JSON.stringify(db));
 const foods={arroz:{n:'Arroz blanco cocido',k:130,p:2.7,c:28.2,f:.3},pollo:{n:'Pechuga de pollo cocida',k:165,p:31,c:0,f:3.6},atun:{n:'Atún al agua drenado',k:116,p:25.5,c:0,f:1},avena:{n:'Avena',k:389,p:16.9,c:66.3,f:6.9},platano:{n:'Plátano',k:89,p:1.1,c:22.8,f:.3},huevo:{n:'Huevo entero',k:143,p:12.6,c:.7,f:9.5},salmon:{n:'Salmón',k:208,p:20.4,c:0,f:13.4},quinoa:{n:'Quinoa cocida',k:120,p:4.4,c:21.3,f:1.9}};
 function save(){
  let persisted=false;
+ if(dbRecoveryBackupFailed){alert('El almacenamiento original no pudo respaldarse. Se bloqueó el guardado para evitar sobrescribir datos recuperables. Exporta o recupera el almacenamiento antes de continuar.');return false;}
  try{localStorage.setItem(DBKEY,JSON.stringify(db));persisted=true;}
  catch(err){console.error('No se pudieron persistir los datos de FITNESS PERFORMANCE PRO:',err);alert('No se pudieron guardar los cambios en el almacenamiento del navegador. Tus cambios siguen visibles en esta sesión, pero podrían perderse al cerrar o recargar la página. Libera espacio del navegador y vuelve a intentarlo.');}
  try{renderAll();}catch(err){console.error('Los datos fueron procesados, pero hubo un error al actualizar la interfaz:',err);}
@@ -2820,58 +2842,4 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElement
     <div class="r"><div class="name"><span class="ico">${iconSvg.body}</span>Indicadores Corporales</div><div class="detail">Peso: <strong>${measure.weight?fmt(measure.weight,1)+' kg':'—'}</strong> &nbsp; | &nbsp; Cintura: <strong>${measure.waist?fmt(measure.waist)+' cm':'—'}</strong><br><span style="font-size:8pt;color:#7b827d">% Grasa (est.): — &nbsp; | &nbsp; Masa muscular (est.): —</span></div><div class="state ${measureOK?'ok':'none'}">${measureOK?'':'—'}</div></div>
    </section>
   </div>
-  <div class="score"><span class="score-label">Cumplimiento del Día</span><strong><span>${score} %</span></strong></div>
-  <div class="lower">
-   <section class="box summary"><h2><span class="heading-icon">${iconSvg.target}</span>Resumen del Día</h2><ul>
-    <li>${kcalOK?`Calorías en rango del plan (${Math.round(totals.k/2000*100)} %).`:`Consumo registrado: ${fmt(totals.k)} kcal.`}</li>
-    <li>${proteinOK?`Proteína cumplida (${fmt(totals.p)} g).`:`Proteína registrada: ${fmt(totals.p)} g.`}</li>
-    <li>${workoutOK?`Entrenamiento realizado (${fmt(minutes)} min).`:'Sin entrenamiento registrado.'}</li>
-    <li>${suppOK?'Suplementación completa.':'Sin suplementos confirmados.'}</li>
-    <li>${measure.weight?`Peso registrado: ${fmt(measure.weight,1)} kg.`:'Sin peso registrado.'}</li>
-   </ul></section>
-   <section class="box"><h2><span class="heading-icon">${iconSvg.next}</span>Próximo Enfoque</h2><ul>
-    <li>Mantener ingesta en 1.800–2.000 kcal.</li><li>Sostener 120–130 g de proteína.</li>
-    <li>Entrenamiento de fuerza según planificación.</li><li>Control de cintura y descanso (7–8 h).</li>
-   </ul></section>
-  </div>
-  <div class="footer"></div></main><script>window.addEventListener('load',()=>setTimeout(()=>window.print(),500));<\/script>
-<script>
-(function(){
-  var enter=document.getElementById('fpw-enter-app');
-  if(enter){
-    enter.addEventListener('click',function(){
-      document.body.classList.add('welcome-dismissed');
-      window.scrollTo({top:0,behavior:'smooth'});
-    });
-  }
-})();
-<\/script>
-
-</body></html>`;
-  w.document.open();w.document.write(report);w.document.close();
- };
-})();
-</script>
-<script>
-/* V23.99 · Limpieza JavaScript y reparación del informe diario */
-(function(){
-  const enter=document.getElementById('fpw-enter-app');
-  const close=document.getElementById('sb-close-auth');
-  if(enter){
-    enter.addEventListener('click',function(){
-      if(document.body.classList.contains('app-ready')){
-        document.body.classList.add('welcome-dismissed');
-        const welcome=document.getElementById('fp-welcome-screen');
-        if(welcome) welcome.setAttribute('aria-hidden','true');
-        window.scrollTo({top:0,behavior:'smooth'});
-      }else{
-        document.body.classList.add('auth-open');
-        const auth=document.getElementById('supabase-auth-panel');
-        if(auth) auth.scrollTop=0;
-      }
-    });
-  }
-  if(close) close.addEventListener('click',()=>document.body.classList.remove('auth-open'));
-})();
-</script>
-</body></html>
+  <div class="sc
