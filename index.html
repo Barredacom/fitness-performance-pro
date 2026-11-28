@@ -1,4 +1,6 @@
 <!doctype html>
+<!-- FITNESS PERFORMANCE PRO V24.27 | AUDITORIA INTEGRAL CONSOLIDADA | Base validada: V24.26 -->
+
 <!-- FITNESS PERFORMANCE PRO V24.26 | MATRIZ DE PRUEBAS FUNCIONALES | Base: V24.25 | Sin cambios funcionales en esta etapa -->
 
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -1165,11 +1167,21 @@ const confirmedWeightHistory=[
  ['2026-11-08',80.2],
  ['2026-11-15',80.4]
 ];
-confirmedWeightHistory.forEach(([date,weight])=>{
- const existing=db.measures.find(m=>String(m.date)===date);
- if(existing){existing.weight=weight;if(!existing.id)existing.id='history-'+date;}
- else db.measures.push({id:'history-'+date,date,weight,waist:null});
-});
+// Los pesos históricos se incorporan una sola vez. Nunca sobrescribir una medición
+// existente: puede haber sido corregida por el usuario. La marca persistente también
+// evita reintroducir el historial si el usuario decide borrar todos sus registros.
+const WEIGHT_HISTORY_SEED_KEY='fppro_v2_weight_history_seeded';
+let shouldMarkWeightHistorySeeded=false;
+let weightHistoryAlreadySeeded=false;
+try{weightHistoryAlreadySeeded=localStorage.getItem(WEIGHT_HISTORY_SEED_KEY)==='1';}
+catch(err){console.warn('No se pudo consultar la marca del historial inicial:',err);}
+if(!weightHistoryAlreadySeeded){
+ confirmedWeightHistory.forEach(([date,weight])=>{
+  const existing=db.measures.find(m=>String(m.date)===date);
+  if(!existing)db.measures.push({id:'history-'+date,date,weight,waist:null});
+ });
+ shouldMarkWeightHistorySeeded=true;
+}
 db.measures.sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
 
 const suppDefaults=[['creatina','Creatina','5 g'],['magnesio','Magnesio','Dosis configurable'],['omega','Omega 3','Dosis configurable'],['cop','COP de proteína','34 g']];
@@ -1177,7 +1189,17 @@ if(!Array.isArray(db.supplements))db.supplements=[];
 suppDefaults.forEach(([key,name,dose],i)=>{let x=db.supplements.find(z=>String(z.name||'').toLowerCase().includes(key==='omega'?'omega':key));if(!x){x={id:Date.now()+i+1,name,dose,time:'',done:false,date:today};db.supplements.push(x)}else{x.name=name;if(!x.dose)x.dose=dose;}});
 db.supplements=db.supplements.filter(x=>suppDefaults.some(([k,n])=>n===x.name)).slice(0,4);
 db.supplements.forEach(x=>{if(!x.id)x.id=Date.now()+Math.random();if(!Array.isArray(x.log))x.log=[];});
-localStorage.setItem(DBKEY,JSON.stringify(db));
+try{
+ localStorage.setItem(DBKEY,JSON.stringify(db));
+ if(shouldMarkWeightHistorySeeded){
+  try{localStorage.setItem(WEIGHT_HISTORY_SEED_KEY,'1');}
+  catch(markerError){console.warn('No se pudo guardar la marca del historial inicial; se volverá a comprobar al recargar:',markerError);}
+ }
+}catch(initPersistError){
+ // No detener la aplicación por una cuota llena o un almacenamiento bloqueado.
+ // Los datos permanecen en memoria y save() volverá a intentar persistirlos.
+ console.error('La aplicación inició, pero no pudo persistir la inicialización local:',initPersistError);
+}
 const foods={arroz:{n:'Arroz blanco cocido',k:130,p:2.7,c:28.2,f:.3},pollo:{n:'Pechuga de pollo cocida',k:165,p:31,c:0,f:3.6},atun:{n:'Atún al agua drenado',k:116,p:25.5,c:0,f:1},avena:{n:'Avena',k:389,p:16.9,c:66.3,f:6.9},platano:{n:'Plátano',k:89,p:1.1,c:22.8,f:.3},huevo:{n:'Huevo entero',k:143,p:12.6,c:.7,f:9.5},salmon:{n:'Salmón',k:208,p:20.4,c:0,f:13.4},quinoa:{n:'Quinoa cocida',k:120,p:4.4,c:21.3,f:1.9}};
 function save(){
  let persisted=false;
@@ -1911,9 +1933,15 @@ function renderHistory(){
   ['CINTURA',dayMeasures.filter(x=>x.waist).map(x=>x.waist+' cm').join(', ')||'—','Registro del día']
  ].map(x=>`<div class="history-kpi"><span>${x[0]}</span><strong>${x[1]}</strong><small>${x[2]}</small></div>`).join('');
  const count=events.length;$('historyCount').textContent=count+' '+(count===1?'evento':'eventos');
- $('historyResult').innerHTML=events.map(x=>`<div class="history-event"><div class="history-time">${x.time||'—'}</div><div class="history-track"><i class="history-dot"></i></div><article class="history-event-card"><div class="history-event-top"><strong>${escapeHtml(x.title)}</strong><span class="history-event-tag">${escapeHtml(x.tag)}</span></div><p>${escapeHtml(x.body)}</p>${x.meta?`<div class="history-event-meta">${escapeHtml(x.meta)}</div>`:''}</article></div>`).join('');
+ $('historyResult').innerHTML=events.map(x=>`<div class="history-event"><div class="history-time">${escapeHtml(x.time||'—')}</div><div class="history-track"><i class="history-dot"></i></div><article class="history-event-card"><div class="history-event-top"><strong>${escapeHtml(x.title)}</strong><span class="history-event-tag">${escapeHtml(x.tag)}</span></div><p>${escapeHtml(x.body)}</p>${x.meta?`<div class="history-event-meta">${escapeHtml(x.meta)}</div>`:''}</article></div>`).join('');
 }
-function exportData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='fitness-performance-respaldo.json';a.click();URL.revokeObjectURL(a.href)}
+function exportData(){
+ let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');
+ const url=URL.createObjectURL(blob);a.href=url;a.download='fitness-performance-respaldo.json';
+ document.body.appendChild(a);a.click();a.remove();
+ // Revocar después de que el navegador haya iniciado la descarga.
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
 function importData(e){
  let f=e.target.files[0];if(!f)return;
  let r=new FileReader();
